@@ -24,10 +24,8 @@
     "primaryTopic": "",
     "secondaryTopics": []
   },
-  "sheets": [
-    "17gmH26Cq0yjy3JBMlfJXFS5CpuY16wyNzxpUYLxNtUg"
-  ],
-  "docs": {},
-  "embedded": true,
+  "sheets": [ "1zlv0MndWsdLnp15NI1tFjD7eJuvcYgpmhutASiOqcgk" ],
+  "docs": { "longform": "1oj6pW1S09SpGzqUBALOYx7fpCG6V3eLmqruErRuKTJE" },
+  "embedded": false,
   "production": false
 }
