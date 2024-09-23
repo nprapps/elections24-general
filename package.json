@@ -13,6 +13,8 @@
     "@babel/preset-env": "^7.14.2",
     "@nprapps/betty": "^1.0.9",
     "async": "^2.0.0-rc.1",
+    "aws-sdk": "^2.1691.0",
+    "axios": "^1.7.7",
     "babelify": "^10.0.0",
     "browser-pack-flat": "^3.0.5",
     "browserify": "^16.2.3",
