@@ -26,13 +26,11 @@ module.exports = function (grunt) {
   ]);
   grunt.registerTask("static", "Build all files", [
     "bundle",
-    // "bundle:once",
     "less",
     "template",
   ]);
   grunt.registerTask("startup", "Build all files and data", [
     "bundle",
-    // "bundle:once",
     "less",
     "ap",
     "build",
