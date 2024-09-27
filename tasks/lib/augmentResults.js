@@ -21,6 +21,7 @@ module.exports = function (results, data) {
 
     // Add electoral college winners to states
     // Not done in 2022 since we don't are about EC.
+    // race.id == 0 is usually presidential election
     if (r.id == 0 && (r.level == "state" || r.level == "district")) {
       var state16 = data.csv.prior_states
         .filter((s) => s.votes * 1 && s.state == r.state)
