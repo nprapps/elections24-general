@@ -2,6 +2,12 @@ let { Parser } = require("@json2csv/plainjs");
 const fs = require("fs");
 const axios = require("axios");
 
+/**
+ * This function fetches the House, Senate or Governor data depending on the parameter
+ * It then creates the .csv file which can be imported to the Google sheet
+ * @param {str} type
+ */
+
 async function extractData(type) {
   const baseURL = "https://api.ap.org/v3/elections/2024-11-05?format=JSON";
   const results = [];
