@@ -11,9 +11,7 @@ var nprDate = (apDate) => {
   return [m, d, y].join("/");
 };
 
-// candidates to always keep in results
-//! Why?
-//two presidential candidates. Get the IDs for the presidential candidates
+// presidential candidates to always keep in results
 var NEVER_MERGE = new Set(["8639", "1036"]);
 
 var translation = {
@@ -299,8 +297,6 @@ module.exports = function (resultArray, overrides = {}) {
       }
     }
   }
-
-  console.log({ output });
 
   return output;
 };
