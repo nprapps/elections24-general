@@ -16,7 +16,6 @@ module.exports = function (grunt) {
   var task = async function () {
     // ranked choice voting for 22.
 
-    console.log("CSV: ", grunt.data.json.rcv);
     var RCV_linkages = grunt.data.json.rcv;
     var test = grunt.option("APtest");
 
@@ -64,47 +63,46 @@ module.exports = function (grunt) {
     var results = normalize(rawResults, grunt.data.json);
 
     // Only include general election results if an RCV runoff is not available
-    //! how do I know if rcv runoff is available or not?
-    RCV_linkages.forEach(function (rcv_linkage) {
-      this_rcv_race = results.filter(
-        (race) => race.id == rcv_linkage["general_race_id"]
-      )[0];
+    // RCV_linkages.forEach(function (rcv_linkage) {
+    //   this_rcv_race = results.filter(
+    //     (race) => race.id == rcv_linkage["general_race_id"]
+    //   )[0];
 
-      if (this_rcv_race && this_rcv_race.called) {
-        // If the rcv race has been called, use it and filter out the "normal" race
-        console.log(
-          `RCV ${this_rcv_race.district} ${this_rcv_race.id} has been called, using it`
-        );
+    //   if (this_rcv_race && this_rcv_race.called) {
+    //     // If the rcv race has been called, use it and filter out the "normal" race
+    //     console.log(
+    //       `RCV ${this_rcv_race.district} ${this_rcv_race.id} has been called, using it`
+    //     );
 
-        // Set the new race to have the same status as the old race before filtering it out
-        var thisGeneralRaceIsKey = results.find(
-          (race) => race.id == rcv_linkage["general_race_id"]
-        ).keyRace;
-        var thisGeneralRaceRating = results.find(
-          (race) => race.id == rcv_linkage["general_race_id"]
-        ).rating;
+    //     // Set the new race to have the same status as the old race before filtering it out
+    //     var thisGeneralRaceIsKey = results.find(
+    //       (race) => race.id == rcv_linkage["general_race_id"]
+    //     ).keyRace;
+    //     var thisGeneralRaceRating = results.find(
+    //       (race) => race.id == rcv_linkage["general_race_id"]
+    //     ).rating;
 
-        if (typeof thisGeneralRaceIsKey !== "undefined") {
-          results.find(
-            (race) => race.id == rcv_linkage["rcv_race_id"]
-          ).keyRace = thisGeneralRaceIsKey;
-          results.find((race) => race.id == rcv_linkage["rcv_race_id"]).rating =
-            thisGeneralRaceRating;
-        }
+    //     if (typeof thisGeneralRaceIsKey !== "undefined") {
+    //       results.find(
+    //         (race) => race.id == rcv_linkage["rcv_race_id"]
+    //       ).keyRace = thisGeneralRaceIsKey;
+    //       results.find((race) => race.id == rcv_linkage["rcv_race_id"]).rating =
+    //         thisGeneralRaceRating;
+    //     }
 
-        // Ignore the general election race details
-        results = results.filter(
-          (race) => race.id != rcv_linkage["general_race_id"]
-        );
-      } else {
-        console.log(
-          `RCV race ${this_rcv_race.id} has NOT been called yet, NOT using the RCV result`
-        );
-        results = results.filter(
-          (race) => race.id != rcv_linkage["general_race_id"]
-        );
-      }
-    });
+    //     // Ignore the general election race details
+    //     results = results.filter(
+    //       (race) => race.id != rcv_linkage["general_race_id"]
+    //     );
+    //   } else {
+    //     console.log(
+    //       `RCV race ${this_rcv_race.id} has NOT been called yet, NOT using the RCV result`
+    //     );
+    //     results = results.filter(
+    //       (race) => race.id != rcv_linkage["general_race_id"]
+    //     );
+    //   }
+    // });
 
     // Ignore contest for end of 2016 CA term held during 2022
     // https://www.capradio.org/articles/2022/10/17/us-sen-alex-padilla-will-appear-on-californias-june-primary-ballot-twice-heres-why/
@@ -140,8 +138,6 @@ module.exports = function (grunt) {
       state: results.filter((r) => r.level == "state" || r.level == "district"),
       county: results.filter((r) => r.level == "county"),
     };
-
-    console.log(geo.national);
 
     grunt.log.writeln("Geo.national: ");
     grunt.log.writeflags(geo.national);
