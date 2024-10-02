@@ -12,7 +12,7 @@ var nprDate = (apDate) => {
 };
 
 // presidential candidates to always keep in results
-var NEVER_MERGE = new Set(["8639", "1036"]);
+var NEVER_MERGE = new Set(["8639", "64984"]);
 
 var translation = {
   race: {
