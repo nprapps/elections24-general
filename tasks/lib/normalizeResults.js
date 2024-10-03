@@ -25,6 +25,7 @@ var translation = {
     seatNumber: "seatNum",
     seat: "seatName",
     description: "description",
+    flippedSeat: "flippedSeat",
   },
   unit: {
     level: "level",
