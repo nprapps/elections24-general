@@ -26,6 +26,7 @@ var translation = {
     seat: "seatName",
     description: "description",
     flippedSeat: "flippedSeat",
+    winThreshold: "winThreshold",
   },
   unit: {
     level: "level",
