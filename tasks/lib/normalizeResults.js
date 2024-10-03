@@ -46,6 +46,7 @@ var translation = {
     avotes: "avotes",
     electoral: "electWon",
     winner: "winner",
+    winnerDateTime: "winnerDateTime",
     incumbent: "incumbent",
   },
   metadata: {
