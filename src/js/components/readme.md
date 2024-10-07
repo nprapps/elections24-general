@@ -87,12 +87,27 @@ balance-of-power
 ---------------
 ## Live updating a component
 
+### Special Note: Gopher.js
+---------------
+- `gopher.js` is another example of a file carried over from past election pages that helps keep the files up to date ([link here](https://github.com/nprapps/elections24-general/blob/45-balance-of-power-bar/src/js/components/gopher.js))
+- If you expect your component to be changing views depending on the data, installing gopher is a requirement
+  -   
+  ```javascript
+     import gopher from "../gopher.js";
+  ```
+- To use gopher, we call its watch() function, which watches for any changes to a given file. In the case of the elections, these files are usually the json files we collect and update regularly throughout the night
+- Example usage:
+  ```javascript
+     gopher.watch("./data/some-data.json", this.loadData);
+  ```
+
 
 ### Lifecycle Functions - Definitions
 ---------------
 - Similar to React, we custom components have lifecycle methods used to help render them
-  - `constructor()`: Initialize the component
-  - `connectedCallback()`: Called when the element is added to the DOM
+  - `constructor()`: Initialize the component, and fetch any props passed into it
+  - `connectedCallback()`: Called when the element is added to the DOM. We usually run our `loadData()` and `loadSVG()` functions here. We also call `gopher.watch()` to check a json file or two for any changes. 
+    - If a json file changes, the current plan is to re-call the render function
   - `disconnectedCallback()`: Called when the element is removed from the DOM
   - `attributeChangedCallback()`: Called when an attribute is changed (though we are using gopher.js for this, so this might not be needed)
 
@@ -113,7 +128,7 @@ balance-of-power
 
   ### Data Loading and Processing
 ---------------
-- For our custom components, we are trying to limit how often we read from local data files. However, if needed, we have the loadData() method, which reads in local data files and proceeds to call the render function
+- For our custom components, ideally we would try to limit how often we read from local data files. However, if needed, we have the loadData() method, which reads in local data files and proceeds to call the render function
 - Example:
   ```javascript
   async loadData() {
