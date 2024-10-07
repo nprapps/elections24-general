@@ -21,6 +21,7 @@ This document outlines the architecture of our ([2024 Election components ](http
   - We want more control over the component lifecycle, as these components will be updating often
 
 ### How are the components structured?
+---------------
 - Each web component is defined in the html as <NameOfComponent></NameOfComponent>
   - Thus, for a component named balance-of-power, the structure should look like:
 balance-of-power
