@@ -134,10 +134,6 @@ class ResultsBoardDisplay extends ElementBase {
             });
         }
 
-        console.log('=========')
-        console.log(buckets)
-        console.log('=========')
-
         let content = '';
 
         if (this.office.includes('Senate')) {
@@ -193,7 +189,6 @@ class ResultsBoardDisplay extends ElementBase {
                 </div>
             `;
         } else if (this.office.includes('governor')) {
-            console.log('governor')
             content += `
                 <div class="board-container Gov">
                     ${this.results ? `
@@ -208,7 +203,6 @@ class ResultsBoardDisplay extends ElementBase {
                 </div>
             `;
         } else if (this.office.includes('president')) {
-            console.log('president')
             content += `
                 <div class="board-container President">
                     ${this.results ? `
