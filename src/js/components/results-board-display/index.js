@@ -97,10 +97,6 @@ class ResultsBoardDisplay extends ElementBase {
             this.results = raceData.results || [];
             this.states = statesData || {};
 
-            console.log('/////')
-            console.log(this.results)
-            console.log('/////')
-
             this.isLoading = false;
             this.render();
         } catch (error) {
