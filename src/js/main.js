@@ -2,6 +2,7 @@
 
 require("./analytics");
 require("./components/results-table");
+require("./components/county-map");
 require("./components/balance-of-power-combined");
 require("./components/balance-of-power-bar");
 require("./components/results-board");
@@ -11,4 +12,3 @@ require("./components/nationalMap");
 require("./components/cartogram");
 require("./components/electoralBubbles")
 require("./components/tabs");
-require("./components/county-map");

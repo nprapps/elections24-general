@@ -1,0 +1,18 @@
+<link rel="stylesheet" type="text/css" href="styles/county-map.css">
+
+<div class="county-map" data-as="map" aria-hidden="true">
+  <div class="container" data-as="container">
+    <div class="key" data-as="key">
+      <div class="key-grid">
+      </div>
+    </div>
+    <div
+      class="map-container"
+      data-as="mapContainer">
+      <div class="map" data-as="map">
+        <div ref={this.svgRef}></div>
+      </div>
+      <div class="tooltip" ref={this.tooltipRef}></div>
+    </div>
+  </div>
+</div>
