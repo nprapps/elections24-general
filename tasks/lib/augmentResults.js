@@ -30,11 +30,11 @@ module.exports = function (results, data) {
         .filter((s) => s.votes * 1 && s.state == result.state)
         .sort((a, b) => b.votes - a.votes);
 
-      if (result.level == "district") {
-        state20 = state20.filter((s) => s.district == result.district);
-      } else {
-        state20 = state20.filter((s) => !s.district);
-      }
+      // if (result.level == "district") {
+      //   state20 = state20.filter((s) => s.district == result.district);
+      // } else {
+      //   state20 = state20.filter((s) => !s.district);
+      // }
 
       const candidates = state20.map(function (c) {
         return {
