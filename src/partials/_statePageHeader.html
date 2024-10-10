@@ -1,0 +1,19 @@
+<% const states = grunt.data.json.states; %> 
+
+<header>
+	<img src="https://apps.npr.org/primary-election-results-2024/assets/states/<%= state %>.svg" alt="" class="state-icon">
+
+	<div>
+		<h1><%= states[state].name %> election results</h1>
+		<form>
+			<input type="radio" name="nav" id="key-races" value="key-races" checked>
+			<label for="key-races">Key races</label>
+			<input type="radio" name="nav" id="president" value="president">
+			<label for="president">President</label>
+			<input type="radio" name="nav" id="senate" value="senate">
+			<label for="senate">Senate</label>
+			<input type="radio" name="nav" id="house" value="house">
+			<label for="house">House</label>
+		</form>
+	</div>
+</header>

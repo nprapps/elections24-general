@@ -1,3 +1,5 @@
+<% const state = "CA" %>
+
 <!doctype html>
 <html lang="en-US">
   <head>
@@ -5,16 +7,21 @@
     <link rel="stylesheet" type="text/css" href="state.css">
   </head>
   <body>
-    <div >
-    </div>
     <main class="app constrained">
-      <key-races state="CA" type="senate"></key-races>
-      <key-races state="CA" type="house"></key-races>
-</main>
+      <%= t.include("partials/_statePageHeader.html", {state: "CA"}) %>
+      <div id="key-race-section" class="section shown">
+        <results-collection state="<%= state %>" type="president"></results-collection>
+        <results-collection state="<%= state %>" type="senate"></results-collection>
+        <results-collection state="<%= state %>" type="house" key-races-only></results-collection>
+      </div>
+      <div id="house-section" class="hidden">
+        <results-collection state="<%= state %>" type="house"></results-collection>
+      </div>
+    </main>
     <script>
       window.PROJECT_ANALYTICS = <%= JSON.stringify(json.project.analytics || {}) %>;
     </script>
-    <script src="app.js" async></script>
+    <script src="state.js" async></script>
     <%= t.include("partials/_analytics.html") %>
   </body>
 </html>

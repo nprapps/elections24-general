@@ -1,7 +1,7 @@
 import gopher from "../gopher.js";
 const ElementBase = require("../elementBase");
 
-class KeyRaces extends ElementBase {
+class ResultsCollection extends ElementBase {
   constructor() {
     super();
     this.loadData = this.loadData.bind(this);
@@ -36,7 +36,11 @@ class KeyRaces extends ElementBase {
       <h3>${this.getAttribute("type")}</h3>
     `;
     let races = this.data.results.filter(d => {
-      return (d.state === "CA" && d.keyRace === true);
+      if (this.hasAttribute("key-races-only")) {
+        return (d.state === this.getAttribute("state") && d.keyRace === true);
+      } else {
+        return (d.state === this.getAttribute("state"));
+      }
     });
 
     races.forEach(race => {
@@ -50,4 +54,4 @@ class KeyRaces extends ElementBase {
   }
 }
 
-customElements.define("key-races", KeyRaces);
+customElements.define("results-collection", ResultsCollection);
