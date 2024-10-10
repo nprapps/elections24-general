@@ -135,7 +135,9 @@ class NationalMap extends ElementBase {
 
     // Initialize labels
     this.initLabels();
-    return svg;
+    console.log(svg)
+    console.log(this.svg)
+    return;
   }
 
   onClick(e) {
