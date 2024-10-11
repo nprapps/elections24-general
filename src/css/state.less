@@ -5,6 +5,13 @@ header {
 	display: flex;
 }
 
+label {
+	cursor: pointer;
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
 .state-icon {
 	height: 60px;
 }
@@ -24,8 +31,15 @@ label {
 
 input:checked + label {
 	color: black;
+	cursor: default;
+	&:hover {
+		text-decoration: none;
+	}
 }
 
-.hidden {
+section {
 	display: none;
+	&.shown {
+		display: block;
+	}
 }

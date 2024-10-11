@@ -1,4 +1,8 @@
-<% const state = "CA" %>
+<%
+  const state = "CA";
+  let sections = ["president"];
+%>
+
 
 <!doctype html>
 <html lang="en-US">
@@ -7,16 +11,22 @@
     <link rel="stylesheet" type="text/css" href="state.css">
   </head>
   <body>
+    <%= t.include("partials/_statePageHeader.html", {state: state}) %>
     <main class="app constrained">
-      <%= t.include("partials/_statePageHeader.html", {state: "CA"}) %>
-      <div id="key-race-section" class="section shown">
+      <section id="key-races-section" class="shown">
         <results-collection state="<%= state %>" type="president"></results-collection>
         <results-collection state="<%= state %>" type="senate"></results-collection>
         <results-collection state="<%= state %>" type="house" key-races-only></results-collection>
-      </div>
-      <div id="house-section" class="hidden">
+      </section>
+      <section id="house-section">
         <results-collection state="<%= state %>" type="house"></results-collection>
-      </div>
+      </section>
+      <section id="senate-section">
+        <results-collection state="<%= state %>" type="senate"></results-collection>
+      </section>
+      <section id="president-section">
+        <results-collection state="<%= state %>" type="president"></results-collection>
+      </section>
     </main>
     <script>
       window.PROJECT_ANALYTICS = <%= JSON.stringify(json.project.analytics || {}) %>;
