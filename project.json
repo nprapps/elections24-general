@@ -13,7 +13,9 @@
     "src/css/seed.less": "build/style.css"
   },
   "scripts": {
-    "src/js/main.js": "build/app.js"
+    "src/js/main.js": "build/app.js",
+    "src/js/loadHeaderBidding.js": "build/loadHeaderBidding.js"
+
   },
   "scriptsOnce": {
     "src/js/embed.js": "build/embed.js",
