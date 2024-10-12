@@ -208,10 +208,6 @@ class NationalMap extends ElementBase {
         <div class="perc">${Math.round(candidate.percent * 1000) / 10}%</div>
       </div>
     `).join("");
-
-    console.log('//////////')
-    console.log(result)
-    console.log('//////////')
   
     const tooltipContent = `
       <h3>${result.stateName}${district ? districtDisplay : ""} <span>(${result.electoral})</span></h3>
