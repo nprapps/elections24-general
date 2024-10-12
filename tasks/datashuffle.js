@@ -1,3 +1,16 @@
+/*
+
+ Replays a recorded AP test (recorded via timed_backup.py)
+
+ To run this task
+ 1. Put the backup folder for the test you want in the /temp folder
+ 2. run `grunt replay --offline`
+
+ Optional flag:
+ --seconds=## (the time interval to update the data; default is 60 seconds)
+ 
+*/
+
 module.exports = function (grunt) {
   const fs = require("fs");
   const path = require("path");
