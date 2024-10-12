@@ -185,13 +185,16 @@ class NationalMap extends ElementBase {
     const districtDisplay = district == "AL" ? " At-Large" : " " + district;
     const results = this.races.filter((r) => r.state == stateName);
     let result;
+
   
     if (district) {
-      result = results.filter((r) => (r.district == district))[0];
+      result = results.filter((r) => (r.seatNumber == district))[0];
+    } if (district === "AL") {
+      result = results[0];
     } else {
       result = results[0];
     }
-  
+
         // Filter candidates with a percent value; old way is commented out
         //const candidates = result.candidates.filter(c => c.percent);
         const candidates = result.candidates
@@ -205,6 +208,10 @@ class NationalMap extends ElementBase {
         <div class="perc">${Math.round(candidate.percent * 1000) / 10}%</div>
       </div>
     `).join("");
+
+    console.log('//////////')
+    console.log(result)
+    console.log('//////////')
   
     const tooltipContent = `
       <h3>${result.stateName}${district ? districtDisplay : ""} <span>(${result.electoral})</span></h3>

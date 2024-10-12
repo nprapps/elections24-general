@@ -168,7 +168,9 @@ class Cartogram extends ElementBase {
         let result;
     
         if (district) {
-          result = results.filter((r) => (r.district == district))[0];
+          result = results.filter((r) => (r.seatNumber == district))[0];
+        } if (district === "AL") {
+          result = results[0];
         } else {
           result = results[0];
         }
