@@ -6,14 +6,13 @@
 	<div>
 		<h1><%= states[state].name %> election results</h1>
 		<form>
-			<input type="radio" name="nav" id="key-races" value="key-races" checked>
-			<label for="key-races">Key races</label>
-			<input type="radio" name="nav" id="president" value="president">
-			<label for="president">President</label>
-			<input type="radio" name="nav" id="senate" value="senate">
-			<label for="senate">Senate</label>
-			<input type="radio" name="nav" id="house" value="house">
-			<label for="house">House</label>
+			<% 
+				sections.forEach((section, i) => {
+					const sectionName = (section.charAt(0).toUpperCase() + section.slice(1)).replace("-", " ") 
+			%>
+				<input type="radio" name="nav" id="<%= section %>" value="<%= section %>" <%= i === 0 ? "checked" : "" %>>
+				<label for="<%= section %>"><%= sectionName %></label>
+			<% }); %>
 		</form>
 	</div>
 </header>

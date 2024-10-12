@@ -1,8 +1,13 @@
 <%
-  const state = "CA";
-  let sections = ["president"];
-%>
+  const senateData = require("../data/senate.json");
 
+  const state = "CA";
+  let sections = ["key-races", "president", "house"];
+
+  if (senateData.results.filter(d => d.state === state).length > 0) {
+    sections.push("senate");
+  }
+%>
 
 <!doctype html>
 <html lang="en-US">
@@ -11,7 +16,7 @@
     <link rel="stylesheet" type="text/css" href="state.css">
   </head>
   <body>
-    <%= t.include("partials/_statePageHeader.html", {state: state}) %>
+    <%= t.include("partials/_statePageHeader.html", {state: state, sections: sections}) %>
     <main class="app constrained">
       <section id="key-races-section" class="shown">
         <results-collection state="<%= state %>" type="president"></results-collection>
