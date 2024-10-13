@@ -17,5 +17,6 @@ require("./components/cartogram");
 require("./components/electoralBubbles")
 require("./components/county-map")
 require("./components/key-races")
+require("./components/county-map")
 require("./components/results-table-county")
 

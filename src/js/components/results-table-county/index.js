@@ -172,10 +172,6 @@ class ResultsTableCounty extends ElementBase {
     candidatePercentCell(candidate, leading, percentIn) {
         const displayPercent = percentDecimal(candidate.percent);
         const party = getParty(candidate.party);
-        console.log('......')
-        console.log(candidate)
-        console.log(party)
-        console.log('......')
 
         const allIn = percentIn >= 1;
         return `
@@ -212,8 +208,6 @@ class ResultsTableCounty extends ElementBase {
             }
             return header;
         });
-
-        console.log(candidates)
 
         let metricValue = row.county[metric.key];
         if (metric.format) {
@@ -263,11 +257,6 @@ class ResultsTableCounty extends ElementBase {
                 party: candidate.party,
                 percent: candidate.percent
             }));
-
-
-        console.log(']]]]]]]]]]]]]]]]]]]]]]]]')
-        console.log(orderedCandidates)
-
 
 
         // Add "Other" if there are more than 3 candidates

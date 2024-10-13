@@ -18,45 +18,52 @@ class CountyMap extends ElementBase {
 
     this.handleResize = this.handleResize.bind(this);
     this.state = {};
-    this.svgRef = createRef();
-    this.containerRef = createRef();
-    this.mapContainerRef = createRef();
-    this.tooltipRef = createRef();
     this.width;
     this.height;
+    this.data = null
+    this.sortOrder;
+    this.legendCands = []
+  }
 
-    // Only display candidates that are winning a county
-    var legendCands = getCountyCandidates(props.sortOrder, props.data);
+  async connectedCallback() {
+    try {
+      const state = this.getAttribute('state');
+      const response = await fetch(`./data/counties/${state}-0.json`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      this.data = data.results || [];
+
+      // Only display candidates that are winning a county
+      const sortOrder = this.data[0].candidates;
+      this.sortOrder = sortOrder;
+      const winningCandidates = getCountyCandidates(sortOrder, this.data);
 
     // Add in special marker if more than one candidate of same party is winning a county.
-    var specialCount = 1;
-    legendCands.forEach(function (c, index) {
-      if (
-        legendCands.filter(l => getParty(l.party) == getParty(c.party)).length >
-        1
-      ) {
-        c.special = specialCount;
-        specialCount += 1;
+    let specialCount = 1;
+    this.legendCands = winningCandidates.map(candidate => {
+      const samePartyCount = winningCandidates.filter(c => 
+        getParty(c.party) === getParty(candidate.party)
+      ).length;
+      
+      if (samePartyCount > 1) {
+        return { ...candidate, special: specialCount++ };
       }
+      return candidate;
     });
-    this.legendCands = legendCands;
+
+      this.render();
+      await this.loadSVG();
+    } catch (error) {
+      console.error("Could not load JSON data:", error);
+      this.render(); // Render to show error state
+    }
+    //window.addEventListener("resize", this.handleResize);
   }
 
-  connectedCallback() {
-    var response = fetch(
-      "./assets/synced/counties/" + this.getAttribute("state") + ".svg"
-    );
-    var text = response.text();
-    var svg = this.loadSVG(text);
-    this.setState({ svg: svg });
-
-    window.addEventListener("resize", this.handleResize);
-  }
-
-  // Lifecycle: Called just before our component will be destroyed
   disconnectedCallback() {
-    // stop when not renderable
-    window.removeEventListener("resize", this.handleResize);
+    //window.removeEventListener("resize", this.handleResize);
   }
 
   componentDidUpdate() {
@@ -76,55 +83,66 @@ class CountyMap extends ElementBase {
   render() {
     this.innerHTML = `
       <div class="county-map" data-as="map" aria-hidden="true">
-        <div ref={this.containerRef} class="container" data-as="container">
+        <div class="container" data-as="container">
           <div class="key" data-as="key">
             <div class="key-grid">
-              {this.legendCands.map(candidate => this.createLegend(candidate))}
+              ${this.legendCands.map(candidate => this.createLegend(candidate)).join('')}
             </div>
           </div>
-          <div
-            ref={this.mapContainerRef}
-            class="map-container"
-            data-as="mapContainer">
+         <div class="map-container" data-as="mapContainer">
             <div class="map" data-as="map">
-              <div ref={this.svgRef}></div>
+              <div class="svg-container"></div>
             </div>
-            <div class="tooltip" ref={this.tooltipRef}></div>
+            <div class="tooltip"></div>
           </div>
         </div>
       </div>
     `
   }
 
-  async loadSVG(svgText) {
-    this.svgRef.current.innerHTML = svgText;
-    var [svg] = this.svgRef.current.getElementsByTagName("svg");
-    this.width = svg.getAttribute("width") * 1;
-    this.height = svg.getAttribute("height") * 1;
+  async loadSVG() {
+    const state = this.getAttribute('state');
+    const response = await fetch(`./assets/counties/${state}.svg`);
+    const text = await response.text();
+    this.svgContainer = this.querySelector('.svg-container');
+    this.svgContainer.innerHTML = text;
+    this.svg = this.svgContainer.querySelector('svg');
+    this.width = this.svg.getAttribute("width") * 1;
+    this.height = this.svg.getAttribute("height") * 1;
 
-    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    this.svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
 
-    var paths = svg.querySelectorAll("path");
+    var paths = this.svg.querySelectorAll("path");
     paths.forEach((p, i) => {
       p.setAttribute("vector-effect", "non-scaling-stroke");
     });
 
-    svg.addEventListener("mousemove", e => this.onMove(e));
-    svg.addEventListener("mouseleave", e => this.onMove(e));
-
-    this.svg = svg;
+    this.svg.addEventListener("mousemove", e => this.onMove(e));
+    this.svg.addEventListener("mouseleave", e => this.onMove(e));
 
     this.paint();
     this.updateDimensions();
 
-    return svg;
+    return this.svg;
+  }
+
+  processData(data) {
+    this.legendCands = getCountyCandidates(this.getAttribute('sort-order'), data);
+    let specialCount = 1;
+    this.legendCands.forEach((c, index) => {
+      if (this.legendCands.filter(l => getParty(l.party) == getParty(c.party)).length > 1) {
+        c.special = specialCount;
+        specialCount += 1;
+      }
+    });
+    this.render();
   }
 
   updateDimensions() {
     if (!this.svg) return;
 
     var embedded = false; //document.body.classList.contains("embedded");
-    var mapContainer = this.mapContainerRef.current;
+    var mapContainer = this.querySelector('.map-container');
 
     var innerWidth = window.innerWidth;
     var maxH = 400;
@@ -137,7 +155,7 @@ class CountyMap extends ElementBase {
     this.svg.setAttribute("width", w + "px");
     this.svg.setAttribute("height", h + "px");
 
-    this.containerRef.current.classList.toggle(
+    this.querySelector('.container').classList.toggle(
       "horizontal",
       this.width < this.height
     );
@@ -145,7 +163,7 @@ class CountyMap extends ElementBase {
 
   paint() {
     if (!this.svg) return;
-    var mapData = this.getAttribute("data");
+    var mapData = this.data;
 
     var incomplete = false;
 
@@ -154,7 +172,6 @@ class CountyMap extends ElementBase {
       this.fipsLookup[mapData[d].fips] = mapData[d];
     }
 
-    var lookup = {};
     for (var d of Object.keys(mapData)) {
       var fips = mapData[d].fips;
       var candidates = mapData[d].candidates;
@@ -189,8 +206,8 @@ class CountyMap extends ElementBase {
       <div class="key-row">
         <div
           class="swatch ${getParty(
-            candidate.party
-          )} i${specialShading}"></div>
+      candidate.party
+    )} i${specialShading}"></div>
         <div class="name">${name}</div>
       </div>
     `);
@@ -207,7 +224,7 @@ class CountyMap extends ElementBase {
   }
 
   onMove(e) {
-    var tooltip = this.tooltipRef.current;
+    var tooltip = this.querySelector('.tooltip');
     var fips = e.target.id.replace("fips-", "");
 
     if (!fips || e.type == "mouseleave") {
@@ -215,8 +232,7 @@ class CountyMap extends ElementBase {
       return;
     }
 
-    var svg = this.svgRef.current.querySelector("svg");
-    svg.appendChild(e.target);
+    this.svg.appendChild(e.target);
 
     var result = this.fipsLookup[fips];
     if (result) {
@@ -226,19 +242,20 @@ class CountyMap extends ElementBase {
       candText = displayCandidates
         .map(cand => {
           var [candidate] = legendCands.filter(c => isSameCandidate(c, cand));
-          var inStateTop = !!this.props.sortOrder.filter(c =>
+          var inStateTop = !!this.sortOrder.filter(c =>
             isSameCandidate(c, cand)
           ).length;
           var special =
             candidate && candidate.special ? `i${candidate.special}` : "";
           var cs = `<div class="row">
             <span class="party ${cand.party} ${special}"></span>
-            <span>${cand.last} ${
-            !inStateTop ? `(${getParty(cand.party)})` : ""
-          }</span>
+            <span>${cand.last} ${!inStateTop ? `(${getParty(cand.party)})` : ""
+            }</span>
             <span class="amt">${reportingPercentage(cand.percent)}%</span>
         </div>`;
-          return cand.percent > 0 ? cs : "";
+          //technically, this was the first response; ask about zero state
+          //return cand.percent > 0 ? cs : "";
+          return cs;
         })
         .join("");
 
@@ -250,8 +267,8 @@ class CountyMap extends ElementBase {
         <div class="name"> ${countyName} </div>
         ${candText}
         <div class="row pop">Population <span class="amt"> ${formatters.comma(
-          result.county.population
-        )}</span></div>
+        result.county.population
+      )}</span></div>
         <div class="row reporting">${perReporting}% in</div>
       `;
     }
