@@ -199,8 +199,6 @@ class ResultsTableCounty extends ElementBase {
         const metric = this.state.displayedMetric;
 
         const topCands = orderedCandidates.map(c => c.last);
-
-        console.log(orderedCandidates)
         
         const candidates = orderedCandidates.map(header => {
             if (header.last == "Other") {
