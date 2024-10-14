@@ -44,25 +44,22 @@ class NationalMap extends ElementBase {
       const response = await fetch("./assets/_map-geo.svg");
       const svgText = await response.text();
       this.svg = await this.loadSVG(svgText); // Store the returned SVG
+      this.svgContainerRef.current = this.querySelector('.svg-container');
+      this.svgContainerRef.current.innerHTML = ''; // Clear existing content
+      this.svgContainerRef.current.appendChild(this.svg);
+
     } catch (error) {
       console.error("Failed to load SVG:", error);
       return;
     }
 
     this.illuminate();
-    gopher.watch(`./data/president.json`, this.loadData);
-
+    this.render()
+    this.initLabels();
     this.paint();
-  }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    switch (name) {
-      case 'races':
-        this.loadData();
-        //this.races  JSON.parse(newValue);
-        this.paint();
-        break;
-    }
+
+    gopher.watch(`./data/president.json`, this.loadData);
   }
 
   disconnectedCallback() {
@@ -100,12 +97,36 @@ class NationalMap extends ElementBase {
 
 
   render() {
+    // Create the basic structure
     this.innerHTML = `
       <div class="map">
         <div class="svg-container" role="img" aria-label="National map of results"></div>
         <div class="tooltip"></div>
       </div>
     `;
+  
+    const svgContainer = this.querySelector('.svg-container');
+    const tooltipContainer = this.querySelector('.tooltip');
+  
+    if (this.svg) {
+      this.svg.setAttribute('width', '100%');
+      this.svg.setAttribute('height', '100%');
+  
+      this.svg.addEventListener("mousemove", this.onMove);
+      this.svg.addEventListener("click", this.onClick);
+  
+      svgContainer.appendChild(this.svg);
+    }
+  
+    if (this.tooltip) {
+      tooltipContainer.innerHTML = this.tooltip.innerHTML;
+      tooltipContainer.className = this.tooltip.className;
+      tooltipContainer.style.cssText = this.tooltip.style.cssText;
+    }
+  
+    this.svgContainerRef.current = svgContainer;
+    this.tooltip = tooltipContainer;
+  
     return;
   }
 
@@ -114,30 +135,38 @@ class NationalMap extends ElementBase {
       console.error("SVG container not found");
       return;
     }
-
-    // Insert the SVG text into the container
-    this.svgContainerRef.current.innerHTML = svgText;
-
-    this.svg = this.svgContainerRef.current.querySelector("svg");
-
+  
+    // Create a temporary container
+    const tempContainer = document.createElement('div');
+    tempContainer.innerHTML = svgText;
+  
+    // Get the SVG element
+    this.svg = tempContainer.querySelector("svg");
+  
     if (!this.svg) {
-      console.error("SVG element not found after insertion");
+      console.error("SVG element not found in the provided SVG text");
       return;
     }
-
+  
     // Ensure the SVG takes up the full space of its container
     this.svg.setAttribute('width', '100%');
     this.svg.setAttribute('height', '100%');
-
+  
     // Add event listeners
     this.svg.addEventListener("mousemove", this.onMove);
     this.svg.addEventListener("click", this.onClick);
-
+  
     // Initialize labels
     this.initLabels();
-    console.log(svg)
-    console.log(this.svg)
-    return;
+    this.paint();
+  
+    // Clear the SVG container and insert the new SVG
+    //this.svgContainerRef.current.innerHTML = '';
+    this.svgContainerRef.current.appendChild(this.svg);
+  
+    // Dispatch an event to signal that the SVG has been loaded and incorporated
+  
+    return this.svg;
   }
 
   onClick(e) {
@@ -152,7 +181,7 @@ class NationalMap extends ElementBase {
     // Select the SVG element
     this.svg = this.svgContainerRef.current.querySelector("svg");
     const tooltip = this.querySelector('.tooltip');
-  
+
     // hover styles
     const currentHover = this.svg.querySelector(".hover");
     if (currentHover) {
@@ -302,6 +331,7 @@ class NationalMap extends ElementBase {
       console.error("SVG not available for painting");
       return;
     }
+    
 
     const mapData = this.races;
 

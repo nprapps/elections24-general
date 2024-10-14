@@ -53,6 +53,9 @@ class CountyMap extends ElementBase {
       return candidate;
     });
 
+    console.log(this.legendCands);
+
+
       this.render();
       await this.loadSVG();
     } catch (error) {
@@ -226,27 +229,32 @@ class CountyMap extends ElementBase {
   onMove(e) {
     var tooltip = this.querySelector('.tooltip');
     var fips = e.target.id.replace("fips-", "");
-
+  
     if (!fips || e.type == "mouseleave") {
       tooltip.classList.remove("shown");
       return;
     }
-
+  
     this.svg.appendChild(e.target);
-
+  
     var result = this.fipsLookup[fips];
+  
     if (result) {
-      var displayCandidates = result.candidates.slice(0, 2);
-      var candText = "";
-      var legendCands = this.legendCands;
-      candText = displayCandidates
-        .map(cand => {
-          var [candidate] = legendCands.filter(c => isSameCandidate(c, cand));
+      var displayCandidates = result.candidates
+        .sort((a, b) => b.percent - a.percent)
+        .slice(0, 2);
+  
+      var partyCounts = displayCandidates.reduce((acc, cand) => {
+        acc[getParty(cand.party)] = (acc[getParty(cand.party)] || 0) + 1;
+        return acc;
+      }, {});
+  
+      var candText = displayCandidates
+        .map((cand, index) => {
           var inStateTop = !!this.sortOrder.filter(c =>
             isSameCandidate(c, cand)
           ).length;
-          var special =
-            candidate && candidate.special ? `i${candidate.special}` : "";
+          var special = partyCounts[getParty(cand.party)] > 1 ? `i${index + 1}` : "";
           var cs = `<div class="row">
             <span class="party ${cand.party} ${special}"></span>
             <span>${cand.last} ${!inStateTop ? `(${getParty(cand.party)})` : ""
@@ -258,11 +266,11 @@ class CountyMap extends ElementBase {
           return cs;
         })
         .join("");
-
+  
       var countyName = result.county.countyName.replace(/\s[a-z]/g, match =>
         match.toUpperCase()
       );
-      var perReporting = reportingPercentage(result.eevp);
+      var perReporting = reportingPercentage(result.reportingPercent);
       tooltip.innerHTML = `
         <div class="name"> ${countyName} </div>
         ${candText}
@@ -272,7 +280,7 @@ class CountyMap extends ElementBase {
         <div class="row reporting">${perReporting}% in</div>
       `;
     }
-
+  
     var bounds = this.svg.getBoundingClientRect();
     var x = e.clientX - bounds.left;
     var y = e.clientY - bounds.top;
@@ -283,7 +291,7 @@ class CountyMap extends ElementBase {
     }
     tooltip.style.left = x + "px";
     tooltip.style.top = y + "px";
-
+  
     tooltip.classList.add("shown");
   }
 }
