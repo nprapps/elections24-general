@@ -164,10 +164,15 @@ class CountyDataViz extends ElementBase {
     }
 
     toggleCollapsed() {
-        this.collapsed = !this.collapsed;
+        console.log('toggle collapse is happening')
+        this.state.collapsed = !this.state.collapsed;
         this.render();
-        this.querySelector('#trendsRef').scrollIntoView({ behavior: 'smooth' });
-    }
+        setTimeout(() => {
+            const trendsRef = this.querySelector('#trendsRef');
+            if (trendsRef) {
+                trendsRef.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);    }
 }
 
 
