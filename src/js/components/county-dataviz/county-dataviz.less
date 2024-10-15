@@ -167,26 +167,26 @@
     }
   }
 
-  div.collapsed .chart-wrapper:nth-child(n + 4) {
+  div.collapsed > :nth-child(n + 4) .chart-wrapper {
     display: none;
   }
 
   @media @tablet {
-    div.collapsed .chart-wrapper:nth-child(n + 4) {
-      display: none;
-    }
+    div.collapsed > :nth-child(n + 4) .chart-wrapper {
+        display: none;
+      }
   }
 
   @media @mobile {
-    div.collapsed .chart-wrapper:nth-child(n + 3) {
-      display: none;
-    }
+    div.collapsed > :nth-child(n + 3) .chart-wrapper {
+        display: none;
+      }
   }
 
   @media @tiny {
-    div.collapsed .chart-wrapper:nth-child(n + 2) {
-      display: none;
-    }
+    div.collapsed > :nth-child(n + 2) .chart-wrapper {
+        display: none;
+      }
   }
 
   .footnote {
