@@ -42,6 +42,7 @@ class Cartogram extends ElementBase {
           const response = await fetch("./assets/_map-cartogram.svg");
           const svgText = await response.text();
           this.svg = await this.loadSVG(svgText);
+          this.initLabels();
         } catch (error) {
           console.error("Failed to load SVG:", error);
           return;
@@ -200,6 +201,7 @@ class Cartogram extends ElementBase {
       }
     
       initLabels() {
+        console.log('calling initLabels')
         const groups = this.svg.querySelectorAll("svg > g[data-postal]");
     
         groups.forEach((g) => {

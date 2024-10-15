@@ -32,6 +32,14 @@
       <section id="president-section">
         <results-collection state="<%= state %>" type="president"></results-collection>
       </section>
+      <section id="county-section">
+        <county-map state="CA"></county-map>
+        <county-dataviz state="CA"></county-dataviz>
+        <results-table-county
+        state="<%= state %>"
+        race-id="0"
+        order="1"></results-table-county>
+      </section>
     </main>
     <script>
       window.PROJECT_ANALYTICS = <%= JSON.stringify(json.project.analytics || {}) %>;
