@@ -118,6 +118,14 @@ module.exports = function (grunt) {
         grunt.file.write(file.dest, output);
       });
 
+      // generate state pages
+      var statePageTemplate = grunt.file.read("src/_state.html");
+      for (var state in grunt.data.json.states) {
+        var stateData = grunt.data.json.states[state];
+        var output = process(statePageTemplate, stateData, `states/${state}.html`);
+        grunt.file.write(`build/${state}.html`, output);
+      }
+
       // generate office share pages
       var officeTemplate = grunt.file.read("src/_office_social.html");
       for (var office of ["governor", "house", "senate"]) {
