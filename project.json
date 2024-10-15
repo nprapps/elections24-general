@@ -17,7 +17,8 @@
     "src/css/county.less": "build/county.css"
   },
   "scripts": {
-    "src/js/main.js": "build/app.js"
+    "src/js/main.js": "build/app.js",
+    "src/js/state.js": "build/state.js"
   },
   "scriptsOnce": {
     "src/js/embed.js": "build/embed.js",
