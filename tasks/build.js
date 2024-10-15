@@ -121,11 +121,12 @@ module.exports = function (grunt) {
 
       // generate state pages
       var statePageTemplate = grunt.file.read("src/_state.html");
-      for (var state in grunt.data.json.states) {
+      var states = Object.keys(grunt.data.json.states).filter(d => !d.includes("-"));
+      states.forEach(state => {
         var stateData = grunt.data.json.states[state];
         var output = process(statePageTemplate, stateData, `states/${state}.html`);
         grunt.file.write(`build/${classify(stateData.name)}.html`, output);
-      }
+      });
 
       // generate office share pages
       var officeTemplate = grunt.file.read("src/_office_social.html");
