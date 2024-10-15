@@ -26,12 +26,24 @@ class CountyDataViz extends ElementBase {
     }
 
     async connectedCallback() {
-        try {
-            const state = this.getAttribute('state');
-            const response = await fetch(`./data/counties/${state}-0.json`);
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
+        const state = this.getAttribute('state');
+            const race = this.getAttribute('race');
+
+            let url;
+            console.log(race)
+            if (race !== null) {
+                url = `./data/counties/${race}.json`;
+            } else {
+                url = `./data/counties/${state}-0.json`;
             }
+
+        try {
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
             const data = await response.json();
             this.data = data.results || [];
 
@@ -153,9 +165,9 @@ class CountyDataViz extends ElementBase {
         var [firstParty] = county.candidates.filter(c => c.party == lead);
         var leadPer = firstParty.percent * 100;
         var secondPer = secondParty.percent * 100;
-    
+
         return secondPer / (leadPer + secondPer);
-      }
+    }
 
     getCorrs(v, data) {
         const correlation = pearsonCorrelation([data.map(d => d.x),
@@ -172,7 +184,8 @@ class CountyDataViz extends ElementBase {
             if (trendsRef) {
                 trendsRef.scrollIntoView({ behavior: 'smooth' });
             }
-        }, 100);    }
+        }, 100);
+    }
 }
 
 
@@ -188,43 +201,43 @@ class CountyDataViz extends ElementBase {
  */
 function pearsonCorrelation(prefs, p1, p2) {
     var si = [];
-  
+
     for (var key in prefs[p1]) {
-      if (prefs[p2][key]) si.push(key);
+        if (prefs[p2][key]) si.push(key);
     }
-  
+
     var n = si.length;
-  
+
     if (n == 0) return 0;
-  
+
     var sum1 = 0;
     for (var i = 0; i < si.length; i++) sum1 += prefs[p1][si[i]];
-  
+
     var sum2 = 0;
     for (var i = 0; i < si.length; i++) sum2 += prefs[p2][si[i]];
-  
+
     var sum1Sq = 0;
     for (var i = 0; i < si.length; i++) {
-      sum1Sq += Math.pow(prefs[p1][si[i]], 2);
+        sum1Sq += Math.pow(prefs[p1][si[i]], 2);
     }
-  
+
     var sum2Sq = 0;
     for (var i = 0; i < si.length; i++) {
-      sum2Sq += Math.pow(prefs[p2][si[i]], 2);
+        sum2Sq += Math.pow(prefs[p2][si[i]], 2);
     }
-  
+
     var pSum = 0;
     for (var i = 0; i < si.length; i++) {
-      pSum += prefs[p1][si[i]] * prefs[p2][si[i]];
+        pSum += prefs[p1][si[i]] * prefs[p2][si[i]];
     }
-  
+
     var num = pSum - (sum1 * sum2 / n);
     var den = Math.sqrt((sum1Sq - Math.pow(sum1, 2) / n) *
         (sum2Sq - Math.pow(sum2, 2) / n));
-  
+
     if (den == 0) return 0;
-  
+
     return num / den;
-  }
+}
 
 customElements.define('county-dataviz', CountyDataViz);

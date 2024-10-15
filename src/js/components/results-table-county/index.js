@@ -32,23 +32,33 @@ class ResultsTableCounty extends ElementBase {
     }
 
     async connectedCallback() {
-        this.availableMetrics = getAvailableMetrics(this.getAttribute('state'));
-        this.state.sortMetric = this.availableMetrics.population;
-        this.state.displayedMetric = this.availableMetrics.population;
+        const state = this.getAttribute('state');
+    const race = this.getAttribute('race');
 
-        try {
-            const response = await fetch(`./data/counties/CA-0.json`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            this.data = data.results || [];
-            this.render();
-            this.attachEventListeners();
-        } catch (error) {
-            console.error("Could not load JSON data:", error);
-            this.render(); // Render to show error state
+    this.availableMetrics = getAvailableMetrics(state);
+    this.state.sortMetric = this.availableMetrics.population;
+    this.state.displayedMetric = this.availableMetrics.population;
+
+    try {
+        let url;
+        if (race !== null) {
+            url = `./data/counties/${race}.json`;
+        } else {
+            url = `./data/counties/${state}-0.json`;
         }
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        this.data = data.results || [];
+        this.render();
+        this.attachEventListeners();
+    } catch (error) {
+        console.error("Could not load JSON data:", error);
+        this.render(); // Render to show error state
+    }
     }
 
     attachEventListeners() {
