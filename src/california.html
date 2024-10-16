@@ -14,6 +14,7 @@
   <head>
     <%= t.include("partials/_head.html", grunt.data.json) %>
     <link rel="stylesheet" type="text/css" href="state.css">
+    <link rel="stylesheet" type="text/css" href="county.css">
   </head>
   <body>
     <%= t.include("partials/_statePageHeader.html", {state: state, sections: sections}) %>
@@ -21,22 +22,22 @@
       <section id="key-races-section" class="shown">
         <results-collection state="<%= state %>" type="president"></results-collection>
         <results-collection state="<%= state %>" type="senate"></results-collection>
-        <results-collection state="<%= state %>" type="house" key-races-only></results-collection>
       </section>
       <section id="house-section">
+        House
         <results-collection state="<%= state %>" type="house"></results-collection>
       </section>
       <section id="senate-section">
+        Senate
         <results-collection state="<%= state %>" type="senate"></results-collection>
       </section>
       <section id="president-section">
+        County
         <results-collection state="<%= state %>" type="president"></results-collection>
-      </section>
-      <section id="county-section">
-        <county-map state="CA"></county-map>
-        <county-dataviz state="CA"></county-dataviz>
+        <county-map state="<%= state %>"></county-map>
+        <county-dataviz state="<%= state %>" race="CA-0"></county-dataviz>
         <results-table-county
-        state="<%= state %>"
+        state="CA"
         race-id="0"
         order="1"></results-table-county>
       </section>
@@ -45,6 +46,7 @@
       window.PROJECT_ANALYTICS = <%= JSON.stringify(json.project.analytics || {}) %>;
     </script>
     <script src="state.js" async></script>
+    <script src="main.js" async></script>
     <%= t.include("partials/_analytics.html") %>
   </body>
 </html>

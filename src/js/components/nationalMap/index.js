@@ -335,21 +335,47 @@ class NationalMap extends ElementBase {
 
     const mapData = this.races;
 
+    console.log(this.races)
+
     mapData.forEach((r) => {
-      const eevp = r.eevp || r.reportingPercent;
-      const district = r.district;
-      const state = r.state.toLowerCase() + (district ? "-" + district : "");
-      const leader = r.candidates[0].party;
+      if (!r || !r.state) {
+        console.warn("Invalid race data:", r);
+        return;
+      }
+  
+      const eevp = r.eevp || r.reportingPercent || 0;
+      const stateName = r.state.toUpperCase();
+    const district = r.district || r.seatNumber;
+    
+    let stateSelector = stateName.toLowerCase();
+    if (district) {
+      console.log('yerrr')
+      console.log(stateName)
+      console.log(district)
+      if (district === "AL") {
+        stateSelector += `-AL`;
+      } else {
+        console.log(district)
+        console.log('yerrr')
+        stateSelector += `-${district}`;
+      }
+    }
+  
+      const stateGroup = this.svg.querySelector(`.${stateSelector}`);
+      if (!stateGroup) {
+        console.warn(`No SVG group found for state: ${stateSelector}`);
+        return;
+      }
+  
+      const leader = r.candidates && r.candidates.length > 0 ? r.candidates[0].party : null;
       const winner = r.winnerParty;
-      const stateGroup = this.svg.querySelector(`.${state}`);
-      if (!stateGroup) return;
-
+  
       stateGroup.classList.remove("early", "winner", "leader", "GOP", "Dem");
-
+  
       if (eevp > 0) {
         stateGroup.classList.add("early");
       }
-      if (eevp > 0.5) {
+      if (eevp > 0.5 && leader) {
         stateGroup.classList.add("leader");
         stateGroup.classList.add(leader);
       }

@@ -21,7 +21,7 @@ class BoardPresident extends ElementBase {
     this.tabButtons = null;
     this.customElements = null;
     this.tabElementMap = null;
-    
+
   }
 
   connectedCallback() {
@@ -36,27 +36,27 @@ class BoardPresident extends ElementBase {
   setupTabs() {
     // Select all tab buttons and custom elements
     setTimeout(() => {
-    this.tabButtons = this.querySelectorAll('.tabs [role="tab"]');
-    this.customElements = this.querySelectorAll('national-map, cartogram-map, electoral-bubbles');
+      this.tabButtons = this.querySelectorAll('.tabs [role="tab"]');
+      this.customElements = this.querySelectorAll('national-map, cartogram-map, electoral-bubbles');
 
-    // Create an object to map tab indices to custom elements
-    this.tabElementMap = {
-      0: this.querySelector('national-map'),
-      1: this.querySelector('cartogram-map'),
-      2: this.querySelector('electoral-bubbles')
-    };
+      // Create an object to map tab indices to custom elements
+      this.tabElementMap = {
+        0: this.querySelector('national-map'),
+        1: this.querySelector('cartogram-map'),
+        2: this.querySelector('electoral-bubbles')
+      };
 
 
-    // Attach click event listeners to all tab buttons
-    this.tabButtons.forEach((tab, index) => {
-      tab.addEventListener('click', () => this.updateTabSelection(tab));
-    });
+      // Attach click event listeners to all tab buttons
+      this.tabButtons.forEach((tab, index) => {
+        tab.addEventListener('click', () => this.updateTabSelection(tab));
+      });
 
-    // Initialize the first tab as selected
-    if (this.tabButtons.length > 0) {
-      this.updateTabSelection(this.tabButtons[0]);
-    }
-  }, 100);
+      // Initialize the first tab as selected
+      if (this.tabButtons.length > 0) {
+        this.updateTabSelection(this.tabButtons[0]);
+      }
+    }, 500);
   }
 
   updateTabSelection(clickedTab) {
@@ -129,11 +129,8 @@ class BoardPresident extends ElementBase {
           ${test ? '<test-banner></test-banner>' : ''}
 
           <electoral-bars called='${JSON.stringify(called)}'></electoral-bars>
+          <h1 tabindex="-1">Presidential Results</h1>              
         <leader-board called='${JSON.stringify(called)}'></leader-board>
-          <h1 tabindex="-1">Presidential Results</h1>
-              <results-board-key race="president" simple="true"></results-board-key>
-              
-
     <div role="tablist" class="tabs">
     <button role="tab" aria-controls="tab-0" aria-selected="true" data-tab="0">
       <inline-svg alt="" src="./assets/icons/ico-geo.svg" class="icon"><div class="inline-svg icon" role="img" alt=""><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 555">
@@ -325,7 +322,7 @@ class BoardPresident extends ElementBase {
       Margins
     </button>  
     </div>
-
+                  <results-board-key race="president" simple="true"></results-board-key>
                <national-map races="{results}"></national-map>
                <cartogram-map races="{results}"></cartogram-map>
                <electoral-bubbles results="{results}" races="{results}"></electoral-bubbles>
@@ -334,7 +331,7 @@ class BoardPresident extends ElementBase {
           <hr class="divider" />
         </div>
       `;
-      this.setupTabs();
+    this.setupTabs();
   }
 }
 
