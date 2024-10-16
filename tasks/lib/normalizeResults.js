@@ -49,6 +49,7 @@ const translation = {
     incumbent: "incumbent",
     rankedChoiceVotes: "rankedChoiceVotes",
     eliminated: "eliminated",
+    rcvResult: "rcvResult",
   },
   metadata: {
     previousParty: "party",
@@ -209,14 +210,17 @@ module.exports = function (resultArray, overrides = {}) {
         let parties = new Set();
         let ballot = unit.candidates.map(function (candidate) {
           const rankedChoiceVoting = candidate.rankedChoiceVoting;
+          if (
+            !candidate.winner &&
+            unitMeta.raceCallStatus === "Awaiting Ranked Choice Results"
+          ) {
+            candidate["rcvResult"] = "pending";
+          }
 
-          //Not all states and races have RCV system. For those who do and if they do end up going to RCV, then only return votes whose total is greater than 0
           if (rankedChoiceVoting) {
-            const rankedChoiceVotes = rankedChoiceVoting[0].votes;
-            if (rankedChoiceVotes > 0) {
-              candidate.rankedChoiceVotes = rankedChoiceVoting[0].votes;
-              candidate.eliminated = rankedChoiceVoting[0].eliminated;
-            }
+            candidate["voteCount"] =
+              candidate["rankedChoiceVoting"][0]["votes"];
+            candidate["rcvResult"] = "final";
           }
 
           normalizedCandidate = translate.candidate(candidate);
@@ -304,5 +308,9 @@ module.exports = function (resultArray, overrides = {}) {
       }
     }
   }
+  a = output.filter((out) => out.rankedChoice);
+  // console.log(a);
+
+  a.map((b) => b.candidates.map((c) => console.log(c)));
   return output;
 };
