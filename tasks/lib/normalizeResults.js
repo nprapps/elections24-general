@@ -24,6 +24,7 @@ const translation = {
     winThreshold: "winThreshold",
     rankedChoice: "rankedChoice",
     raceCallStatus: "raceCallStatus",
+    rcvResult: "rcvResult",
   },
   unit: {
     level: "level",
@@ -49,7 +50,6 @@ const translation = {
     incumbent: "incumbent",
     rankedChoiceVotes: "rankedChoiceVotes",
     eliminated: "eliminated",
-    rcvResult: "rcvResult",
   },
   metadata: {
     previousParty: "party",
@@ -214,13 +214,13 @@ module.exports = function (resultArray, overrides = {}) {
             !candidate.winner &&
             unitMeta.raceCallStatus === "Awaiting Ranked Choice Results"
           ) {
-            candidate["rcvResult"] = "pending";
+            unitMeta["rcvResult"] = "pending";
           }
 
           if (rankedChoiceVoting) {
             candidate["voteCount"] =
               candidate["rankedChoiceVoting"][0]["votes"];
-            candidate["rcvResult"] = "final";
+            unitMeta["rcvResult"] = "final";
           }
 
           normalizedCandidate = translate.candidate(candidate);
@@ -308,9 +308,6 @@ module.exports = function (resultArray, overrides = {}) {
       }
     }
   }
-  a = output.filter((out) => out.rankedChoice);
-  // console.log(a);
 
-  a.map((b) => b.candidates.map((c) => console.log(c)));
   return output;
 };
