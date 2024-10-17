@@ -34,9 +34,7 @@ class ResultsTable extends ElementBase {
 
     this.removeAttribute("result");
 
-    elements.updated.innerHTML = `
-      ${formatAPDate(new Date(result.updated))} at ${formatTime(new Date(result.updated))}
-    `;
+    elements.updated.innerHTML = `${formatAPDate(new Date(result.updated))} at ${formatTime(new Date(result.updated))}`;
 
     elements.eevp.innerHTML = result.eevp;
 
@@ -46,15 +44,22 @@ class ResultsTable extends ElementBase {
 
     if (result.office === "H") {
       elements.resultsTableHed.innerHTML = result.seat;
+    } else if (result.office === "I") {
+      elements.resultsTableHed.innerHTML = result.description;
     } else {
       elements.resultsTableHed.style.display = "none";
     }
+
     const candidates = mapToElements(elements.tbody, result.candidates);
 
     if (candidates.length < 2) {
       elements.uncontestedFootnote.innerHTML = "The AP does not tabulate votes for uncontested races and declares their winners as soon as polls close.";
     } else {
       elements.uncontestedFootnote.style.display = "none";
+    }
+
+    if (candidates.some(d => d[0].incumbent) === true) {
+      elements.incumbentLegend.style.display = "block";
     }
 
     candidates.forEach(candidate => {
