@@ -12,14 +12,15 @@
   }
 
   let sections = ["key-races", "president"];
-  let keyRaces = ["president"];
+  let keyRaceSections = ["president"];
 
   if (stateData.results.filter(d => d.office === "G").length > 0) {
   	sections.push("governor");
+    keyRaceSections.push("governor");
   }
   if (stateData.results.filter(d => d.office === "S").length > 0) {
   	sections.push("senate");
-  	keyRaces.push("senate");
+  	keyRaceSections.push("senate");
   }
   if (key != "DC") {
   	sections.push("house");
@@ -28,7 +29,12 @@
   	sections.push("ballot-measures");
   }
 
-  
+  if (stateData.results.filter(d => d.office === "H" && d.keyRace === "yes").length > 0) {
+    keyRaceSections.push("house");
+  }
+  if (stateData.results.filter(d => d.office === "I" && d.keyRace === "yes").length > 0) {
+    keyRaceSections.push("ballot-measures");
+  }
 %>
 
 <!doctype html>
@@ -41,9 +47,11 @@
     <%= t.include("partials/_statePageHeader.html", {state: key, sections: sections}) %>
     <main class="app constrained">
     	<% sections.forEach(section => { %>
-    		<section id='<%= section %>-section'>
+    		<section id="<%= section %>-section" <%= section === "key-races" ? "class='shown'" : "" %>>
     			<% if (section === "key-races") { %>
-    				key races here
+            <% keyRaceSections.forEach(office => { %>
+              <results-collection state="<%= key %>" office="<%= offices[office] %>" key-races-only></results-collection>
+            <% }); %>
     			<% } else { %>
 	    			<results-collection state="<%= key %>" office="<%= offices[section] %>"></results-collection>
     			<% } %>

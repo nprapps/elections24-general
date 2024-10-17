@@ -32,7 +32,6 @@ class ResultsCollection extends ElementBase {
   render() {
     if (!this.data) return;
 
-    
     const headers = {
       "key-races": "Key races",
       "P": "President",
@@ -44,20 +43,20 @@ class ResultsCollection extends ElementBase {
     let template = "";
 
     let races = this.data.results.filter(d => {
-      if (this.hasAttribute("key-races-only")) {
-        return (d.state === d.keyRace === true);
+      if (this.hasAttribute("key-races-only") && (this.getAttribute("office") === "H" || this.getAttribute("office") === "I")) {
+        return (d.office === this.getAttribute("office") && d.keyRace === "yes");
       } else {
         return (d.office === this.getAttribute("office"));
       }
     });
 
-    if (this.getAttribute("office") === "key-races") {
+    if (this.hasAttribute("key-races-only")) {
       template += `<h3>${headers[this.getAttribute('office')]}</h3>`;
     }
 
     races.forEach(race => {
       let table = `
-        <results-table state="${this.getAttribute("state")}" result='${JSON.stringify(race)}'></results-table>
+        <results-table state="${this.getAttribute("state")}" result='${JSON.stringify(race).replace(/'/g, "&#39;")}'></results-table>
       `
       template += table;
     });
