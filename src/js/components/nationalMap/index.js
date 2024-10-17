@@ -15,10 +15,10 @@ class NationalMap extends ElementBase {
     this.onClick = this.onClick.bind(this);
     this.paint = this.paint.bind(this);
     this.races = {}
-    this.tooltip = null; 
+    this.tooltip = null;
     this.svgContainer = {}
     this.svgContainerRef = { current: null };
-    this.svg = null; 
+    this.svg = null;
   }
 
   static get observedAttributes() {
@@ -104,29 +104,29 @@ class NationalMap extends ElementBase {
         <div class="tooltip"></div>
       </div>
     `;
-  
+
     const svgContainer = this.querySelector('.svg-container');
     const tooltipContainer = this.querySelector('.tooltip');
-  
+
     if (this.svg) {
       this.svg.setAttribute('width', '100%');
       this.svg.setAttribute('height', '100%');
-  
+
       this.svg.addEventListener("mousemove", this.onMove);
       this.svg.addEventListener("click", this.onClick);
-  
+
       svgContainer.appendChild(this.svg);
     }
-  
+
     if (this.tooltip) {
       tooltipContainer.innerHTML = this.tooltip.innerHTML;
       tooltipContainer.className = this.tooltip.className;
       tooltipContainer.style.cssText = this.tooltip.style.cssText;
     }
-  
+
     this.svgContainerRef.current = svgContainer;
     this.tooltip = tooltipContainer;
-  
+
     return;
   }
 
@@ -135,37 +135,37 @@ class NationalMap extends ElementBase {
       console.error("SVG container not found");
       return;
     }
-  
+
     // Create a temporary container
     const tempContainer = document.createElement('div');
     tempContainer.innerHTML = svgText;
-  
+
     // Get the SVG element
     this.svg = tempContainer.querySelector("svg");
-  
+
     if (!this.svg) {
       console.error("SVG element not found in the provided SVG text");
       return;
     }
-  
+
     // Ensure the SVG takes up the full space of its container
     this.svg.setAttribute('width', '100%');
     this.svg.setAttribute('height', '100%');
-  
+
     // Add event listeners
     this.svg.addEventListener("mousemove", this.onMove);
     this.svg.addEventListener("click", this.onClick);
-  
+
     // Initialize labels
     this.initLabels();
     this.paint();
-  
+
     // Clear the SVG container and insert the new SVG
     //this.svgContainerRef.current.innerHTML = '';
     this.svgContainerRef.current.appendChild(this.svg);
-  
+
     // Dispatch an event to signal that the SVG has been loaded and incorporated
-  
+
     return this.svg;
   }
 
@@ -187,16 +187,16 @@ class NationalMap extends ElementBase {
     if (currentHover) {
       currentHover.classList.remove("hover");
     }
-  
+
     this.tooltip.classList.remove("shown");
     if (!e.target.hasAttribute("data-postal")) {
       return;
     }
-  
+
     const group = e.target.closest("svg > g");
     this.svg.appendChild(group);
     e.target.parentNode.classList.add("hover");
-  
+
     // tooltips
     const bounds = this.svg.getBoundingClientRect();
     let x = e.clientX - bounds.left;
@@ -208,14 +208,14 @@ class NationalMap extends ElementBase {
     }
     this.tooltip.style.left = x + "px";
     this.tooltip.style.top = y + "px";
-  
+
     const stateName = e.target.getAttribute("data-postal");
     const district = e.target.getAttribute("data-district");
     const districtDisplay = district == "AL" ? " At-Large" : " " + district;
     const results = this.races.filter((r) => r.state == stateName);
     let result;
 
-  
+
     if (district) {
       result = results.filter((r) => (r.seatNumber == district))[0];
     } if (district === "AL") {
@@ -224,10 +224,12 @@ class NationalMap extends ElementBase {
       result = results[0];
     }
 
-        // Filter candidates with a percent value; old way is commented out
-        //const candidates = result.candidates.filter(c => c.percent);
-        const candidates = result.candidates
-    
+    // Filter candidates with a percent value; old way is commented out
+    //const candidates = result.candidates.filter(c => c.percent);
+    const candidates = result.candidates
+
+    console.log(result.candidates)
+
     // Generate tooltip content
     const candidateRows = candidates.map(candidate => `
       <div class="row">
@@ -237,15 +239,15 @@ class NationalMap extends ElementBase {
         <div class="perc">${Math.round(candidate.percent * 1000) / 10}%</div>
       </div>
     `).join("");
-  
+
     const tooltipContent = `
       <h3>${result.stateName}${district ? districtDisplay : ""} <span>(${result.electoral})</span></h3>
       <div class="candidates">${candidateRows}</div>
       <div class="reporting">${reportingPercentage(result.eevp || result.reportingPercent)}% in</div>
     `;
-  
+
     this.tooltip.innerHTML = tooltipContent;
-  
+
     this.tooltip.classList.add("shown");
   }
 
@@ -331,7 +333,7 @@ class NationalMap extends ElementBase {
       console.error("SVG not available for painting");
       return;
     }
-    
+
 
     const mapData = this.races;
 
@@ -342,36 +344,32 @@ class NationalMap extends ElementBase {
         console.warn("Invalid race data:", r);
         return;
       }
-  
+
       const eevp = r.eevp || r.reportingPercent || 0;
       const stateName = r.state.toUpperCase();
-    const district = r.district || r.seatNumber;
-    
-    let stateSelector = stateName.toLowerCase();
-    if (district) {
-      console.log('yerrr')
-      console.log(stateName)
-      console.log(district)
-      if (district === "AL") {
-        stateSelector += `-AL`;
-      } else {
-        console.log(district)
-        console.log('yerrr')
-        stateSelector += `-${district}`;
+      const district = r.district || r.seatNumber;
+
+      let stateSelector = stateName.toLowerCase();
+
+      if (stateName === 'ME' || stateName === 'NE') {
+        if (district) {
+          stateSelector += `-${district}`;
+        } else {
+          stateSelector += '-AL';
+        }
       }
-    }
-  
+
       const stateGroup = this.svg.querySelector(`.${stateSelector}`);
       if (!stateGroup) {
         console.warn(`No SVG group found for state: ${stateSelector}`);
         return;
       }
-  
+
       const leader = r.candidates && r.candidates.length > 0 ? r.candidates[0].party : null;
       const winner = r.winnerParty;
-  
+
       stateGroup.classList.remove("early", "winner", "leader", "GOP", "Dem");
-  
+
       if (eevp > 0) {
         stateGroup.classList.add("early");
       }

@@ -51,12 +51,6 @@ class Cartogram extends ElementBase {
         this.paint();
       }
     
-      attributeChangedCallback(name, oldValue, newValue) {
-        if (name === 'races') {
-          this.loadData();
-          this.paint();
-        }
-      }
     
       disconnectedCallback() {
         if (this.svg) {

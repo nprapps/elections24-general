@@ -34,15 +34,18 @@ class CountyMap extends ElementBase {
       }
       const data = await response.json();
       this.data = data.results || [];
-      console.log('////////')
-      console.log('this is how county loooks like right now')
-      console.log(this.data)
-      console.log('////////')
+  
 
       // Only display candidates that are winning a county
       const sortOrder = this.data[0].candidates;
       this.sortOrder = sortOrder;
       const winningCandidates = getCountyCandidates(sortOrder, this.data);
+      console.log('sort order')
+      console.log(this.data)
+      console.log(this.sortOrder)
+      console.log(winningCandidates)
+      console.log('huhh')
+
 
     // Add in special marker if more than one candidate of same party is winning a county.
     let specialCount = 1;
@@ -244,30 +247,48 @@ class CountyMap extends ElementBase {
     var result = this.fipsLookup[fips];
   
     if (result) {
+      // Update this.sortOrder with the current county's candidates
+      this.sortOrder = result.candidates;
+  
+      // Recalculate winningCandidates
+      const winningCandidates = getCountyCandidates(this.sortOrder, [result]);
+  
+      // Update this.legendCands
+      let specialCount = 0;
+      this.legendCands = winningCandidates.map(candidate => {
+        const samePartyCount = winningCandidates.filter(c => 
+          getParty(c.party) === getParty(candidate.party)
+        ).length;
+        
+        if (samePartyCount > 1) {
+          return { ...candidate, special: specialCount++ };
+        }
+        return candidate;
+      });
+  
       var displayCandidates = result.candidates
         .sort((a, b) => b.percent - a.percent)
         .slice(0, 2);
-  
-      var partyCounts = displayCandidates.reduce((acc, cand) => {
-        acc[getParty(cand.party)] = (acc[getParty(cand.party)] || 0) + 1;
-        return acc;
-      }, {});
-  
+
+      console.log('>>>>>>>>>>>>')
+      console.log(fips)
+      console.log(this.fipsLookup[fips])
+      console.log(result)
+      console.log(displayCandidates)
+      console.log(this.legendCands)
+      console.log('>>>>>>>>>>>>')
+
+      
       var candText = displayCandidates
         .map((cand, index) => {
-          var inStateTop = !!this.sortOrder.filter(c =>
-            isSameCandidate(c, cand)
-          ).length;
-          var special = partyCounts[getParty(cand.party)] > 1 ? `i${index + 1}` : "";
+          var legendCandidate = this.legendCands.find(c => isSameCandidate(c, cand));
+          var special = legendCandidate && legendCandidate.special ? `i${legendCandidate.special}` : "";
           var cs = `<div class="row">
-            <span class="party ${cand.party} ${special}"></span>
-            <span>${cand.last} ${!inStateTop ? `(${getParty(cand.party)})` : ""
-            }</span>
+            <span class="party ${getParty(cand.party)} ${special}"></span>
+            <span>${cand.last} ${!legendCandidate ? `(${getParty(cand.party)})` : ""}</span>
             <span class="amt">${reportingPercentage(cand.percent)}%</span>
-        </div>`;
-          //technically, this was the first response; ask about zero state
-          //return cand.percent > 0 ? cs : "";
-          return cs;
+          </div>`;
+          return cand.percent > 0 ? cs : "";
         })
         .join("");
   
@@ -276,11 +297,11 @@ class CountyMap extends ElementBase {
       );
       var perReporting = reportingPercentage(result.reportingPercent);
       tooltip.innerHTML = `
-        <div class="name"> ${countyName} </div>
+        <div class="name">${countyName}</div>
         ${candText}
-        <div class="row pop">Population <span class="amt"> ${formatters.comma(
-        result.county.population
-      )}</span></div>
+        <div class="row pop">Population <span class="amt">${formatters.comma(
+          result.county.population
+        )}</span></div>
         <div class="row reporting">${perReporting}% in</div>
       `;
     }

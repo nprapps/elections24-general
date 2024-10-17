@@ -327,9 +327,10 @@ class BoardPresident extends ElementBase {
                <cartogram-map races="{results}"></cartogram-map>
                <electoral-bubbles results="{results}" races="{results}"></electoral-bubbles>
               <results-board-display office="president" split="true" hed="Competitive"></results-board-display>
-              <results-board-key race="president"></results-board-key>
           <hr class="divider" />
         </div>
+      <results-board-key race="president"></results-board-key>
+
       `;
     this.setupTabs();
   }
