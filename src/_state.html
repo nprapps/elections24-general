@@ -2,6 +2,13 @@
   const senateData = require("../data/senate.json");
   const stateData = require("../build/data/states/" + key + ".json");
 
+  const offices = {
+  	"governor": "G",
+  	"senate": "S",
+  	"house": "H",
+  	"ballot-measures": "I"
+  }
+
   let sections = ["key-races", "president"];
   let keyRaces = ["president"];
 
@@ -16,7 +23,7 @@
   	sections.push("house");
   }
   if (stateData.results.filter(d => d.office === "I").length > 0) {
-  	sections.push("ballot measures");
+  	sections.push("ballot-measures");
   }
 
   
@@ -36,7 +43,7 @@
     			<% if (section === "key-races") { %>
     				key races here
     			<% } else { %>
-	    			<results-collection state="<%= key %>" type="<%= section %>"></results-collection>
+	    			<results-collection state="<%= key %>" office="<%= offices[section] %>"></results-collection>
     			<% } %>
     		</section>
     	<% }); %>

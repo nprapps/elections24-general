@@ -9,16 +9,16 @@ class ResultsCollection extends ElementBase {
 
   connectedCallback() {
     this.loadData();
-    gopher.watch("./data/" + this.getAttribute("type") + ".json", this.loadData);
+    gopher.watch("./data/" + this.getAttribute("state") + ".json", this.loadData);
   }
 
   disconnectedCallback() {
-    gopher.unwatch("./data/" + this.getAttribute("type") + ".json", this.loadData);
+    gopher.unwatch("./data/" + this.getAttribute("state") + ".json", this.loadData);
   }
 
   async loadData() {
     try {
-      const response = await fetch("./data/" + this.getAttribute("type") + ".json");
+      const response = await fetch("./data/" + this.getAttribute("state") + ".json");
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -33,13 +33,13 @@ class ResultsCollection extends ElementBase {
     if (!this.data) return;
 
     let template = `
-      <h3>${this.getAttribute("type")}</h3>
+      <h3>${this.getAttribute("office")}</h3>
     `;
     let races = this.data.results.filter(d => {
       if (this.hasAttribute("key-races-only")) {
-        return (d.state === this.getAttribute("state") && d.keyRace === true);
+        return (d.state === d.keyRace === true);
       } else {
-        return (d.state === this.getAttribute("state"));
+        return (d.office === this.getAttribute("office"));
       }
     });
 
