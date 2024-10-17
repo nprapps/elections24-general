@@ -45,7 +45,7 @@ class ResultsCollection extends ElementBase {
 
     races.forEach(race => {
       let table = `
-        <results-table state="CA" result='${JSON.stringify(race)}'></results-table>
+        <results-table state="${this.getAttribute("state")}" result='${JSON.stringify(race)}'></results-table>
       `
       template += table;
     });
