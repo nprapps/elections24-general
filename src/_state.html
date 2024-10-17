@@ -46,6 +46,7 @@
   <body>
     <%= t.include("partials/_statePageHeader.html", {state: key, sections: sections}) %>
     <main class="app constrained">
+      <%= t.include("partials/_stationguides.html", { "state": key, "data": grunt.data.json.gfx_guide }) %>
     	<% sections.forEach(section => { %>
     		<section id="<%= section %>-section" <%= section === "key-races" ? "class='shown'" : "" %>>
     			<% if (section === "key-races") { %>
