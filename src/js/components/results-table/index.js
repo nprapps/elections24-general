@@ -58,6 +58,12 @@ class ResultsTable extends ElementBase {
       elements.uncontestedFootnote.style.display = "none";
     }
 
+    if (result.flags) {
+      elements.specialElectionFootnote.innerHTML = result.flags[0];
+    } else {
+      elements.specialElectionFootnote.remove();
+    }
+
     if (candidates.some(d => d[0].incumbent) === true) {
       elements.incumbentLegend.style.display = "block";
     }
