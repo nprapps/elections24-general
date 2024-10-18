@@ -25,9 +25,6 @@ class ResultsTable extends ElementBase {
     this.render();
   }
 
-  disconnectedCallback() {
-  }
-
   render() {
     const result = JSON.parse(this.getAttribute("result"));
     const elements = this.illuminate();
@@ -36,7 +33,15 @@ class ResultsTable extends ElementBase {
 
     elements.updated.innerHTML = `${formatAPDate(new Date(result.updated))} at ${formatTime(new Date(result.updated))}`;
 
-    elements.eevp.innerHTML = result.eevp;
+    let reportingString;
+    if (result.eevp > 0 && result.eevp < 1) {
+      reportingString = "<1";
+    } else if (result.eevp > 99 && result.eevp < 100) {
+      reportingString = ">99";
+    } else {
+      reportingString = result.eevp.toFixed(0).toString();
+    }
+    elements.eevp.innerHTML = reportingString;
 
     if (result.office === "P") {
       elements.wrapper.classList.add("president");
@@ -50,7 +55,9 @@ class ResultsTable extends ElementBase {
       elements.resultsTableHed.remove();
     }
 
-    const candidates = mapToElements(elements.tbody, result.candidates);
+    const candidates = mapToElements(elements.tbody, result.candidates).filter(d => {
+      return !(d[0].last === "Other" && d[0].votes === 0);
+    });
 
     if (candidates.length > 1) {
       elements.uncontestedFootnote.remove();
@@ -76,7 +83,7 @@ class ResultsTable extends ElementBase {
           <span class="bar" style="width: ${d.percent * 100}%"></span>
         </span>
         <span class="name">
-          ${d.first ? d.first : ""} ${d.last}${d.incumbent ? "<span class='incumbent-icon'> &#x2022;</span>" : ""}${d.winner === "X" ? winnerIcon : ""}${d.winner === "R" ? "<span class='runoff-indicator'> - runoff</span>" : ""}
+          ${d.first ? d.first + " " : " "}${d.last === "Other" ? "Other candidates" : d.last}${d.incumbent ? "<span class='incumbent-icon'> &#x2022;</span>" : ""}${d.winner === "X" ? winnerIcon : ""}${d.winner === "R" ? "<span class='runoff-indicator'> - runoff</span>" : ""}
         </span>
         <span class="percentage">${(d.percent * 100).toFixed(1)}%</span>
         <span class="votes">${formatComma(d.votes)}</span>
