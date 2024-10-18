@@ -15,9 +15,10 @@ Type=simple
 Restart=always
 RestartSec=30
 User=ubuntu
-%ENV%
-WorkingDirectory=%HERE%
-ExecStart=%HOME%/.nvm/nvm-exec grunt deploy
+<% Object.keys(env).forEach( key => {%>
+Environment="<%= key %>=<%= env[key] %>"<% }); %>
+WorkingDirectory=<%= here %>
+ExecStart=<%= home %>/.nvm/nvm-exec grunt deploy
 
 [Install]
 WantedBy=multi-user.target
