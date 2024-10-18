@@ -23,45 +23,39 @@ class CountyMap extends ElementBase {
     this.data = null
     this.sortOrder;
     this.legendCands = []
+    this.lastExecutionTime = 0;
+    this.minInterval = 1000;
   }
 
   async connectedCallback() {
     try {
       const state = this.getAttribute('state');
-      const response = await fetch(`./data/counties/${state}-0.json`);
+      const response = await fetch(`./data/counties/${state}-8619.json`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
       this.data = data.results || [];
-  
+
 
       // Only display candidates that are winning a county
       const sortOrder = this.data[0].candidates;
       this.sortOrder = sortOrder;
       const winningCandidates = getCountyCandidates(sortOrder, this.data);
-      console.log('sort order')
-      console.log(this.data)
-      console.log(this.sortOrder)
-      console.log(winningCandidates)
-      console.log('huhh')
 
 
-    // Add in special marker if more than one candidate of same party is winning a county.
-    let specialCount = 1;
-    this.legendCands = winningCandidates.map(candidate => {
-      const samePartyCount = winningCandidates.filter(c => 
-        getParty(c.party) === getParty(candidate.party)
-      ).length;
-      
-      if (samePartyCount > 1) {
-        return { ...candidate, special: specialCount++ };
-      }
-      return candidate;
-    });
+      // Add in special marker if more than one candidate of same party is winning a county.
+      let specialCount = 1;
+      this.legendCands = winningCandidates.map(candidate => {
+        const samePartyCount = winningCandidates.filter(c =>
+          getParty(c.party) === getParty(candidate.party)
+        ).length;
 
-    console.log(this.legendCands);
-
+        if (samePartyCount > 1) {
+          return { ...candidate, special: specialCount++ };
+        }
+        return candidate;
+      });
 
       this.render();
       await this.loadSVG();
@@ -177,6 +171,10 @@ class CountyMap extends ElementBase {
 
     var incomplete = false;
 
+    console.log('>>>>>>>>>>>>')
+    console.log(mapData)
+    console.log('>>>>>>>>>>>>')
+
     for (var d of Object.keys(mapData)) {
       var [top] = mapData[d].candidates.sort((a, b) => b.percent - a.percent);
       this.fipsLookup[mapData[d].fips] = mapData[d];
@@ -236,49 +234,52 @@ class CountyMap extends ElementBase {
   onMove(e) {
     var tooltip = this.querySelector('.tooltip');
     var fips = e.target.id.replace("fips-", "");
-  
+
     if (!fips || e.type == "mouseleave") {
       tooltip.classList.remove("shown");
       return;
     }
-  
+
     this.svg.appendChild(e.target);
-  
+
     var result = this.fipsLookup[fips];
-  
+
     if (result) {
       // Update this.sortOrder with the current county's candidates
       this.sortOrder = result.candidates;
-  
+
       // Recalculate winningCandidates
       const winningCandidates = getCountyCandidates(this.sortOrder, [result]);
-  
+
+      // Your existing code, modified to check execution time
+      const currentTime = Date.now();
+      if (currentTime - this.lastExecutionTime >= this.minInterval) {
+        // Only display candidates that are winning a county
+        const sortOrder = result.candidates;
+        this.sortOrder = sortOrder;
+
+        // Update the last execution time
+        this.lastExecutionTime = currentTime;
+      }
+
+
       // Update this.legendCands
       let specialCount = 0;
       this.legendCands = winningCandidates.map(candidate => {
-        const samePartyCount = winningCandidates.filter(c => 
+        const samePartyCount = winningCandidates.filter(c =>
           getParty(c.party) === getParty(candidate.party)
         ).length;
-        
+
         if (samePartyCount > 1) {
           return { ...candidate, special: specialCount++ };
         }
         return candidate;
       });
-  
+
       var displayCandidates = result.candidates
         .sort((a, b) => b.percent - a.percent)
         .slice(0, 2);
 
-      console.log('>>>>>>>>>>>>')
-      console.log(fips)
-      console.log(this.fipsLookup[fips])
-      console.log(result)
-      console.log(displayCandidates)
-      console.log(this.legendCands)
-      console.log('>>>>>>>>>>>>')
-
-      
       var candText = displayCandidates
         .map((cand, index) => {
           var legendCandidate = this.legendCands.find(c => isSameCandidate(c, cand));
@@ -291,7 +292,7 @@ class CountyMap extends ElementBase {
           return cand.percent > 0 ? cs : "";
         })
         .join("");
-  
+
       var countyName = result.county.countyName.replace(/\s[a-z]/g, match =>
         match.toUpperCase()
       );
@@ -300,12 +301,11 @@ class CountyMap extends ElementBase {
         <div class="name">${countyName}</div>
         ${candText}
         <div class="row pop">Population <span class="amt">${formatters.comma(
-          result.county.population
-        )}</span></div>
+        result.county.population
+      )}</span></div>
         <div class="row reporting">${perReporting}% in</div>
       `;
-    }
-  
+    } 
     var bounds = this.svg.getBoundingClientRect();
     var x = e.clientX - bounds.left;
     var y = e.clientY - bounds.top;
@@ -316,7 +316,7 @@ class CountyMap extends ElementBase {
     }
     tooltip.style.left = x + "px";
     tooltip.style.top = y + "px";
-  
+
     tooltip.classList.add("shown");
   }
 }

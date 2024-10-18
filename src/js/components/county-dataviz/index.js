@@ -34,7 +34,7 @@ class CountyDataViz extends ElementBase {
             if (race !== null) {
                 url = `./data/counties/${race}.json`;
             } else {
-                url = `./data/counties/${state}-0.json`;
+                url = `./data/counties/${state}-8619.json`;
             }
 
         try {

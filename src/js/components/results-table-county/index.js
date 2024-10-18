@@ -22,6 +22,8 @@ class ResultsTableCounty extends ElementBase {
             collapsed: true,
             order: -1,
         };
+        this.currentState = this.getAttribute('state');
+        this.race = this.getAttribute('race-id');
 
         this.toggleCollapsed = this.toggleCollapsed.bind(this);
         this.updateSort = this.updateSort.bind(this);
@@ -32,20 +34,19 @@ class ResultsTableCounty extends ElementBase {
     }
 
     async connectedCallback() {
-        const state = this.getAttribute('state');
-    const race = this.getAttribute('race');
 
-    this.availableMetrics = getAvailableMetrics(state);
+    this.availableMetrics = getAvailableMetrics(this.state);
     this.state.sortMetric = this.availableMetrics.population;
     this.state.displayedMetric = this.availableMetrics.population;
 
     try {
         let url;
-        if (race !== null) {
-            url = `./data/counties/${race}.json`;
+        if (this.race !== null) {
+            url = `./data/counties/${this.currentState}-${this.race}.json`;
         } else {
-            url = `./data/counties/${state}-0.json`;
+            url = `./data/counties/${this.currentState}-0.json`;
         }
+
 
         const response = await fetch(url);
         if (!response.ok) {
@@ -53,11 +54,14 @@ class ResultsTableCounty extends ElementBase {
         }
         const data = await response.json();
         this.data = data.results || [];
+        console.log('////////')
+        console.log(this.data)
+        console.log('////////')
         this.render();
         this.attachEventListeners();
     } catch (error) {
         console.error("Could not load JSON data:", error);
-        this.render(); // Render to show error state
+        //this.render(); // Render to show error state
     }
     }
 
