@@ -1,4 +1,4 @@
-# This file defines a systemd service that runs the liveblog build process
+# This file defines a systemd service that runs the results build process
 # To set up:
 # 1. Copy this file to /etc/systemd/system/elections24-general.service
 # 2. Start the service with `sudo systemctl start elections24-general`
