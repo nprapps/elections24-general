@@ -9,16 +9,16 @@ class ResultsCollection extends ElementBase {
 
   connectedCallback() {
     this.loadData();
-    gopher.watch("./data/" + this.getAttribute("type") + ".json", this.loadData);
+    gopher.watch("./data/states/" + this.getAttribute("state") + ".json", this.loadData);
   }
 
   disconnectedCallback() {
-    gopher.unwatch("./data/" + this.getAttribute("type") + ".json", this.loadData);
+    gopher.unwatch("./data/states/" + this.getAttribute("state") + ".json", this.loadData);
   }
 
   async loadData() {
     try {
-      const response = await fetch("./data/" + this.getAttribute("type") + ".json");
+      const response = await fetch("./data/states/" + this.getAttribute("state") + ".json");
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -32,20 +32,31 @@ class ResultsCollection extends ElementBase {
   render() {
     if (!this.data) return;
 
-    let template = `
-      <h3>${this.getAttribute("type")}</h3>
-    `;
+    const headers = {
+      "key-races": "Key races",
+      "P": "President",
+      "G": "Governor",
+      "S": "Senate",
+      "H": "House",
+      "I": "Ballot measures"
+    }
+    let template = "";
+
     let races = this.data.results.filter(d => {
-      if (this.hasAttribute("key-races-only")) {
-        return (d.state === this.getAttribute("state") && d.keyRace === true);
+      if (this.hasAttribute("key-races-only") && (this.getAttribute("office") === "H" || this.getAttribute("office") === "I")) {
+        return (d.office === this.getAttribute("office") && d.keyRace === "yes");
       } else {
-        return (d.state === this.getAttribute("state"));
+        return (d.office === this.getAttribute("office"));
       }
     });
 
+    if (this.hasAttribute("key-races-only")) {
+      template += `<h3>${headers[this.getAttribute('office')]}</h3>`;
+    }
+
     races.forEach(race => {
       let table = `
-        <results-table state="CA" result='${JSON.stringify(race)}'></results-table>
+        <results-table state="${this.getAttribute("state")}" result='${JSON.stringify(race).replace(/'/g, "&#39;")}'></results-table>
       `
       template += table;
     });
