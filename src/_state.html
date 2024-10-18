@@ -35,6 +35,13 @@
   if (stateData.results.filter(d => d.office === "I" && d.keyRace === "yes").length > 0) {
     keyRaceSections.push("ballot-measures");
   }
+
+  const listOfCountyRaces = stateData.results.map(race => ({
+    id: race.id,
+    office: race.office,
+    seatNumber: race.seatNumber,
+    keyRace: race.keyRace
+  }));
 %>
 
 <!doctype html>
@@ -46,12 +53,18 @@
   <body>
     <%= t.include("partials/_statePageHeader.html", {state: key, sections: sections}) %>
     <main class="app constrained">
-      <%= t.include("partials/_stationguides.html", { "state": key, "data": grunt.data.json.gfx_guide }) %>
     	<% sections.forEach(section => { %>
     		<section id="<%= section %>-section" <%= section === "key-races" ? "class='shown'" : "" %>>
     			<% if (section === "key-races") { %>
             <% keyRaceSections.forEach(office => { %>
               <results-collection state="<%= key %>" office="<%= offices[office] %>" key-races-only></results-collection>
+            <% }); %>
+            <% listOfCountyRaces.forEach((race, index) => { %>
+              <county-dataviz state="<%= key %>" race="<%= key %>_<%= race.id %>"></county-dataviz>
+              <results-table-county
+                state="<%= key %>"
+                race-id="<%= race.id %>"
+                order="<%= index + 1 %>"></results-table-county>
             <% }); %>
     			<% } else { %>
 	    			<results-collection state="<%= key %>" office="<%= offices[section] %>"></results-collection>

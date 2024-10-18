@@ -64,7 +64,7 @@ class CountyChart extends ElementBase {
         </div>
       `;
   
-      //this.querySelector('svg').addEventListener('mousemove', this.onMove);
+      this.querySelector('svg').addEventListener('mousemove', this.onMove);
       //this.querySelector('svg').addEventListener('mouseleave', this.onLeave);
     }
   
@@ -120,6 +120,7 @@ class CountyChart extends ElementBase {
     }
   
     onMove(e) {
+
       const tooltip = this.querySelector('.tooltip');
       tooltip.classList.remove("shown");
       const data = JSON.parse(this.getAttribute('data') || '[]');
