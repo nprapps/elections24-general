@@ -30,7 +30,6 @@ class CountyDataViz extends ElementBase {
             const race = this.getAttribute('race');
 
             let url;
-            console.log(race)
             if (race !== null) {
                 url = `./data/counties/${race}.json`;
             } else {

@@ -64,9 +64,14 @@
               <results-collection state="<%= key %>" office="<%= offices[office] %>" key-races-only></results-collection>
             <% }); %>
           <% } else { %>
+            <results-collection state="<%= key %>" office="<%= offices[section] %>"></results-collection>
             <% if (section === "president") { %>
               <county-map state="<%= key %>"></county-map>
               <county-dataviz state="<%= key %>"></county-dataviz>
+              <results-table-county
+              state="<%= key %>"
+              race-id="0"
+              order="1"></results-table-county>
             <% } %>
             
             <% if (section === "senate" || section === "governor") { %>
@@ -74,10 +79,12 @@
                 <%= race.office %>: <%= race.id %>
                 <county-map state="<%= key %>" race-id="<%= key %>-<%= race.id %>"></county-map>
                 <county-dataviz state="<%= key %>" race="<%= key %>-<%= race.id %>"></county-dataviz>
+                <results-table-county
+              state="<%= key %>"
+              race-id="<%= race.id %>"
+              order="1"></results-table-county>
               <% }); %>
             <% } %>
-            
-            <results-collection state="<%= key %>" office="<%= offices[section] %>"></results-collection>
           <% } %>
         </section>
     	<% }); %>

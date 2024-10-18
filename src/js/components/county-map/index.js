@@ -183,10 +183,6 @@ class CountyMap extends ElementBase {
 
     var incomplete = false;
 
-    console.log('>>>>>>>>>>>>')
-    console.log(mapData)
-    console.log('>>>>>>>>>>>>')
-
     for (var d of Object.keys(mapData)) {
       var [top] = mapData[d].candidates.sort((a, b) => b.percent - a.percent);
       this.fipsLookup[mapData[d].fips] = mapData[d];

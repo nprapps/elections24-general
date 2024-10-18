@@ -39,6 +39,10 @@ class ResultsTableCounty extends ElementBase {
     this.state.sortMetric = this.availableMetrics.population;
     this.state.displayedMetric = this.availableMetrics.population;
 
+    this.currentState = this.getAttribute('state');
+    this.race = this.getAttribute('race-id');
+    console.log(this.race)
+
     try {
         let url;
         if (this.race !== null) {
@@ -46,6 +50,10 @@ class ResultsTableCounty extends ElementBase {
         } else {
             url = `./data/counties/${this.currentState}-0.json`;
         }
+
+        console.log('//////')
+        console.log(url)
+        console.log('//////')
 
 
         const response = await fetch(url);
