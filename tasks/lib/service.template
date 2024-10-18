@@ -16,7 +16,7 @@ Restart=always
 RestartSec=30
 User=ubuntu
 <% Object.keys(env).forEach( key => {%>
-Environment="<%= key %>=<%= env[key] %>"<% }); %>
+Environment=<%= key %>=<%= env[key] %><% }); %>
 WorkingDirectory=<%= here %>
 ExecStart=<%= home %>/.nvm/nvm-exec grunt deploy
 
