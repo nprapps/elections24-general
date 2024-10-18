@@ -73,8 +73,8 @@
               <% listOfCountyRaces.filter(race => race.office === offices[section]).forEach((race, index) => { %>
                 <%= race.office %>: <%= race.id %>
                 <county-map state="<%= key %>" race-id="<%= key %>-<%= race.id %>"></county-map>
+                <county-dataviz state="<%= key %>" race="<%= key %>-<%= race.id %>"></county-dataviz>
               <% }); %>
-              <county-dataviz state="<%= key %>"></county-dataviz>
             <% } %>
             
             <results-collection state="<%= key %>" office="<%= offices[section] %>"></results-collection>
