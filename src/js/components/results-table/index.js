@@ -18,7 +18,7 @@ class ResultsTable extends ElementBase {
   }
 
   static get template() {
-    return require("./_results-table.html")
+    return require("./_results-table.html");
   }
 
   connectedCallback() {
@@ -77,13 +77,16 @@ class ResultsTable extends ElementBase {
         el.classList.add("winner");
       }
 
+      const name = (d.first ? d.first + " " : " ") + (d.last === "Other" ? "Other candidates" : d.last);
+      const party = d.party != "Other" ? " (" + d.party + ")" : "";
+
       el.innerHTML = `
         <span aria-hidden="true" class="${headshots[d.last] ? 'headshot has-image" style="background-image: url(' + headshots[d.last] + ')"' : 'headshot no-image"'}></span>
         <span class="bar-container">
           <span class="bar" style="width: ${d.percent * 100}%"></span>
         </span>
         <span class="name">
-          ${d.first ? d.first + " " : " "}${d.last === "Other" ? "Other candidates" : d.last}${d.incumbent ? "<span class='incumbent-icon'> &#x2022;</span>" : ""}${d.winner === "X" ? winnerIcon : ""}${d.winner === "R" ? "<span class='runoff-indicator'> - runoff</span>" : ""}
+          ${name}${party}${d.incumbent ? "<span class='incumbent-icon'> &#x2022;</span>" : ""}${d.winner === "X" ? winnerIcon : ""}${d.winner === "R" ? "<span class='runoff-indicator'> - runoff</span>" : ""}
         </span>
         <span class="percentage">${(d.percent * 100).toFixed(1)}%</span>
         <span class="votes">${formatComma(d.votes)}</span>
