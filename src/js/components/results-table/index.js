@@ -52,9 +52,7 @@ class ResultsTable extends ElementBase {
 
     const candidates = mapToElements(elements.tbody, result.candidates);
 
-    if (candidates.length < 2) {
-      elements.uncontestedFootnote.innerHTML = "The AP does not tabulate votes for uncontested races and declares their winners as soon as polls close.";
-    } else {
+    if (candidates.length > 1) {
       elements.uncontestedFootnote.remove();
     }
 
