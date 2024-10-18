@@ -141,8 +141,6 @@ class CountyDataViz extends ElementBase {
         const resultsIn = data
 
 
-
-
         // Filter out counties whose top 2 candidates don't match state.
         const filtered = resultsIn.filter(function (d) {
             const countyParties = d.candidates.slice(0, 2).map(c => c.party);

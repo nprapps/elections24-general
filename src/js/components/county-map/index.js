@@ -28,9 +28,21 @@ class CountyMap extends ElementBase {
   }
 
   async connectedCallback() {
+
+    const state = this.getAttribute('state');
+    const race = this.getAttribute('race-id');
+
+    let url;
+
+    if (race !== null) {
+      url = `./data/counties/${race}.json`;
+  } else {
+      url = `./data/counties/${state}-0.json`;
+  }
+
     try {
       const state = this.getAttribute('state');
-      const response = await fetch(`./data/counties/${state}-8619.json`);
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
