@@ -50,12 +50,17 @@ results-table {
     background-repeat: no-repeat;
     background-size: 100%;
     border-radius: 2em;
-    border: 1px solid white;
     display: none;
     flex-basis: 4em;
     flex-grow: 0;
     flex-shrink: 0;
     height: 4em;
+    &.has-image {
+    	border: 1px solid white;
+    }
+    &.no-image {
+    	border: 1px solid #efefef;
+    }
 	}
 
 	.president .headshot {

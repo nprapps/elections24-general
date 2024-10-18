@@ -71,7 +71,7 @@ class ResultsTable extends ElementBase {
       }
 
       el.innerHTML = `
-        <span aria-hidden="true" class="headshot"${headshots[d.last] ? 'style="background-image: url(' + headshots[d.last] + ')"' : ''}></span>
+        <span aria-hidden="true" class="${headshots[d.last] ? 'headshot has-image" style="background-image: url(' + headshots[d.last] + ')"' : 'headshot no-image"'}></span>
         <span class="bar-container">
           <span class="bar" style="width: ${d.percent * 100}%"></span>
         </span>
