@@ -57,26 +57,29 @@
   <body>
     <%= t.include("partials/_statePageHeader.html", {state: key, sections: sections}) %>
     <main class="app constrained">
-      <county-map state="<%= key %>"></county-map>
-      <% listOfCountyRaces.forEach((race, index) => { %>
-        <%= race.office %>: <%= race.id %>
-        <county-map state="<%= key %>" race-id="<%= key %>-<%= race.id %>"></county-map>
-        <results-table-county
-          state="<%= key %>"
-          race-id="<%= key %>-<%= race.id %>"
-          order="<%= 1 %>"></results-table-county>
-      <% }); %>
-      <county-dataviz state="<%= key %>"></county-dataviz>
     	<% sections.forEach(section => { %>
     		<section id="<%= section %>-section" <%= section === "key-races" ? "class='shown'" : "" %>>
     			<% if (section === "key-races") { %>
             <% keyRaceSections.forEach(office => { %>
               <results-collection state="<%= key %>" office="<%= offices[office] %>" key-races-only></results-collection>
             <% }); %>
-    			<% } else { %>
-	    			<results-collection state="<%= key %>" office="<%= offices[section] %>"></results-collection>
-    			<% } %>
-    		</section>
+          <% } else { %>
+            <% if (section === "president") { %>
+              <county-map state="<%= key %>"></county-map>
+              <county-dataviz state="<%= key %>"></county-dataviz>
+            <% } %>
+            
+            <% if (section === "senate" || section === "governor") { %>
+              <% listOfCountyRaces.filter(race => race.office === offices[section]).forEach((race, index) => { %>
+                <%= race.office %>: <%= race.id %>
+                <county-map state="<%= key %>" race-id="<%= key %>-<%= race.id %>"></county-map>
+              <% }); %>
+              <county-dataviz state="<%= key %>"></county-dataviz>
+            <% } %>
+            
+            <results-collection state="<%= key %>" office="<%= offices[section] %>"></results-collection>
+          <% } %>
+        </section>
     	<% }); %>
     </main>
     <script>
