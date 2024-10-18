@@ -47,7 +47,7 @@ class ResultsTable extends ElementBase {
     } else if (result.office === "I") {
       elements.resultsTableHed.innerHTML = result.description;
     } else {
-      elements.resultsTableHed.style.display = "none";
+      elements.resultsTableHed.remove();
     }
 
     const candidates = mapToElements(elements.tbody, result.candidates);
@@ -55,7 +55,7 @@ class ResultsTable extends ElementBase {
     if (candidates.length < 2) {
       elements.uncontestedFootnote.innerHTML = "The AP does not tabulate votes for uncontested races and declares their winners as soon as polls close.";
     } else {
-      elements.uncontestedFootnote.style.display = "none";
+      elements.uncontestedFootnote.remove();
     }
 
     if (result.flags) {
