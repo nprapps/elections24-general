@@ -42,7 +42,7 @@ class ResultsTable extends ElementBase {
       elements.wrapper.classList.add("president");
     }
 
-    if (result.office === "H") {
+    if (result.office === "H" || result.flags) {
       elements.resultsTableHed.innerHTML = result.seat;
     } else if (result.office === "I") {
       elements.resultsTableHed.innerHTML = result.description;
