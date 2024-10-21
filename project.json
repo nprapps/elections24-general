@@ -10,12 +10,16 @@
     }
   },
   "styles": {
-    "src/css/seed.less": "build/style.css"
+    "src/css/seed.less": "build/style.css",
+    "src/css/senate.less": "build/senate.css",
+    "src/css/state.less": "build/state.css",
+    "src/css/house.less": "build/house.css",
+    "src/css/county.less": "build/county.css"
   },
   "scripts": {
     "src/js/main.js": "build/app.js",
     "src/js/loadHeaderBidding.js": "build/loadHeaderBidding.js"
-
+    "src/js/state.js": "build/state.js"
   },
   "scriptsOnce": {
     "src/js/embed.js": "build/embed.js",
@@ -31,7 +35,10 @@
     "primaryTopic": "",
     "secondaryTopics": []
   },
-  "sheets": [ "1zlv0MndWsdLnp15NI1tFjD7eJuvcYgpmhutASiOqcgk" ],
+  "sheets": [ 
+    "1zlv0MndWsdLnp15NI1tFjD7eJuvcYgpmhutASiOqcgk",
+    "16F7ifYahp6ahQp7fXCP_7e0C78x4iU4eU24JKrcodZU"
+  ],
   "docs": { "longform": "1oj6pW1S09SpGzqUBALOYx7fpCG6V3eLmqruErRuKTJE" },
   "embedded": false,
   "production": false

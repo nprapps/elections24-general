@@ -7,6 +7,7 @@ and loadSheets, which import data in a compatible way.
 
 // we use a custom template engine for better errors
 var template = require("./lib/template");
+var classify = require("./lib/classify");
 
 var path = require("path");
 var typogr = require("typogr");
@@ -118,6 +119,15 @@ module.exports = function (grunt) {
         grunt.file.write(file.dest, output);
       });
 
+      // generate state pages
+      var statePageTemplate = grunt.file.read("src/_state.html");
+      var states = Object.keys(grunt.data.json.states).filter(d => !d.includes("-"));
+      states.forEach(state => {
+        var stateData = grunt.data.json.states[state];
+        var output = process(statePageTemplate, stateData, `states/${state}.html`);
+        grunt.file.write(`build/${classify(stateData.name)}.html`, output);
+      });
+
       // generate office share pages
       var officeTemplate = grunt.file.read("src/_office_social.html");
       for (var office of ["governor", "house", "senate"]) {
@@ -134,6 +144,16 @@ module.exports = function (grunt) {
         var output = process(stateTemplate, { state });
         grunt.file.write(`build/share/${state}.html`, output);
       }
+
+      // loading in the sheets. hopefully a temporary fix
+      //TODO: come up with more robust fix
+      const sheetFiles = ['states', 'senate', 'house', 'governors', 'strings'];
+
+      sheetFiles.forEach(file => {
+        const jsonData = grunt.file.readJSON(`data/${file}.sheet.json`);
+        grunt.file.write(`build/data/${file}.sheet.json`, JSON.stringify(jsonData, null, 2));
+      });
+
     }
   );
 };

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <%= t.include("partials/_head.html", grunt.data.json) %>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="states.css">
+    <link rel="stylesheet" type="text/css" href="county.css">
+  </head>
+  <body>
+    <div >
+    </div>
+    <main class="app constrained">
+    var order = race.candidates;
+    var isSpecial = !!race.seat;
+
+    <county-map state="FL"></county-map>
+
+    <results-table-county
+    state="FL"
+    race-id="10005"
+    order="1"></results-table-county>
+
+    <county-dataviz state="CA"></county-dataviz>
+    <results-table-county
+    state="CA"
+    race-id="0"
+    order="1"></results-table-county>
+
+    <county-map state="AR"></county-map>
+    <results-table-county
+    state="AR"
+    race-id="0"
+    order="1"></results-table-county>
+
+    <county-map state="CT"></county-map>
+    <results-table-county
+    state="CT"
+    race-id="9145"
+    order="1"></results-table-county>
+    
+  />
+</main>
+    <script>
+        window.PROJECT_ANALYTICS = <%= JSON.stringify(json.project.analytics || {}) %>;
+    </script>
+    <script src="app.js" async></script>
+    <%= t.include("partials/_analytics.html") %>
+  </body>
+</html>
