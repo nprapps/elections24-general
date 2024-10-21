@@ -7,7 +7,7 @@ class TestBanner extends ElementBase {
 
 	connectedCallback() {
 		this.innerHTML = `
-			<span class="test-banner">TEST</span>
+			<div class="test-banner">TEST</div>
 		`
 	}
 }
