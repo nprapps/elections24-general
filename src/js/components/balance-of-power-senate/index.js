@@ -1,5 +1,6 @@
 var ElementBase = require("../elementBase");
 import gopher from "../gopher.js";
+import {winnerIcon} from "../util.js";
 
 
 class BalanceOfPowerSenate extends ElementBase {
