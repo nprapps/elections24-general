@@ -98,11 +98,12 @@ class NationalMap extends ElementBase {
 
   render() {
     // Create the basic structure
-    let test = this.races[0].test;
 
-    this.innerHTML = `
+    const bannerHtml = `${this.races?.[1] ? '<div style="position: relative;"><test-banner></test-banner></div>' : ''}`;
+    
+    this.innerHTML = ` 
       <div class="map">
-        ${test ? "<test-banner></test-banner>" : ""}
+        ${bannerHtml}
         <div class="svg-container" role="img" aria-label="National map of results"></div>
         <div class="tooltip"></div>
       </div>

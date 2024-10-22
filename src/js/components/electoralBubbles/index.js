@@ -236,9 +236,6 @@ class ElectoralBubbles extends ElementBase {
         this.simulation.alpha(1);
         this.state.nodes = nodes;
         this.state.lookup = lookup;
-        console.log('=======')
-        console.log(this.state.width)
-        console.log('=======')
         this.render();
       }
     
@@ -348,10 +345,11 @@ class ElectoralBubbles extends ElementBase {
           likelyR: "Likely Republican"
         };
         
-
-    
+    const bannerHtml = `${this.races?.[1] ? '<div style="position: relative;"><test-banner></test-banner></div>' : ''}`;
+  
         this.innerHTML = `
       <div class="electoral-bubbles">
+        ${bannerHtml}
         <div class="aspect-ratio">
           <svg class="bubble-svg" 
             role="img"
