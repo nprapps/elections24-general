@@ -38,7 +38,9 @@ class ResultsTable extends ElementBase {
       elements.wrapper.classList.add("president");
     }
 
-    if (result.office === "H") {
+    if (result.name_override) {
+      elements.resultsTableHed.innerHTML = result.name_override;
+    } else if (result.office === "H") {
       elements.resultsTableHed.innerHTML = result.seat;
     } else if (result.office === "I") {
       elements.resultsTableHed.innerHTML = result.description;
@@ -52,6 +54,12 @@ class ResultsTable extends ElementBase {
 
     if (candidates.length > 1) {
       elements.uncontestedFootnote.remove();
+    }
+
+    if (result.flags) {
+      elements.specialElectionFootnote.innerHTML = result.flags[0];
+    } else {
+      elements.specialElectionFootnote.remove();
     }
 
     if (candidates.some(d => d[0].incumbent) === true) {
