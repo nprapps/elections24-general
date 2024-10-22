@@ -118,7 +118,12 @@ class CountyMap extends ElementBase {
 
   async loadSVG() {
     const state = this.getAttribute('state');
-    const response = await fetch(`./assets/counties/${state}.svg`);
+    const newEnglandStates = ['CT', 'MA', 'ME', 'NH', 'RI', 'VT'];
+    const basePath = newEnglandStates.includes(state) 
+        ? './assets/synced/towns/' 
+        : './assets/counties/';
+    
+    const response = await fetch(`${basePath}${state}.svg`);
     const text = await response.text();
     this.svgContainer = this.querySelector('.svg-container');
     this.svgContainer.innerHTML = text;
@@ -249,8 +254,11 @@ class CountyMap extends ElementBase {
     }
 
     this.svg.appendChild(e.target);
+    console.log(e.target)
+    console.log(fips)
 
     var result = this.fipsLookup[fips];
+
 
     if (result) {
       // Update this.sortOrder with the current county's candidates
@@ -258,6 +266,7 @@ class CountyMap extends ElementBase {
 
       // Recalculate winningCandidates
       const winningCandidates = getCountyCandidates(this.sortOrder, [result]);
+      console.log(winningCandidates)
 
       // Your existing code, modified to check execution time
       const currentTime = Date.now();
@@ -287,6 +296,13 @@ class CountyMap extends ElementBase {
       var displayCandidates = result.candidates
         .sort((a, b) => b.percent - a.percent)
         .slice(0, 2);
+
+        console.log('>>>>>>>')
+        console.log(result)
+        console.log(result.candidates)
+        console.log(displayCandidates)
+        console.log('>>>>>>>')
+
 
       var candText = displayCandidates
         .map((cand, index) => {
