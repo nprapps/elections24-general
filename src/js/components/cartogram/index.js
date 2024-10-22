@@ -91,7 +91,7 @@ class Cartogram extends ElementBase {
       this.races = presidentData.results || {};
       if (this.races?.[1]) {
         const bannerPlaceholder = this.querySelector('.banner-placeholder');
-        bannerPlaceholder.innerHTML = '<div style="position: relative;"><test-banner></test-banner></div>';
+        bannerPlaceholder.innerHTML = '<test-banner></test-banner>';
       }
     } catch (error) {
       console.error("Could not load JSON data:", error);
