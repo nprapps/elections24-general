@@ -70,7 +70,6 @@ class BoardSenate extends ElementBase {
 
         this.innerHTML = `
         <div class="president board">
-          ${test ? '<test-banner></test-banner>' : ''}
         <div class="header">
           <div class="title-wrapper">
             <h1 tabindex="-1">Senate Results</h1>
