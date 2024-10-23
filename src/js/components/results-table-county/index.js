@@ -228,13 +228,6 @@ class ResultsTableCounty extends ElementBase {
 
         const leadingCand = row.reportingPercent > 0.5 ? row.candidates[0] : "";
         const reportingPercent = reportingPercentage(row.reportingPercent) + "% in";
-
-
-        console.log('(((((((')
-        console.log(orderedCandidates)
-        console.log(candidates)
-        console.log('))))))))')
-
         const candidateCells = candidates.map(c =>
             this.candidatePercentCell(
                 c,
@@ -284,12 +277,6 @@ class ResultsTableCounty extends ElementBase {
             orderedCandidates.push({ last: "Other", party: "Other", percent: otherEEVP });
         }
 
-        console.log('------------')
-        console.log('these are the ordered candidates')
-        console.log(orderedCandidates)
-        console.log('------------')
-
-
         this.innerHTML = `
         <div class="results-counties ${this.state.sortMetric.key.split("_").join("-")}">
             <h3>County Results Table</h3>
@@ -327,25 +314,24 @@ class ResultsTableCounty extends ElementBase {
                 </thead>
 <tbody class="${this.state.collapsed ? "collapsed" : ""}">
                 ${sortedData.map(county => {
-                    const countyOrderedCandidates = orderedCandidates.map(headerCand => {
-                        if (headerCand.last === "Other") {
-                            // Calculate other percentage for this county
-                            const otherPercent = county.candidates
-                                .filter(c => !orderedCandidates.find(h => h.last === c.last))
-                                .reduce((sum, c) => sum + (c.percent || 0), 0);
-                            return { ...headerCand, percent: otherPercent };
-                        }
-                        // Find matching candidate from this county
-                        const countyCand = county.candidates.find(c => c.last === headerCand.last) || 
-                                         { ...headerCand, percent: 0 };
-                        return {
-                            last: headerCand.last,
-                            party: headerCand.party,
-                            percent: countyCand.percent || 0
-                        };
-                    });
-                    
-                    return this.renderCountyRow(county, countyOrderedCandidates);
+            const countyOrderedCandidates = orderedCandidates.map(headerCand => {
+                if (headerCand.last === "Other") {
+                    // Calculate other percentage for this county
+                    const otherPercent = county.candidates
+                        .filter(c => !orderedCandidates.find(h => h.last === c.last))
+                        .reduce((sum, c) => sum + (c.percent || 0), 0);
+                    return { ...headerCand, percent: otherPercent };
+                }
+                // Find matching candidate from this county
+                const countyCand = county.candidates.find(c => c.last === headerCand.last) ||
+                    { ...headerCand, percent: 0 };
+                return {
+                    last: headerCand.last,
+                    party: headerCand.party,
+                    percent: countyCand.percent || 0
+                };
+            });
+            return this.renderCountyRow(county, countyOrderedCandidates);
         }).join('')}
             </tbody>
             </table>

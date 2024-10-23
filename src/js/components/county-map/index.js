@@ -51,11 +51,6 @@ class CountyMap extends ElementBase {
       }
       const data = await response.json();
       this.data = data.results || [];
-      console.log('++++++++')
-      console.log(this.data)
-      console.log('++++++++')
-
-
 
       // Only display candidates that are winning a county
       const sortOrder = this.data[0].candidates;

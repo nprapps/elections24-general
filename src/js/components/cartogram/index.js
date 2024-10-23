@@ -204,8 +204,6 @@ class Cartogram extends ElementBase {
         }
         const groups = this.svg.querySelectorAll("svg > g[data-postal]");    
         groups.forEach((g) => {
-          console.log('++++++++')
-          console.log(g)
           const stateName = g.dataset.postal;
           const square = g.querySelector("rect");
           const label = g.querySelector("text");
