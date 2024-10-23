@@ -41,7 +41,6 @@ class ResultsTableCounty extends ElementBase {
 
         this.currentState = this.getAttribute('state');
         this.race = this.getAttribute('race-id');
-        console.log(this.race)
 
         try {
             let url;

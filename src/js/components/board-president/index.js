@@ -60,7 +60,6 @@ class BoardPresident extends ElementBase {
   }
 
   updateTabSelection(clickedTab) {
-    console.log(clickedTab)
     // Deselect all tabs and hide all elements
     this.tabButtons.forEach(tab => {
       tab.setAttribute('aria-selected', 'false');
@@ -73,8 +72,6 @@ class BoardPresident extends ElementBase {
     // Select clicked tab and show corresponding element
     clickedTab.setAttribute('aria-selected', 'true');
     const selectedTabIndex = clickedTab.getAttribute('data-tab');
-    console.log(selectedTabIndex)
-    console.log(this.tabElementMap[selectedTabIndex])
     this.tabElementMap[selectedTabIndex]
     if (this.tabElementMap[selectedTabIndex]) {
       this.tabElementMap[selectedTabIndex].style.display = 'block';
@@ -98,6 +95,12 @@ class BoardPresident extends ElementBase {
 
   render() {
     const { results = [], test, latest } = this.state;
+
+    console.log('////')
+    console.log(this.state)
+    console.log(this.results[0].test)
+    console.log('////')
+
 
     var buckets = {
       likelyD: [],
@@ -126,10 +129,8 @@ class BoardPresident extends ElementBase {
 
     this.innerHTML = `
         <div class="president board">
-          ${test ? '<test-banner></test-banner>' : ''}
-
           <electoral-bars called='${JSON.stringify(called)}'></electoral-bars>
-          <h1 tabindex="-1">Presidential Results</h1>              
+          <h1 tabindex="-1">Presidential Results</h1>       
         <leader-board called='${JSON.stringify(called)}'></leader-board>
     <div role="tablist" class="tabs">
     <button role="tab" aria-controls="tab-0" aria-selected="true" data-tab="0">

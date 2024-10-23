@@ -1,4 +1,5 @@
 import gopher from "../gopher.js";
+import TestBanner from "../test-banner"
 
 const ElementBase = require("../elementBase");
 const dot = require("../../lib/dot");
@@ -30,6 +31,10 @@ class ResultsTable extends ElementBase {
     const elements = this.illuminate();
 
     this.removeAttribute("result");
+
+    if (!result.test) {
+      elements.testBanner.remove();
+    }
 
     elements.updated.innerHTML = `${formatAPDate(new Date(result.updated))} at ${formatTime(new Date(result.updated))}`;
     elements.eevp.innerHTML = formatEEVP(result.eevp);
@@ -77,7 +82,10 @@ class ResultsTable extends ElementBase {
       }
 
       const name = (d.first ? d.first + " " : " ") + (d.last === "Other" ? "Other candidates" : d.last);
-      const party = d.party != "Other" ? " (" + d.party + ")" : "";
+      let party = " (" + d.party + ")";
+      if (d.party === "Other" || d.party === "Yes" || d.party === "No") {
+        party = "";
+      }
 
       el.innerHTML = `
         <span aria-hidden="true" class="${headshots[d.last] ? 'headshot has-image" style="background-image: url(' + headshots[d.last] + ')"' : 'headshot no-image"'}></span>

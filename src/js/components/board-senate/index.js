@@ -33,7 +33,6 @@ class BoardSenate extends ElementBase {
             const response = await fetch('./data/senate.json');
             const { results = {} } = await response.json();
             this.results = results;
-            console.log(this.results)
             this.render();
           } catch (error) {
             console.error('Error fetching senate data:', error);
@@ -70,7 +69,6 @@ class BoardSenate extends ElementBase {
 
         this.innerHTML = `
         <div class="president board">
-          ${test ? '<test-banner></test-banner>' : ''}
         <div class="header">
           <div class="title-wrapper">
             <h1 tabindex="-1">Senate Results</h1>
