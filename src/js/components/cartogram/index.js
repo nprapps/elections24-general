@@ -43,13 +43,12 @@ class Cartogram extends ElementBase {
           const response = await fetch("./assets/_map-cartogram.svg");
           const svgText = await response.text();
           this.svg = await this.loadSVG(svgText);
-          this.initLabels();
         } catch (error) {
           console.error("Failed to load SVG:", error);
           return;
         }
-    
         this.paint();
+        this.initLabels();
       }
     
 
@@ -120,8 +119,6 @@ class Cartogram extends ElementBase {
 
     this.svg.addEventListener("mousemove", this.onMove);
     this.svg.addEventListener("click", this.onClick);
-
-    this.initLabels();
     return this.svg;
   }
     
@@ -201,8 +198,14 @@ class Cartogram extends ElementBase {
       }
     
       initLabels() {
+        if (!this.svg) {
+          console.error("SVG not available for initializing labels");
+          return;
+        }
         const groups = this.svg.querySelectorAll("svg > g[data-postal]");    
         groups.forEach((g) => {
+          console.log('++++++++')
+          console.log(g)
           const stateName = g.dataset.postal;
           const square = g.querySelector("rect");
           const label = g.querySelector("text");
@@ -212,11 +215,16 @@ class Cartogram extends ElementBase {
     
           let x, y;
           if (hasDistricts) {
-            x = bbox.x - 10;
-            y = bbox.y + labelBox.height;
+            x = parseFloat(square.getAttribute('x')) - 10;
+            y = parseFloat(square.getAttribute('y'));
           } else {
-            x = bbox.x + bbox.width / 2;
-            y = bbox.y + bbox.height / 2 + labelBox.height / 2 - 3;
+            const squareX = parseFloat(square.getAttribute('x'));
+            const squareY = parseFloat(square.getAttribute('y'));
+            const squareWidth = parseFloat(square.getAttribute('width'));
+            const squareHeight = parseFloat(square.getAttribute('height'));
+
+            x = squareX + (squareWidth / 2);
+            y = squareY + (squareHeight / 2);
           }
     
           if (window.innerWidth > 650) {
@@ -226,6 +234,9 @@ class Cartogram extends ElementBase {
             electoralLabel.textContent = votes;
             g.appendChild(electoralLabel);
     
+            console.log(x)
+            console.log(y)
+            console.log('++++++++')
             electoralLabel.setAttribute("x", x);
             electoralLabel.setAttribute("y", y + 10);
             electoralLabel.setAttribute("class", "votes");
