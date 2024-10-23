@@ -168,13 +168,13 @@ class Cartogram extends ElementBase {
         const results = this.races.filter((r) => r.state == stateName);
         let result;
     
-        if (district) {
-          result = results.filter((r) => (r.seatNumber == district))[0];
-        } if (district === "AL") {
+        if (district === "AL") {
           result = results[0];
-        } else {
+      } else if (district) {
+          result = results.find(r => r.seatNumber === district);
+      } else {
           result = results[0];
-        }
+      }
     
         if (!result) return;
     
@@ -252,8 +252,6 @@ class Cartogram extends ElementBase {
               state += '-AL';
             }
           }
-          console.log(state)
-          console.log(stateName)
 
           const leader = r.candidates[0].party;
           const winner = r.winnerParty;
