@@ -2,6 +2,7 @@
 @mobile: ~"(max-width: 500px)";
 @mobile-above: ~"(min-width: 501px)";
 @tablet: ~"(max-width: 768px)";
+@tablet-above: ~"(min-width: 769px)";
 
 /*
  * Legacy media queries
@@ -20,7 +21,7 @@
 @portrait: ~"(max-aspect-ratio: 1 / 1)";
 @landscape: ~"(min-aspect-ratio: 1 / 1)";
 
-@linkblue: #237bbd;
+@linkblue: #5076b8;
 
 // Colors
 @accent-dark: #4774CC;
@@ -30,12 +31,17 @@
 @blue: #217BAE;
 @dem: @blue;
 @lightblue: #C3E0F0;
+
 @red: #C72021;
 @gop: @red;
 @lightred: #F8C8CA;
+
 @yellow: #F1A513;
 @ind: @yellow;
 @lightyellow: #FFE4AF;
+
+@green: #469F4B;
+@lightgreen: #C2E7C4;
 
 @gopDim: #F8D6D4;
 @gopDim2: fade(@gop, 50%);
@@ -76,6 +82,9 @@
 @gray-lighter: lighten(#000, 93.5%); // #eee
 @white: #fff;
 
+@graybar: #5C5C5C;
+@graybackground: #C1C1C1;
+
 // Links
 // -------------------------
 @link-color: #5076b8;
@@ -85,51 +94,17 @@
 @updateHighlight: fade(@yellow, 80%);
 
 // Fonts
-@gotham: "Gotham SSm", Helvetica, Arial, sans-serif;
-@knockout: "Knockout 31 4r", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-@sans: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 @sans: 'NPRSans', @sans-base;
+// serif and condensed are not loaded by default. uncomment in src/partials/_webfonts.html if you want to use them
 @serif: 'NPRSerif', @serif-base;
-// not loaded by default. uncomment in src/partials/_webfonts.html if you want to use this
 @condensed: 'Source Sans Pro', @sans-base;
 
 @sans-base: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 @serif-base: Georgia, "Times New Roman", Times, serif;
 
-.gotham() {
-  font-family: @gotham;
-  font-weight: normal;
-  font-weight: 400;
-}
+@gotham: @sans;
+@knockout: @sans;
 
-// Normal Knockout
-.knockout() {
-  font-family: @knockout;
-  font-weight: normal;
-}
-
-// Knockout, uppercased
-.knockout-upper() {
-  .knockout();
-  text-transform: uppercase;
-}
-
-// Knockout for headings
-.knockout-header() {
-  .knockout-upper();
-  letter-spacing: 0.05em;
-  -webkit-font-smoothing: antialiased;
-}
-
-
-// Export values to CSS custom properties
-:root {
-  --accent-dark: @accent-dark;
-  --accent-light: @accent-light;
-  --sans: @sans;
-  --serif: @serif;
-  --vh: 1vh;
-}
 
 // Font mixins
 .sans() {
@@ -164,6 +139,30 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   -webkit-font-smoothing: antialiased;
+}
+
+// fallbacks for old mixins
+.gotham() {
+  .sans();
+}
+.knockout() {
+  .sans();
+}
+.knockout-upper() {
+  .sans();
+  text-transform: uppercase;
+}
+.knockout-header() {
+  .sans-header();
+}
+
+// Export values to CSS custom properties
+:root {
+  --accent-dark: @accent-dark;
+  --accent-light: @accent-light;
+  --sans: @sans;
+  --serif: @serif;
+  --vh: 1vh;
 }
 
 // a11y
