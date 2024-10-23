@@ -241,8 +241,20 @@ class Cartogram extends ElementBase {
     
         this.races.forEach((r) => {
           const eevp = r.eevp || r.reportingPercent;
-          const district = r.district;
-          const state = r.state + (district ? "-" + district : "");
+          const district = r.district || r.seatNumber
+          let state = r.state + (district ? "-" + district : "");
+          let stateName = r.state.toUpperCase();
+
+          if (state === 'ME' || state === 'NE') {
+            if (district) {
+              state += `-${district}`;
+            } else {
+              state += '-AL';
+            }
+          }
+          console.log(state)
+          console.log(stateName)
+
           const leader = r.candidates[0].party;
           const winner = r.winnerParty;
           const groups = this.svg.querySelectorAll(`[data-postal="${state}"]`);
