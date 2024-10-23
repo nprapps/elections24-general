@@ -270,7 +270,7 @@ class NationalMap extends ElementBase {
       if (!stateOutline.hasAttribute("data-postal")) {
         const thisBlock = g.querySelector("rect");
         const positionX = parseInt(thisBlock.getAttribute("x")) - 12 + "px";
-        const positionY = parseInt(thisBlock.getAttribute("y")) + 11 + "px";
+        const positionY = parseInt(thisBlock.getAttribute("y")) + "px";
         stateLabel.setAttribute("x", positionX);
         stateLabel.setAttribute("y", positionY);
         return;
