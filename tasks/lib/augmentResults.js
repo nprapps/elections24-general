@@ -53,11 +53,20 @@ module.exports = function (results, data) {
       if (!result.fips) return;
 
       // get the winner margin from the previous presidential election
+      const townshipStates = ["CT", "ME", "MA", "NH", "RI", "VT"];
       const past_margin = {};
-      const [top, second] = data.csv.prior_fips
-        .filter((p) => p.fipscode == result.fips)
-        .sort((a, b) => b.votepct - a.votepct)
-        .slice(0, 2);
+      let [top, second] = [];
+      if (townshipStates.includes(result.state)) {
+        [top, second] = data.csv.townshipAPResults
+          .filter((p) => p.reportingunitID == result.reportingunitID)
+          .sort((a, b) => b.votepct - a.votepct)
+          .slice(0, 2);
+      } else {
+        [top, second] = data.csv.prior_fips
+          .filter((p) => p.fipscode == result.fips)
+          .sort((a, b) => b.votepct - a.votepct)
+          .slice(0, 2);
+      }
       past_margin.party = top ? top.party : "";
       past_margin.margin = top ? top.votepct - second.votepct : "";
 
