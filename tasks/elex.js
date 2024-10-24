@@ -22,12 +22,25 @@ module.exports = function (grunt) {
     const offline = grunt.option("offline");
     const zero = grunt.option("zero");
 
+    const countyLevelDataForStates =
+      "AL,AK,AZ,AR,CA,CO,DC,DE, FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,MD,MI,MN,MS,MO,MT,NE,NV,NJ,NM,NY,NC,ND,OH,OK,OR,PA,SC,SD,TN,TX,UT,VA,WA,WV,WI,WY";
+
+    const townshipLevelDataForStates = "CT,ME,MA,NH,RI,VT";
     const tickets = [
       {
         date: "2024-11-05",
         params: {
           officeID: "G,S,P",
           level: "FIPSCode",
+          statePostal: countyLevelDataForStates,
+        },
+      },
+      {
+        date: "2024-11-05",
+        params: {
+          officeID: "G,S,P",
+          level: "ru",
+          statePostal: townshipLevelDataForStates,
         },
       },
       {
@@ -57,28 +70,10 @@ module.exports = function (grunt) {
     // turn AP into normalized race objects
     const results = normalize(rawResults, grunt.data.json);
 
-    // Ignore contest for end of 2016 CA term held during 2022
-    // https://www.capradio.org/articles/2022/10/17/us-sen-alex-padilla-will-appear-on-californias-june-primary-ballot-twice-heres-why/
-    // And ignore contest for unexpired term in Indiana, House seat 2
-    //! results = results.filter((race) => race.id != 8964 && race.id != 15766);
-
-    //! We don't need this anymore because electoral data for ME/NE aren't district level
-    // filter generator for ME/NE states as they split their electoral college votes as of 2024.
-    var stateOrDistrictFilter = function (level) {
-      return function (result) {
-        if (result.id != "0") return true;
-        if (result.state == "ME" || result.state == "NE") {
-          return result.level == level;
-        }
-        return true;
-      };
-    };
-
     grunt.log.writeln("Merging in external data...");
 
     //grunt.data is json + csv + markdown + archieml
     augment(results, grunt.data);
-    console.log('this is calling')
 
     const { longform } = grunt.data.archieml;
 
@@ -92,7 +87,9 @@ module.exports = function (grunt) {
     const geo = {
       national: results.filter((r) => r.level == "national"),
       state: results.filter((r) => r.level == "state"),
-      county: results.filter((r) => r.level == "county"),
+      county: results.filter(
+        (r) => r.level == "county" || r.level == "subunit"
+      ),
     };
 
     grunt.log.writeln("Geo.national: ");
