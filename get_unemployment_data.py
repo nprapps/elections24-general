@@ -14,7 +14,7 @@ def get_unemployment_data():
     xlsx['unemployment'] = xlsx['unemployment'].astype(float)/100
     xlsx = xlsx.drop(columns=['state_fips', 'county_fips'])
 
-    xlsx.to_csv('data/unemployment_data2.csv', index=False, encoding='utf-8',)
+    xlsx.to_csv('data/unemployment_data.csv', index=False, encoding='utf-8',)
 
 
 if __name__ == "__main__":
