@@ -132,6 +132,8 @@ class ResultsBoard extends ElementBase {
         ];
 
         const anyHasResult = this.races.some(r => r.eevp || r.reporting || r.called || r.runoff);
+        console.log('this is the race')
+        console.log(this.races)
 
 
         this.innerHTML = `
