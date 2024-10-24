@@ -133,25 +133,24 @@ class ResultsBoard extends ElementBase {
 
         const anyHasResult = this.races.some(r => r.eevp || r.reporting || r.called || r.runoff);
 
+
         this.innerHTML = `
     <div class="${classNames.filter(c => c).join(" ")}">
         ${this.hed ? `<h3 class="board-hed">${this.hed}</h3>` : ""}
         <div class="board-inner">
             ${tables.map(races => `
                 <table class="${this.office === 'President' ? 'president' : 'named'} results table" role="table">
-                    ${anyHasResult ? `
-                      <tr>
-                        ${this.office === 'President' ? 
-                          `<th class="state-hed">State</th>
-                          <th class="electoral-hed">E.V.</th>
-                          <th class="party-hed">Harris</th>
-                          <th class="party-hed">Trump</th>
-                          <th class="reporting-hed">% in</th>` : 
-                          ''
-                        }
-                        <th></th>
-                      </tr>
-                    ` : ''}
+                    <tr>
+                      ${this.office === 'President' ? 
+                        `<th class="state-hed">State</th>
+                        <th class="electoral-hed">E.V.</th>
+                        <th class="party-hed">${anyHasResult ? 'Harris' : ''}</th>
+                        <th class="party-hed">${anyHasResult ? 'Trump' : ''}</th>
+                        <th class="reporting-hed">${anyHasResult ? '% in' : ''}</th>` : 
+                        ''
+                      }
+                      <th></th>
+                    </tr>
                     ${races.map((r, i) => {
                         var hasResult = r.eevp || r.reporting || r.called || r.runoff;
                         var reporting = r.eevp;
