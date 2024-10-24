@@ -1,4 +1,4 @@
-statePostal, year,unemployment,key
+state,year,unemployment_rate,id
 "Autauga County, AL",Aug-24 p,0.03,01-001
 "Baldwin County, AL",Aug-24 p,0.031,01-003
 "Barbour County, AL",Aug-24 p,0.049,01-005
