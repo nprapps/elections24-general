@@ -104,8 +104,6 @@ class ElectoralBubbles extends ElementBase {
       connectedCallback() {
         this.loadData()
         window.addEventListener("resize", this.resize);
-        this.simulation.restart();
-
       }
     
       disconnectedCallback() {
@@ -246,6 +244,7 @@ class ElectoralBubbles extends ElementBase {
     
       onMove(e) {
 
+
         const bounds = this.getBoundingClientRect();
         const offsetX = e.clientX - bounds.left;
         const offsetY = e.clientY - bounds.top;
@@ -260,6 +259,8 @@ class ElectoralBubbles extends ElementBase {
         }
     
         this.tooltip.classList.add("show");
+
+        console.log(this.tooltip)
     
         if (this.lastHover != key) {
           const stateName = stateSheet[data.state].name;
@@ -286,6 +287,7 @@ class ElectoralBubbles extends ElementBase {
         const left = offsetX < bounds.width / 2 ? offsetX + 10 : offsetX - 4 - this.tooltip.offsetWidth;
         this.tooltip.style.left = left + "px";
         this.tooltip.style.top = offsetY + 10 + "px";
+        
       }
     
       onExit() {
@@ -338,6 +340,8 @@ class ElectoralBubbles extends ElementBase {
           
     
         const hasUncalled = [...(uncalled.likelyD || []), ...(uncalled.tossup || []), ...(uncalled.likelyR || [])].length;
+
+        console.log('uncalled: ' +  hasUncalled)
     
         const titles = {
           likelyD: "Likely Democratic",
@@ -454,14 +458,20 @@ class ElectoralBubbles extends ElementBase {
             </div>
           </div>
         ` : ''}
-        <div class="bubble-tooltip tooltip"></div>
       </div>
     `;
+
+    const tooltipDiv = document.createElement('div');
+    tooltipDiv.className = 'bubble-tooltip tooltip';
+    this.querySelector('.electoral-bubbles').appendChild(tooltipDiv);
+    this.tooltip = tooltipDiv;
     
-        this.querySelector('.electoral-bubbles').addEventListener('mousemove', this.onMove);
-        this.querySelector('.electoral-bubbles').addEventListener('mouseleave', this.onExit);
         this.querySelectorAll('circle').forEach(circle => {
+          console.log('attaching handler')
+          console.log(circle)
           circle.addEventListener('click', () => this.goToState(circle.dataset.key.slice(0, 2)));
+          circle.addEventListener('mousemove', this.onMove);
+          circle.addEventListener('mouseleave', this.onExit);
         });
       }
     }
