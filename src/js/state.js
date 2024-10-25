@@ -1,3 +1,5 @@
+import { Sidechain } from '@nprapps/sidechain';
+
 import './nav.js';
 
 require("./components/results-collection");
@@ -18,3 +20,13 @@ nav.addEventListener("change", e => {
 	});
 	selectedSection.classList.add("shown");
 })
+
+const urlParams = new URLSearchParams(window.location.search);
+
+if (urlParams.has('embedded')) {
+    const isEmbedded = urlParams.get('embedded');
+
+    if (isEmbedded) {
+        Sidechain.registerGuest();
+    }
+}

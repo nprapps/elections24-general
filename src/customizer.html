@@ -1,0 +1,156 @@
+<%
+var states = grunt.data.json.states;
+var races = grunt.data.json.races;
+
+console.log(races)
+ %>
+
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <%= t.include("partials/_head.html", grunt.data.json) %>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <link rel="stylesheet" type="text/css" href="customizer.css"/>
+
+    <script src="customizer.js"></script>
+  </head>
+  <body>
+    <script>
+      document.body.classList.add(
+        new URL(window.location).searchParams.get("theme")
+      );
+    </script>
+
+    <main class="customizer">
+      <h2>Customize your embed</h2>
+      <div id="formContainer">
+        <form>
+          <label>
+            <input
+              type="radio"
+              name="selection"
+              value="president"
+              onclick="handleSelection('president')"
+            />
+            President
+          </label>
+          <br />
+          <label>
+            <input
+              type="radio"
+              name="selection"
+              value="governors"
+              onclick="handleSelection('governors')"
+            />
+            Governor
+          </label>
+          <br />
+          <label>
+            <input
+              type="radio"
+              name="selection"
+              value="senate"
+              onclick="handleSelection('senate')"
+            />
+            Senate
+          </label>
+          <br />
+          <label>
+            <input
+              type="radio"
+              name="selection"
+              value="house"
+              onclick="handleSelection('house')"
+            />
+            House
+          </label>
+          <br />
+          <label>
+            <input
+              type="radio"
+              name="selection"
+              value="state"
+              onclick="handleSelection('state')"
+            />
+            State Page
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="selection"
+              value="bop"
+              onclick="handleSelection('bop')"
+            />
+            Balance of Power
+          </label>
+          <div
+            id="dropdownSection"
+            class="hidden"
+          >
+            <label
+              >State:
+              <select id="state">
+              <% Object.keys(states).forEach( state => { 
+
+                if (/^[A-Z]{2}$/.test(state)) {
+
+                %>
+                
+                   
+                <option value="<%= state %>,<%= states[state]["name"] %>"><%= states[state]["name"] %></option>
+                <% }}) %>
+              </select></label
+            ><br /><label
+              >Race:
+              <select id="stateRace">
+              </select></label
+            >
+          </div>
+          <div
+            id="checkboxSection"
+            class="hidden"
+          >
+            <label
+              ><input
+                type="checkbox"
+                value="check1"
+              />Checkbox 1</label
+            ><br /><label
+              ><input
+                type="checkbox"
+                value="check2"
+              />Checkbox 2</label
+            ><br /><label
+              ><input
+                type="checkbox"
+                value="check3"
+              />Checkbox 3</label
+            >
+          </div>
+        </form>
+      </div>
+
+      <h2>Embed code</h2>
+      <div class="embeds">
+        <div>
+          <label for="pym">Pym (most common)</label>
+          <textarea id="pym"></textarea>
+        </div>
+
+        <div>
+          <label for="sidechain">Sidechain</label>
+          <textarea id="sidechain"></textarea>
+        </div>
+      </div>
+
+      <h2>Preview</h2>
+
+      <side-chain></side-chain>
+    </main>
+
+      <script>
+        var PROJECT_URL = "<%= grunt.data.json.project.url %>";
+      </script>
+    </p>
+  </body>
+</html>
