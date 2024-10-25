@@ -104,14 +104,31 @@ module.exports = function (results, data) {
       }
       past_margin.party = top ? top.party : "";
       past_margin.margin = top ? top.votepct - second.votepct : "";
-
       const census = data.csv.census_data[result.fips];
-      const bls = data.csv.unemployment_data[result.fips] || {};
-      const { unemployment } = bls;
+      let bls;
+      let countyName;
+      if (townshipStates.includes(result.state)) {
+        bls = data.csv.township_unemployment[result.censusID] || {};
+        countyName = data.csv.township_unemployment[result.censusID]
+          ? data.csv.township_unemployment[result.censusID]["township"]
+          : "At large";
 
-      const countyName = data.csv.county_names[result.fips] || "At large";
+        if (!data.csv.township_unemployment[result.censusID]) {
+          console.log(result.censusID, result.fips);
+        }
+      } else {
+        const fips = `${result.fips.slice(0, 2)}-${result.fips.slice(2)}`;
+        bls = data.csv.unemployment_data[fips] || {};
+        countyName = data.csv.county_names[result.fips] || "At large";
+      }
+      const { unemployment_rate } = bls;
 
-      result.county = { past_margin, ...census, unemployment, countyName };
+      result.county = {
+        past_margin,
+        ...census,
+        unemployment_rate,
+        countyName,
+      };
     }
   });
 
