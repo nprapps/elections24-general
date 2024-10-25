@@ -54,6 +54,15 @@ module.exports = function (results, data) {
         result.flags = matchingFlags.map((f) => f.flag);
       }
     }
+    const townshipStates = ["CT", "ME", "MA", "NH", "RI", "VT"];
+
+    //merge in the identifier to access unemployment data in the frontend
+    if (townshipStates.includes(result.state)) {
+      const apReportingUnit = data.csv.identifiers[result.reportingunitID];
+      if (apReportingUnit) {
+        result.censusID = apReportingUnit["combined"];
+      }
+    }
 
     // Add electoral college winners to states
     // race.id == 0 is usually presidential election
@@ -79,7 +88,7 @@ module.exports = function (results, data) {
       if (!result.fips) return;
 
       // get the winner margin from the previous presidential election
-      const townshipStates = ["CT", "ME", "MA", "NH", "RI", "VT"];
+
       const past_margin = {};
       let [top, second] = [];
       if (townshipStates.includes(result.state)) {
