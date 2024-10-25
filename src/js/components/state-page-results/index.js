@@ -63,19 +63,53 @@ class StatePageResults extends ElementBase {
       let sectionHTML = "";
 
       if (section === "key-races") {
+        sectionHTML += `
+          <section id="key-races-section" section="key-races" class="shown">
+        `
         keyRaceCollections.forEach(office => {
           sectionHTML += `
-            <section id="key-races-section" section="key-races" class="shown">
-              <results-collection state="${this.getAttribute('state')}" office="${offices[office]}" key-races-only></results-collection>
+            <results-collection state="${this.getAttribute('state')}" office="${offices[office]}" key-races-only></results-collection>
+          `
+        });
+        sectionHTML += "</section>"
+      } else {
+        if (section === "president") {
+          sectionHTML += `
+            <section id="${section}-section" section="${section}">
+              <results-collection state="${this.getAttribute("state")}" office="${offices[section]}"></results-collection>
+              <h3 class="section-hed">Presidential results by county</h3>
+              <county-map state="${this.getAttribute("state")}"></county-map>
+              <county-dataviz state="${this.getAttribute("state")}"></county-dataviz>
+              <results-table-county
+                state="${this.getAttribute("state")}"
+                race-id="0"
+                order="1">
+              </results-table-county>
             </section>
           `
-        })
-      } else {
-        sectionHTML += `
-          <section id="${section}-section" section="${section}">
-            <results-collection state="${this.getAttribute("state")}" office="${offices[section]}"></results-collection>
-          </section>
+        } else if (section === "senate" || section === "governor") {
+          sectionHTML += `
+            <section id="${section}-section" section="${section}">
+              <results-collection state="${this.getAttribute("state")}" office="${offices[section]}"></results-collection>
+              <h3 class="section-hed">${section.toUpperCase} results by county</h3>
+              <% listOfCountyRaces.filter(race => race.office === offices[section]).forEach((race, index) => { %>
+                <%= race.office %>: <%= race.id %>
+                <county-map state="<%= key %>" race-id="<%= key %>-<%= race.id %>"></county-map>
+                <county-dataviz state="<%= key %>" race="<%= key %>-<%= race.id %>"></county-dataviz>
+                <results-table-county
+                  state="<%= key %>"
+                  race-id="<%= race.id %>"
+                  order="1">
+              </results-table-county>
+            </section>
           `
+        } else {
+          sectionHTML += `
+            <section id="${section}-section" section="${section}">
+              <results-collection state="${this.getAttribute("state")}" office="${offices[section]}"></results-collection>
+            </section>
+            `
+        }
       }
 
       template += sectionHTML;
