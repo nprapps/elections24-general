@@ -164,11 +164,24 @@ class CountyChart extends ElementBase {
     createAxes() {
         const [xStart, xEnd] = this.xScale.range();
         const [yStart, yEnd] = this.yScale.range();
-        const order = JSON.parse(this.getAttribute('data') || '[]')
-          .sort((a, b) => b.percent - a.percent)
-          .slice(0, 2)
-          .map(d => ({ party: d.party }));
+
+        
+        const data = JSON.parse(this.getAttribute('data') || '[]')
+        .sort((a, b) => b.percent - a.percent);
+      
+      // Find top two different parties
+      const firstParty = data[0]?.party;
+      const secondParty = data.find(d => d.party !== firstParty)?.party;
+      
+      const order = [
+        { party: firstParty || 'Unknown' },
+        { party: secondParty || 'Unknown' }
+      ];
+
+
         const [orderLess, orderMore] = order;
+
+        console.log(order)
     
         let yLabel;
         if (this.getAttribute('variable') == "past_margin") {
