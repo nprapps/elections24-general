@@ -1,5 +1,5 @@
 import gopher from "../gopher.js";
-import { formatters, getCountyVariable } from "../util.js";
+import { formatters, getCountyVariable, getAvailableMetrics } from "../util.js";
 var { chain, comma, percent, dollars } = formatters;
 const ElementBase = require("../elementBase");
 
@@ -23,6 +23,7 @@ class CountyChart extends ElementBase {
       this.defaultWidth = 230;
       this.minWidth = 200;
       this.maxWidth = 400;
+      this.availableMetrics = getAvailableMetrics('CA');
   
       this.state = {
         dimensions: {
@@ -86,12 +87,13 @@ class CountyChart extends ElementBase {
       const corr = parseFloat(this.getAttribute('corr'));
       const index = Math.ceil(corr * relationships.length) - 1;
       const title = this.getAttribute('title');
+      const relationship = relationships[index] ?? "no";
 
       return `
         <div class="description">
           <div>${title}</div>
-          <div class="strength ${relationships[index].replace(" ","-")}">
-            ${relationships[index]} trend
+          <div class="strength ${relationship.replace(" ","-")}">
+            ${relationship} trend
           </div>
         </div>
       `;
@@ -136,7 +138,8 @@ class CountyChart extends ElementBase {
       if (county) {
         const variable = this.getAttribute('variable');
         const displayVar = county[variable];
-        const formatter = this[this.getAttribute('formatter')] || (x => x);
+        const metric = this.availableMetrics[variable];
+        const formatter = metric?.format || (x => x);
   
         tooltip.innerHTML = `
           <div class="name">${county.countyName}</div>
@@ -156,11 +159,15 @@ class CountyChart extends ElementBase {
         tooltip.classList.add("shown");
       }
     }
+    
   
     createAxes() {
         const [xStart, xEnd] = this.xScale.range();
         const [yStart, yEnd] = this.yScale.range();
-        const order = JSON.parse(this.getAttribute('order') || '[]');
+        const order = JSON.parse(this.getAttribute('data') || '[]')
+          .sort((a, b) => b.percent - a.percent)
+          .slice(0, 2)
+          .map(d => ({ party: d.party }));
         const [orderLess, orderMore] = order;
     
         let yLabel;
@@ -263,6 +270,8 @@ class CountyChart extends ElementBase {
       return normalized * rangeSize + rangeStart;
     };
     scale.range = () => range;
+    scale.domain = () => domain;
+
     return scale;
   };
     }
