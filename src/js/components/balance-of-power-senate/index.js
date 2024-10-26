@@ -126,6 +126,8 @@ class BalanceOfPowerSenate extends ElementBase {
             senate.netGain = topSenate.gains;
         }
 
+
+        //! UPDATE OR REMOVE LINK (LINK IS ONLY NEEDED FOR EMBED)
         this.innerHTML = `
       <main class="embed-bop">
     <div id="embed-bop-on-page" class="embed-bop">
@@ -141,7 +143,7 @@ class BalanceOfPowerSenate extends ElementBase {
             <div class="votes">${senate.Ind.total}${showUnaffiliated ? "*" : ""}</div>
           </div>`
                 : ""}
-        ${100 - senate.Dem.total - senate.GOP.total - senate.Ind.width ?
+        ${100 - senate.Dem.total - senate.GOP.total - senate.Ind.total ?
                 `<div class="candidate uncalled">
             <div class="name">Not yet called</div>
             <div class="votes">${100 - senate.Dem.total - senate.GOP.total - senate.Ind.total}</div>
