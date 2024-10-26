@@ -20,7 +20,8 @@
   "scripts": {
     "src/js/main.js": "build/app.js",
     "src/js/loadHeaderBidding.js": "build/loadHeaderBidding.js",
-    "src/js/state.js": "build/state.js"
+    "src/js/state.js": "build/state.js",
+    "src/js/embedBOP.js": "build/embedBOP.js"
   },
   "scriptsOnce": {
     "src/js/embed.js": "build/embed.js",
