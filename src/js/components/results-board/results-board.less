@@ -60,18 +60,37 @@ results-board {
       display: flex;
       gap: 30px;
 
-      > table {
+      > table.results {
         flex: 1 0 45%;
+
+        + table.results tr:nth-child(1) { display: flex; }
       }
     }
   }
 
-  &[split="true"] {
-    table + table {
-      margin-top: -8px;
+  @media @tablet {
+    &[split="true"] {
+      table.results + table.results {
+        tr:nth-child(1) {
+          display: none;
+        }
+      
+        tr.index-0 td {
+          border-top: none;
+        }
+      }
+    }
+  }
+  @media @full-above {
+    &[split="true"] {
+      table.results + table.results {
+        tr:nth-child(1) {
+          display: none;
+        }
 
-      tr.index-0 td {
-        border-top: none;
+        tr.index-0 td {
+          border-top: none;
+        }
       }
     }
   }
@@ -88,13 +107,17 @@ results-board {
 }
 
 table.results {
-  // margin-bottom: 20px;
   width: 100%;
+  table-layout: fixed; 
   font-family: @sans;
   color: #666;
   font-size: 11px;
   display: block;
-  // border-collapse: collapse;
+  border-collapse: collapse;
+
+  tbody {
+    display: block;
+  }
 
   @media @tiny {
     font-size: 10px;
@@ -329,20 +352,14 @@ table.results {
   }
 }
 
-.Senate table.results,
-.Gov table.results,
-.Ballot table.results,
-.President table.results {
+table.results {
   width: 100%;
   table-layout: fixed;
-}
 
-.Senate table.results tr,
-.Gov table.results tr,
-.Ballot table.results tr,
-.President table.results tr {
-  display: flex;
-  width: 100%;
+  tr {
+    display: flex;
+    width: 100%;
+  }
 }
 
 /* Senate, Gov, and President tables */
@@ -384,90 +401,11 @@ table.results {
   }
 }
 
-/* Ballot table specific */
-.Ballot table.results tr {
-  .state,
-  th.state-hed {
-    width: 30%;
-    min-width: 80px;
-  }
-  
-  .candidate,
-  th.candidate-hed {
-    width: 50%;
-    min-width: 150px;
-  }
-  
-  .votes,
-  th.votes-hed,
-  .percent,
-  th.percent-hed {
-    width: 10%;
-    min-width: 40px;
-  }
-}
-
 /* President table specific */
 .President table.results tr {
   .state,
   th.state-hed {
     min-width: 53px;
-  }
-}
-
-.President .board-wrapper {
-  .board-inner {
-    table:nth-child(2) {
-      float: right;
-
-      tr:nth-child(1) {
-        display: none;
-      }
-      tr.index-0 td {
-        border-top: none;
-      }
-    }
-  }
-
-  @media @desktop {
-    flex: 0 0 49%;
-
-    &.middle {
-      flex: 0 0 100%;
-      order: 1;
-      margin-bottom: 35px;
-
-      table {
-        width: 49%;
-        vertical-align: top;
-        display: inline-block;
-      }
-
-      table:nth-child(2) {
-        tr.index-0 td {
-          border-top: 1px solid #ddd;
-          margin-top: 23px;
-        }
-      }
-    }
-  }
-
-  @media @mobile {
-    flex: 0 0 100%;
-    margin-bottom: 20px;
-
-    &.middle {
-      margin-bottom: 20px;
-      table {
-        width: 100%;
-      }
-      table:nth-child(2) {
-        tr.index-0 td {
-          border-top: none;
-          margin-top: 0;
-        }
-      }
-    }
   }
 }
 
@@ -536,14 +474,5 @@ table.results {
     text-transform: uppercase;
     color: #666;
     font-size: 1.1em;
-  }
-}
-
-table.results {
-  width: 100%;
-  table-layout: fixed; 
-
-  tbody {
-    display: block;
   }
 }
