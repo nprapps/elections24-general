@@ -22,7 +22,7 @@
     <script>
         function buildComponents() {
           const params = new URLSearchParams(window.location.search);
-          const races = params.get('races')?.split(',') || ['senate']; // Default to senate if no races
+          const races = params.get('races')?.split(',') || ['president']; // Default to senate if no races
           
           const components = races.map(race => {
             if (race === 'combined') {
