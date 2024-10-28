@@ -36,8 +36,11 @@ class CountyMap extends ElementBase {
 
     if (race !== null) {
       url = `./data/counties/${race}.json`;
+      console.log('this is the county race')
   } else {
       url = `./data/counties/${state}-0.json`;
+      console.log('this is the presid race')
+
   }
 
     try {
@@ -48,7 +51,6 @@ class CountyMap extends ElementBase {
       }
       const data = await response.json();
       this.data = data.results || [];
-
 
       // Only display candidates that are winning a county
       const sortOrder = this.data[0].candidates;
@@ -187,13 +189,17 @@ class CountyMap extends ElementBase {
     var mapData = this.data;
 
     var incomplete = false;
+    this.fipsLookup = {};
 
-    for (var d of Object.keys(mapData)) {
+
+    const dataKeys = [...mapData.keys()];
+
+    for (var d of dataKeys) {
       var [top] = mapData[d].candidates.sort((a, b) => b.percent - a.percent);
       this.fipsLookup[mapData[d].fips] = mapData[d];
     }
 
-    for (var d of Object.keys(mapData)) {
+    for (var d of dataKeys) {
       var fips = mapData[d].fips;
       var candidates = mapData[d].candidates;
       var [top] = candidates.sort((a, b) => b.percent - a.percent);
@@ -266,8 +272,11 @@ class CountyMap extends ElementBase {
 
       // Recalculate winningCandidates
       const winningCandidates = getCountyCandidates(this.sortOrder, [result]);
+<<<<<<< HEAD
       console.log(winningCandidates)
 
+=======
+>>>>>>> origin/township-ap-data
       // Your existing code, modified to check execution time
       const currentTime = Date.now();
       if (currentTime - this.lastExecutionTime >= this.minInterval) {
@@ -278,7 +287,6 @@ class CountyMap extends ElementBase {
         // Update the last execution time
         this.lastExecutionTime = currentTime;
       }
-
 
       // Update this.legendCands
       let specialCount = 0;

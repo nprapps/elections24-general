@@ -33,7 +33,10 @@ class BoardSenate extends ElementBase {
             const response = await fetch('./data/senate.json');
             const { results = {} } = await response.json();
             this.results = results;
+<<<<<<< HEAD
             console.log(this.results)
+=======
+>>>>>>> origin/township-ap-data
             this.render();
           } catch (error) {
             console.error('Error fetching senate data:', error);

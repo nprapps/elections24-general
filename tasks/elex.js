@@ -3,22 +3,17 @@
 --offline - Use cached data if it exists
 */
 
-const { redeemTicket, apDate } = require("./lib/apResults");
+const { redeemTicket } = require("./lib/apResults");
 const normalize = require("./lib/normalizeResults");
 const nullify = require("./lib/nullifyResults");
 const augment = require("./lib/augmentResults");
 const fs = require("fs").promises;
 
 module.exports = function (grunt) {
-  var elex = {};
-
   // Grunt doesn't like top-level async, so define this here and call it immediately
   var task = async function () {
-    // ranked choice voting for 22.
-
-    const RCV_linkages = grunt.data.json.rcv;
+    // These are the options we can give while running grunt (i.e grunt --offline)
     const test = grunt.option("APtest");
-
     const offline = grunt.option("offline");
     const zero = grunt.option("zero");
 
@@ -26,6 +21,8 @@ module.exports = function (grunt) {
       "AL,AK,AZ,AR,CA,CO,DC,DE, FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,MD,MI,MN,MS,MO,MT,NE,NV,NJ,NM,NY,NC,ND,OH,OK,OR,PA,SC,SD,TN,TX,UT,VA,WA,WV,WI,WY";
 
     const townshipLevelDataForStates = "CT,ME,MA,NH,RI,VT";
+    // For 24-general, we are getting county level-data for G,S,P for all non-england states
+    // We are getting township level data for G,S,P for all the england states and state level data for H,I.
     const tickets = [
       {
         date: "2024-11-05",
@@ -54,8 +51,8 @@ module.exports = function (grunt) {
 
     // get results from AP
     const rawResults = [];
-    for (let t of tickets) {
-      const response = await redeemTicket(t, { test, offline });
+    for (let ticket of tickets) {
+      const response = await redeemTicket(ticket, { test, offline });
       if (!response) continue;
 
       //This is a 2024 special CA senate election that we don't want so we are filtering it out
@@ -71,14 +68,11 @@ module.exports = function (grunt) {
     const results = normalize(rawResults, grunt.data.json);
 
     grunt.log.writeln("Merging in external data...");
-
-    //grunt.data is json + csv + markdown + archieml
     augment(results, grunt.data);
 
     const { longform } = grunt.data.archieml;
 
     grunt.log.writeln("Generating data files ");
-
     // ensure the data folder exists
     await fs.mkdir("build/data", { recursive: true });
 

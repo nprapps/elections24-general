@@ -2,6 +2,7 @@ const ElementBase = require("../elementBase");
 import { reportingPercentage, winnerIcon } from "../util.js";
 import track from "../../lib/tracking";
 import gopher from "../gopher.js";
+import TestBanner from "../test-banner";
 
 class Cartogram extends ElementBase {
     constructor() {
@@ -42,13 +43,12 @@ class Cartogram extends ElementBase {
           const response = await fetch("./assets/_map-cartogram.svg");
           const svgText = await response.text();
           this.svg = await this.loadSVG(svgText);
-          this.initLabels();
         } catch (error) {
           console.error("Failed to load SVG:", error);
           return;
         }
-    
         this.paint();
+        this.initLabels();
       }
     
 
@@ -63,12 +63,12 @@ class Cartogram extends ElementBase {
       render() {
         this.innerHTML = `
           <div class="cartogram" role="img" aria-label="Cartogram of state results">
+              <div class="banner-placeholder"></div>
             <div class="svg-container"></div>
             <div class="tooltip"></div>
           </div>
         `;
       }
-    
      
 
   async loadData() {
@@ -88,6 +88,10 @@ class Cartogram extends ElementBase {
 
       this.states = statesData || {};
       this.races = presidentData.results || {};
+      if (this.races?.[1]) {
+        const bannerPlaceholder = this.querySelector('.banner-placeholder');
+        bannerPlaceholder.innerHTML = '<test-banner></test-banner>';
+      }
     } catch (error) {
       console.error("Could not load JSON data:", error);
     } finally {
@@ -115,8 +119,6 @@ class Cartogram extends ElementBase {
 
     this.svg.addEventListener("mousemove", this.onMove);
     this.svg.addEventListener("click", this.onClick);
-
-    this.initLabels();
     return this.svg;
   }
     
@@ -163,13 +165,13 @@ class Cartogram extends ElementBase {
         const results = this.races.filter((r) => r.state == stateName);
         let result;
     
-        if (district) {
-          result = results.filter((r) => (r.seatNumber == district))[0];
-        } if (district === "AL") {
+        if (district === "AL") {
           result = results[0];
-        } else {
+      } else if (district) {
+          result = results.find(r => r.seatNumber === district);
+      } else {
           result = results[0];
-        }
+      }
     
         if (!result) return;
     
@@ -196,9 +198,11 @@ class Cartogram extends ElementBase {
       }
     
       initLabels() {
-        console.log('calling initLabels')
-        const groups = this.svg.querySelectorAll("svg > g[data-postal]");
-    
+        if (!this.svg) {
+          console.error("SVG not available for initializing labels");
+          return;
+        }
+        const groups = this.svg.querySelectorAll("svg > g[data-postal]");    
         groups.forEach((g) => {
           const stateName = g.dataset.postal;
           const square = g.querySelector("rect");
@@ -209,11 +213,16 @@ class Cartogram extends ElementBase {
     
           let x, y;
           if (hasDistricts) {
-            x = bbox.x - 10;
-            y = bbox.y + labelBox.height;
+            x = parseFloat(square.getAttribute('x')) - 10;
+            y = parseFloat(square.getAttribute('y'));
           } else {
-            x = bbox.x + bbox.width / 2;
-            y = bbox.y + bbox.height / 2 + labelBox.height / 2 - 3;
+            const squareX = parseFloat(square.getAttribute('x'));
+            const squareY = parseFloat(square.getAttribute('y'));
+            const squareWidth = parseFloat(square.getAttribute('width'));
+            const squareHeight = parseFloat(square.getAttribute('height'));
+
+            x = squareX + (squareWidth / 2);
+            y = squareY + (squareHeight / 2);
           }
     
           if (window.innerWidth > 650) {
@@ -223,6 +232,9 @@ class Cartogram extends ElementBase {
             electoralLabel.textContent = votes;
             g.appendChild(electoralLabel);
     
+            console.log(x)
+            console.log(y)
+            console.log('++++++++')
             electoralLabel.setAttribute("x", x);
             electoralLabel.setAttribute("y", y + 10);
             electoralLabel.setAttribute("class", "votes");
@@ -238,8 +250,18 @@ class Cartogram extends ElementBase {
     
         this.races.forEach((r) => {
           const eevp = r.eevp || r.reportingPercent;
-          const district = r.district;
-          const state = r.state + (district ? "-" + district : "");
+          const district = r.district || r.seatNumber
+          let state = r.state + (district ? "-" + district : "");
+          let stateName = r.state.toUpperCase();
+
+          if (state === 'ME' || state === 'NE') {
+            if (district) {
+              state += `-${district}`;
+            } else {
+              state += '-AL';
+            }
+          }
+
           const leader = r.candidates[0].party;
           const winner = r.winnerParty;
           const groups = this.svg.querySelectorAll(`[data-postal="${state}"]`);

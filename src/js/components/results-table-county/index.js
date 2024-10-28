@@ -41,7 +41,6 @@ class ResultsTableCounty extends ElementBase {
 
         this.currentState = this.getAttribute('state');
         this.race = this.getAttribute('race-id');
-        console.log(this.race)
 
         try {
             let url;
@@ -229,8 +228,6 @@ class ResultsTableCounty extends ElementBase {
 
         const leadingCand = row.reportingPercent > 0.5 ? row.candidates[0] : "";
         const reportingPercent = reportingPercentage(row.reportingPercent) + "% in";
-
-
         const candidateCells = candidates.map(c =>
             this.candidatePercentCell(
                 c,
@@ -260,11 +257,14 @@ class ResultsTableCounty extends ElementBase {
         const sortOrder = JSON.parse(this.getAttribute('sort-order') || '[]');
 
         const allCandidates = sortedData[0].candidates;
+<<<<<<< HEAD
         console.log('/////')
         console.log(sortedData)
         console.log(allCandidates)
         console.log('/////')
 
+=======
+>>>>>>> origin/township-ap-data
         // Sort candidates by EEVP and get top 3
         const orderedCandidates = allCandidates
             .sort((a, b) => b.percent - a.percent)
@@ -287,7 +287,7 @@ class ResultsTableCounty extends ElementBase {
 
         this.innerHTML = `
         <div class="results-counties ${this.state.sortMetric.key.split("_").join("-")}">
-            <h3>County Results Table</h3>
+            <h3>Demographics by county</h3>
             ${this.getSorter()}
             <table class="results-table candidates-${orderedCandidates.length}">
                 <thead>
@@ -322,6 +322,7 @@ class ResultsTableCounty extends ElementBase {
                 </thead>
 <tbody class="${this.state.collapsed ? "collapsed" : ""}">
                 ${sortedData.map(county => {
+<<<<<<< HEAD
             // Sort candidates by percent and get top 2
             const topTwo = county.candidates
                 .sort((a, b) => b.percent - a.percent)
@@ -343,6 +344,26 @@ class ResultsTableCounty extends ElementBase {
             }
 
             return this.renderCountyRow(county, orderedCandidates);
+=======
+            const countyOrderedCandidates = orderedCandidates.map(headerCand => {
+                if (headerCand.last === "Other") {
+                    // Calculate other percentage for this county
+                    const otherPercent = county.candidates
+                        .filter(c => !orderedCandidates.find(h => h.last === c.last))
+                        .reduce((sum, c) => sum + (c.percent || 0), 0);
+                    return { ...headerCand, percent: otherPercent };
+                }
+                // Find matching candidate from this county
+                const countyCand = county.candidates.find(c => c.last === headerCand.last) ||
+                    { ...headerCand, percent: 0 };
+                return {
+                    last: headerCand.last,
+                    party: headerCand.party,
+                    percent: countyCand.percent || 0
+                };
+            });
+            return this.renderCountyRow(county, countyOrderedCandidates);
+>>>>>>> origin/township-ap-data
         }).join('')}
             </tbody>
             </table>
