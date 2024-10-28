@@ -150,10 +150,6 @@ module.exports = function (results, data) {
         countyName = data.csv.township_unemployment[result.censusID]
           ? data.csv.township_unemployment[result.censusID]["township"]
           : "At large";
-
-        if (!data.csv.township_unemployment[result.censusID]) {
-          console.log(result.censusID, result.fips);
-        }
       } else {
         const fips = `${result.fips.slice(0, 2)}-${result.fips.slice(2)}`;
         bls = data.csv.unemployment_data[fips] || {};
