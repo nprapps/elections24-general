@@ -58,7 +58,9 @@ class StatePageResults extends ElementBase {
         sectionHTML += '<section id="key-races-section" section="key-races" class="shown">';
         this.keyRaceCollections.forEach(office => {
           let races = results.filter(d => {
-            if (office === "H" || office === "I") {
+            if (office === "president" && (this.state === "NE" || this.state === "ME")) {
+              return d.office === "P" && d.electoral === 2;
+            } else if (office === "H" || office === "I") {
               return d.office === offices[office] && d.keyRace === "yes";
             } else {
               return d.office === offices[office];
@@ -70,7 +72,13 @@ class StatePageResults extends ElementBase {
         });
         sectionHTML += "</section>"
       } else {
-        let races = results.filter(d => d.office === offices[section]);
+        let races = results.filter(d => {
+          if (section === "president" && (this.state === "NE" || this.state === "ME")) {
+            return d.office === "P" && d.electoral === 2;
+          } else {
+            return d.office === offices[section];            
+          }
+        });
 
         if (section === "president") {
           sectionHTML += `
