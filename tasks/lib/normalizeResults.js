@@ -53,6 +53,7 @@ const translation = {
     incumbent: "incumbent",
     rankedChoiceVotes: "rankedChoiceVotes",
     eliminated: "eliminated",
+    caucusWith: "caucusWith"
   },
   metadata: {
     previousParty: "party",
@@ -305,6 +306,10 @@ module.exports = function (resultArray, overrides = {}) {
         if (winner) {
           unitMeta.called = true;
           unitMeta.winnerParty = winner.party;
+
+          if (winner.caucusWith) {
+            unitMeta.caucusWith = winner.caucusWith;
+          }
         }
 
         unitMeta.candidates = ballot;

@@ -169,6 +169,7 @@ module.exports = function (grunt) {
         winner: r.winnerParty,
         electoral: r.electoral,
         previous: r.previousParty,
+        caucusWith: r.caucusWith
       };
     };
 

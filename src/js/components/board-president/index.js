@@ -27,10 +27,12 @@ class BoardPresident extends ElementBase {
   connectedCallback() {
     this.loadData();
     this.illuminate();
+    gopher.watch(this.getAttribute("./data/president.json"), this.loadData);
   }
 
+
   disconnectedCallback() {
-    gopher.unwatch(this.getAttribute("data-file"), this.onData);
+    gopher.unwatch(this.getAttribute("./data/president.json"), this.loadData);
   }
 
   setupTabs() {
@@ -322,7 +324,6 @@ class BoardPresident extends ElementBase {
                <cartogram-map races="{results}"></cartogram-map>
                <electoral-bubbles results="{results}" races="{results}"></electoral-bubbles>
               <results-board-display office="president" split="true" hed="Competitive"></results-board-display>
-          <hr class="divider" />
         </div>
       <results-board-key race="president"></results-board-key>
 

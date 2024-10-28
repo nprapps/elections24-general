@@ -39,9 +39,9 @@ class CountyMap extends ElementBase {
 
     if (race !== null) {
       url = `./data/counties/${race}.json`;
-    } else {
+  } else {
       url = `./data/counties/${state}-0.json`;
-    }
+  }
 
     try {
 
