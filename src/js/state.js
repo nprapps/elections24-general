@@ -21,6 +21,15 @@ nav.addEventListener("change", e => {
 	selectedSection.classList.add("shown");
 })
 
+const offices = {
+    "key-races": "key-races",
+    "P" : "president",
+  	"G" : "governor",
+  	"S" : "senate",
+  	"H" : "house",
+  	"I" : "ballot-measures"
+  }
+
 const urlParams = new URLSearchParams(window.location.search);
 
 if (urlParams.has('embedded')) {
@@ -29,4 +38,13 @@ if (urlParams.has('embedded')) {
     if (isEmbedded) {
         Sidechain.registerGuest();
     }
+
+	const race = urlParams.get('race')
+
+	const selectedSection = document.querySelector("#" + offices[race] + "-section");
+
+	document.querySelectorAll("section").forEach(section => {
+		section.classList.remove("shown");
+	});
+	selectedSection.classList.add("shown");
 }

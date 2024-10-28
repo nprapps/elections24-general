@@ -84,12 +84,12 @@ console.log(races)
             Balance of Power
           </label>
           <div
-            id="dropdownSection"
+            id="stateConfig"
             class="hidden"
           >
             <label
               >State:
-              <select id="state">
+              <select id="stateSelect" onchange="handleState(this.value)">
               <% Object.keys(states).forEach( state => { 
 
                 if (/^[A-Z]{2}$/.test(state)) {
@@ -102,7 +102,7 @@ console.log(races)
               </select></label
             ><br /><label
               >Race:
-              <select id="stateRace">
+              <select id="stateRaceSelect" onchange="handleStateRace(this.value)">
               </select></label
             >
           </div>
