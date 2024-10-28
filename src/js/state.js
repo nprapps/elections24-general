@@ -47,4 +47,19 @@ if (urlParams.has('embedded')) {
 		section.classList.remove("shown");
 	});
 	selectedSection.classList.add("shown");
+
+	hideHeader = urlParams.get('showHeader')
+
+	console.log(hideHeader)
+
+	if (hideHeader) {
+
+	const headerElement = document.querySelector("header");
+
+	console.log(headerElement)
+
+	headerElement.style.display = "none";
+	}
+
+
 }

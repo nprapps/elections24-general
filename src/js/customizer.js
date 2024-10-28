@@ -18,6 +18,7 @@ const createURL = function (page, params = {}) {
   const url = new URL(baseURL);
 
   params["embedded"] = true;
+  
   Object.keys(params).forEach(key => {
     url.searchParams.append(key, params[key]);
   });
@@ -101,13 +102,24 @@ const updateStateRaces = function (selectedState, stateRaceSelect) {
     });
 };
 
+window.handleStateHeader = function() {
+var options = {"race": stateRaceSelect.value}
+showHeader = document.getElementById('stateHeaderTrue').checked;
+
+if (!showHeader) {
+  options["showHeader"] = false
+}
+
+createEmbed(classify(stateSelect.value.split(",")[1]), options)
+}
+
 window.handleStateRace = function (race) {
   state = stateSelect.value.split(",")[1];
 
-  createEmbed(classify(state), { race: race });
+  handleStateHeader();
 };
 
-window.handleState = function (state) {
+window.handleState = function (state = "MO,Missouri") {
   stateSelect.value = state;
   var selectedState = state.split(",")[0];
 
