@@ -2,12 +2,12 @@ import { Sidechain } from "@nprapps/sidechain";
 
 import "./nav.js";
 
-require("./components/results-collection");
-require("./components/results-table");
-require("./components/county-map");
-require("./components/county-dataviz");
-require("./components/county-map");
-require("./components/results-table-county");
+require("./components/state-page-results")
+require("./components/results-table")
+require("./components/county-map")
+require("./components/county-dataviz")
+require("./components/county-map")
+require("./components/results-table-county")
 
 let section = document.querySelector('input[name="nav"]:checked').value;
 
