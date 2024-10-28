@@ -10,7 +10,7 @@ let customizerState = {
 };
 let stateConfigOptions,
   stateSelectDropdown,
-  stateRaceDropdown,
+  stateSectionDropdown,
   stateHeaderCheckbox;
 
 const classify = function (str) {
@@ -79,7 +79,7 @@ const updateEmbed = function () {
   createEmbed(customizerState["page"], customizerState["params"]);
 };
 
-const updateStatewideRaces = function (selectedState) {
+const updateStateSection = function (selectedState) {
   fetch("data/states/" + selectedState + ".json")
     .then(response => {
       if (!response.ok) {
@@ -96,24 +96,24 @@ const updateStatewideRaces = function (selectedState) {
       if (data.results.filter(d => d.office === "S").length > 0) {
         sections.push("senate,S");
       }
-      if (key != "DC") {
+      if (selectedState != "DC") {
         sections.push("house,H");
       }
       if (data.results.filter(d => d.office === "I").length > 0) {
         sections.push("ballot-measures,I");
       }
 
-      stateRaceDropdown.innerHTML = "";
+      stateSectionDropdown.innerHTML = "";
 
       sections.forEach(section => {
         var sectionItem = document.createElement("option");
         sectionItem.value = section.split(",")[1];
         sectionItem.textContent = section.split(",")[0];
 
-        stateRaceDropdown.appendChild(sectionItem);
-        stateRaceDropdown.addEventListener("change", function () {
-          console.log(stateRaceDropdown.value);
-          customizerState["params"]["race"] = stateRaceDropdown.value;
+        stateSectionDropdown.appendChild(sectionItem);
+        stateSectionDropdown.addEventListener("change", function () {
+          console.log(stateSectionDropdown.value);
+          customizerState["params"]["section"] = stateSectionDropdown.value;
           updateEmbed();
         });
       });
@@ -121,10 +121,10 @@ const updateStatewideRaces = function (selectedState) {
 };
 
 const handleStatewide = function () {
-  updateStatewideRaces(stateSelectDropdown.value.split(",")[0]);
+  updateStateSection(stateSelectDropdown.value.split(",")[0]);
 
   stateSelectDropdown.addEventListener("change", function () {
-    updateStatewideRaces(stateSelectDropdown.value.split(",")[0]);
+    updateStateSection(stateSelectDropdown.value.split(",")[0]);
     customizerState["page"] = classify(stateSelectDropdown.value.split(",")[1]);
     updateEmbed();
   });
@@ -163,7 +163,7 @@ const updateStatesingleRaces = function (selectedState) {
         I: "Ballot Measure",
       };
 
-      stateRaceDropdown.innerHTML = "";
+      stateSectionDropdown.innerHTML = "";
 
       listOfCountyRaces.forEach(race => {
         raceOffice = raceTypeLookup[race.office];
@@ -176,12 +176,12 @@ const updateStatesingleRaces = function (selectedState) {
         sectionItem.value = race.id;
         sectionItem.textContent = raceName;
 
-        stateRaceDropdown.appendChild(sectionItem);
+        stateSectionDropdown.appendChild(sectionItem);
       });
 
-      stateRaceDropdown.addEventListener("change", function () {
-        customizerState["params"]["race"] = stateRaceDropdown.value;
-        console.log(stateRaceDropdown.value)
+      stateSectionDropdown.addEventListener("change", function () {
+        customizerState["params"]["race"] = stateSectionDropdown.value;
+        console.log(stateSectionDropdown.value)
         updateEmbed();
       });
     });
@@ -191,7 +191,7 @@ const handleStatesingle = function () {
   updateStatesingleRaces(stateSelectDropdown.value.split(",")[0]);
 
   stateSelectDropdown.addEventListener("change", function () {
-    updateStatewideRaces(stateSelectDropdown.value.split(",")[0]);
+    updateStateSection(stateSelectDropdown.value.split(",")[0]);
     customizerState["page"] = classify(stateSelectDropdown.value.split(",")[1]);
     updateEmbed();
   });
@@ -215,7 +215,7 @@ const handleTopLevel = function (embedType) {
     stateConfigOptions.classList.remove("hidden");
     stateSelectDropdown.value = "MO,Missouri";
     customizerState["page"] = classify(stateSelectDropdown.value.split(",")[1]);
-    customizerState["params"]["race"] = "key-races";
+    customizerState["params"]["section"] = "key-races";
 
     handleStatewide();
   } else if (embedType == "individual") {
@@ -233,7 +233,7 @@ window.onload = function () {
   const topLevel = $("#topLevel label input");
   stateConfigOptions = $.one("#stateConfig");
   stateSelectDropdown = $.one("#stateSelect");
-  stateRaceDropdown = $.one("#stateRaceSelect");
+  stateSectionDropdown = $.one("#stateSectionSelect");
   stateHeaderCheckbox = $.one("#stateHeaderTrue");
 
   topLevel.forEach(el => {
