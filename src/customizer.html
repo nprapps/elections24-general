@@ -85,6 +85,15 @@ console.log(races)
             />
             Balance of Power
           </label>
+          <label>
+            <input
+              type="radio"
+              name="selection"
+              value="presidentMaps"
+              onclick="handleSelection('presidentMaps')"
+            />
+            Presidential Maps
+          </label>
           <div
             id="stateConfig"
             class="hidden"
@@ -144,6 +153,27 @@ console.log(races)
               Combined</label
           >
           </div>
+          <div id="presidentOptions" class="hidden">
+            <label>
+              <input
+                type="checkbox"
+                value="national"
+                onchange="handleSelection('presidentMaps')"
+              />National Map</label><br />
+            <label>
+              <input
+                type="checkbox"
+                value="cartogram"
+                onchange="handleSelection('presidentMaps')"
+              />Electoral Map</label><br />
+            <label>
+              <input
+                type="checkbox"
+                value="bubbles"
+                onchange="handleSelection('presidentMaps')"
+              />Margin Bubbles</label>
+          </div>
+          
         </form>
       </div>
 

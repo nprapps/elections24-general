@@ -64,10 +64,6 @@ class NationalMap extends ElementBase {
 
   disconnectedCallback() {
     const svg = this.svgContainer;
-    if (svg) {
-      svg.removeEventListener("mousemove", this.onMove);
-      svg.removeEventListener("click", this.onClick);
-    }
     gopher.unwatch(`./data/president.json`, this.loadData);
   }
 

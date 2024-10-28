@@ -64,6 +64,22 @@ const createEmbed = function (page, config) {
   preview.setAttribute("src", url.toString().replace(prefix, ""));
 };
 
+const createPresidentEmbed = function(config = {}) {
+  var optionsSection = document.getElementById('presidentOptions');
+  var checkboxes = optionsSection.querySelectorAll('input[type="checkbox"]');
+  var selectedOptions = [];
+  
+  checkboxes.forEach(checkbox => {
+    if (checkbox.checked) {
+      selectedOptions.push(checkbox.value);
+    }
+  });
+
+  config.options = selectedOptions.join(',');
+  
+  createEmbed('presidentMaps', config);
+};
+
 
 const createBOPEmbed = function(config = {}) {
   var checkboxSection = document.getElementById('checkboxSection');
@@ -199,13 +215,20 @@ window.handleSelection = function (option) {
   if (option === "state") {
     stateConfig.classList.remove("hidden");
     checkboxSection.classList.add("hidden");
-
+    presidentOptions.classList.add("hidden");
     handleState("MO,Missouri");
   } else if (option === "bop") {
     checkboxSection.classList.remove("hidden");
     stateConfig.classList.add("hidden");
+    presidentOptions.classList.add("hidden");
     createBOPEmbed();
+  } else if (option === "presidentMaps") {
+    presidentOptions.classList.remove("hidden");
+    stateConfig.classList.add("hidden");
+    checkboxSection.classList.add("hidden");
+    createPresidentEmbed();
   } else {
+    presidentOptions.classList.add("hidden");
     stateConfig.classList.add("hidden");
     checkboxSection.classList.add("hidden");
     createEmbed(option);
@@ -217,6 +240,6 @@ window.onload = function () {
   const checkboxSection = document.getElementById("checkboxSection");
   const stateDropdown = document.getElementById("stateSelect");
   const raceDropdown = document.getElementById("stateRaceSelect");
-
+  const presidentOptions = document.getElementById("presidentOptions");
   createEmbed("president");
 };
