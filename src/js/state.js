@@ -57,8 +57,6 @@ if (urlParams.has("embedded")) {
   if (hideHeader) {
     const headerElement = document.querySelector("header");
 
-    console.log(headerElement);
-
     headerElement.style.display = "none";
   }
 } else {

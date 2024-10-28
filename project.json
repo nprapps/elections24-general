@@ -23,6 +23,7 @@
     "src/js/loadHeaderBidding.js": "build/loadHeaderBidding.js",
     "src/js/state.js": "build/state.js",
     "src/js/customizer.js": "build/customizer.js",
+    "src/js/customizerSingle.js": "build/customizerSingle.js",
     "src/js/embedBOP.js": "build/embedBOP.js"
   },
   "scriptsOnce": {

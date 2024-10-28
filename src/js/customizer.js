@@ -79,7 +79,7 @@ const updateEmbed = function () {
   createEmbed(customizerState["page"], customizerState["params"]);
 };
 
-const updateStateRaces = function (selectedState) {
+const updateStatewideRaces = function (selectedState) {
   fetch("data/states/" + selectedState + ".json")
     .then(response => {
       if (!response.ok) {
@@ -120,11 +120,78 @@ const updateStateRaces = function (selectedState) {
     });
 };
 
-const handleState = function () {
-  updateStateRaces(stateSelectDropdown.value.split(",")[0]);
+const handleStatewide = function () {
+  updateStatewideRaces(stateSelectDropdown.value.split(",")[0]);
 
   stateSelectDropdown.addEventListener("change", function () {
-    updateStateRaces(stateSelectDropdown.value.split(",")[0]);
+    updateStatewideRaces(stateSelectDropdown.value.split(",")[0]);
+    customizerState["page"] = classify(stateSelectDropdown.value.split(",")[1]);
+    updateEmbed();
+  });
+
+  stateHeaderCheckbox.addEventListener("change", function () {
+    if (!stateHeaderCheckbox.checked) {
+      customizerState["params"]["showHeader"] = false;
+    } else {
+      delete customizerState["params"]["showHeader"];
+    }
+    updateEmbed();
+  });
+};
+
+const updateStatesingleRaces = function (selectedState) {
+  fetch("data/states/" + selectedState + ".json")
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json(); // Parse the JSON data
+    })
+    .then(data => {
+      const listOfCountyRaces = data.results.map(race => ({
+        id: race.id,
+        office: race.office,
+        seat: race.seat,
+        keyRace: race.keyRace,
+      }));
+
+      const raceTypeLookup = {
+        P: "President",
+        G: "Governor",
+        S: "Senate",
+        H: "House",
+        I: "Ballot Measure",
+      };
+
+      stateRaceDropdown.innerHTML = "";
+
+      listOfCountyRaces.forEach(race => {
+        raceOffice = raceTypeLookup[race.office];
+        raceName = raceOffice;
+        if (race.office == "H" || race.office == "I") {
+          raceName += " " + race.seat
+        }
+
+        var sectionItem = document.createElement("option");
+        sectionItem.value = race.id;
+        sectionItem.textContent = raceName;
+
+        stateRaceDropdown.appendChild(sectionItem);
+      });
+
+      stateRaceDropdown.addEventListener("change", function () {
+        customizerState["params"]["race"] = stateRaceDropdown.value;
+        console.log(stateRaceDropdown.value)
+        updateEmbed();
+      });
+    });
+};
+
+const handleStatesingle = function () {
+  updateStatesingleRaces(stateSelectDropdown.value.split(",")[0]);
+
+  stateSelectDropdown.addEventListener("change", function () {
+    updateStatewideRaces(stateSelectDropdown.value.split(",")[0]);
     customizerState["page"] = classify(stateSelectDropdown.value.split(",")[1]);
     updateEmbed();
   });
@@ -150,7 +217,15 @@ const handleTopLevel = function (embedType) {
     customizerState["page"] = classify(stateSelectDropdown.value.split(",")[1]);
     customizerState["params"]["race"] = "key-races";
 
-    handleState();
+    handleStatewide();
+  } else if (embedType == "individual") {
+    stateConfigOptions.classList.remove("hidden");
+    stateSelectDropdown.value = "MO,Missouri";
+    customizerState["page"] = "embeds/embed";
+    customizerState["params"]["state"] = "MO";
+    customizerState["params"]["race"] = "26795";
+
+    handleStatesingle();
   }
 };
 
