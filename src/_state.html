@@ -5,18 +5,28 @@
   const stateData = require("../build/data/states/" + key + ".json");
 
   let sections = ["key-races", "president"];
+  let keyRaceCollections = ["president"];
 
   if (stateData.results.filter(d => d.office === "G").length > 0) {
-  	sections.push("governor");
+    sections.push("governor");
+    keyRaceCollections.push("governor");
   }
   if (stateData.results.filter(d => d.office === "S").length > 0) {
-  	sections.push("senate");
+    sections.push("senate");
+    keyRaceCollections.push("senate");
   }
   if (key != "DC") {
-  	sections.push("house");
+    sections.push("house");
   }
   if (stateData.results.filter(d => d.office === "I").length > 0) {
-  	sections.push("ballot-measures");
+    sections.push("ballot-measures");
+  }
+
+  if (stateData.results.filter(d => d.office === "H" && d.keyRace === "yes").length > 0) {
+    keyRaceCollections.push("house");
+  }
+  if (stateData.results.filter(d => d.office === "I" && d.keyRace === "yes").length > 0) {
+    keyRaceCollections.push("ballot-measures");
   }
   
   const listOfCountyRaces = stateData.results
@@ -57,7 +67,7 @@
 
     <%= t.include("partials/_statePageHeader.html", {state: key, sections: sections}) %>
     <main class="app constrained">
-      <state-page-results state="<%= key %>" sections='<%= JSON.stringify(sections) %>'></state-page-results>
+      <state-page-results state="<%= key %>" key-race-collections='<%= JSON.stringify(keyRaceCollections).replace(/'/g, "&#39;") %>' sections='<%= JSON.stringify(sections).replace(/'/g, "&#39;") %>' county-races='<%= JSON.stringify(listOfCountyRaces).replace(/'/g, "&#39;") %>'></state-page-results>
     </main>
     <%= t.include("partials/_ad.html", {id: "ad-secondary"}) %> 
     <%= t.include("partials/_footer.html", {"data": grunt.data.json.states}) %>
