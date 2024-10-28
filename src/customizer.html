@@ -13,6 +13,8 @@ console.log(races)
     <link rel="stylesheet" type="text/css" href="customizer.css"/>
 
     <script src="customizer.js"></script>
+    <script src="app.js"></script>
+
   </head>
   <body>
     <script>
@@ -115,19 +117,29 @@ console.log(races)
             <label
               ><input
                 type="checkbox"
-                value="check1"
-              />Checkbox 1</label
+                value="senate"
+                onchange="handleSelection('bop')"
+              />Senate</label
             ><br /><label
               ><input
                 type="checkbox"
-                value="check2"
-              />Checkbox 2</label
+                value="house"
+                onchange="handleSelection('bop')"
+              />House</label
             ><br /><label
               ><input
                 type="checkbox"
-                value="check3"
-              />Checkbox 3</label
-            >
+                value="president"
+                onchange="handleSelection('bop')"
+              />President</label
+            ><br /><label
+              ><input
+                type="checkbox"
+                value="combined"
+                onchange="handleSelection('bop')"
+              />
+              Combined</label
+          >
           </div>
         </form>
       </div>

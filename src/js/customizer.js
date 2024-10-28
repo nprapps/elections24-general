@@ -64,6 +64,74 @@ const createEmbed = function (page, config) {
   preview.setAttribute("src", url.toString().replace(prefix, ""));
 };
 
+
+const createBOPEmbed = function(config = {}) {
+  var checkboxSection = document.getElementById('checkboxSection');
+  var checkboxes = checkboxSection.querySelectorAll('input[type="checkbox"]');
+  var selectedRaces = [];
+  var components = [];
+  
+  // Gather all checked values
+  checkboxes.forEach(checkbox => {
+    if (checkbox.checked) {
+      selectedRaces.push(checkbox.value);
+    }
+  });
+
+  // Add selected races to config
+  config.races = selectedRaces.join(',');
+  
+
+
+  // Join all components
+  var template = components.join('\n');
+  
+  // If no checkboxes are selected, default to senate
+  if (!template) {
+    template = `<div class="bop-wrapper">
+      <balance-of-power-combined race="senate"></balance-of-power-combined>
+    </div>`;
+  }
+
+  // Create the embed code versions
+  var embedPym = $.one("textarea#pym");
+  var embedSidechain = $.one("textarea#sidechain");
+  var preview = $.one("side-chain");
+
+   // Create URL with selected options
+   var url = createURL('bop', config);
+  
+  // Create Pym embed code
+  var embedPymHTML = `<p
+    data-pym-loader
+    data-child-src="${url.toString()}"
+    id="responsive-embed-bop">
+      Loading...
+  </p>
+  <script src="https://pym.nprapps.org/npr-pym-loader.v2.min.js"></script>`;
+  
+  embedPym.innerHTML = embedPymHTML
+    .replace(/</g, "&lt;")
+    .replace(/[\n\s]+/g, " ");
+  
+  // Create Sidechain embed code
+  var embedSidechainHTML = `<side-chain src="${url.toString()}"></side-chain>
+    <script src="${PROJECT_URL}sidechain.js"></script>`;
+  
+  embedSidechain.innerHTML = embedSidechainHTML
+    .replace(/</g, "&lt;")
+    .replace(/[\n\s]+/g, " ");
+  
+  // Update preview
+  preview.setAttribute("src", url.toString().replace("localhost:8000/", ""));
+
+  console.log(template)
+  
+  return template;
+};
+
+
+
 const updateStateRaces = function (selectedState, stateRaceSelect) {
   fetch("data/states/" + selectedState + ".json")
     .then(response => {
@@ -136,7 +204,7 @@ window.handleSelection = function (option) {
   } else if (option === "bop") {
     checkboxSection.classList.remove("hidden");
     stateConfig.classList.add("hidden");
-    createEmbed(option);
+    createBOPEmbed();
   } else {
     stateConfig.classList.add("hidden");
     checkboxSection.classList.add("hidden");
