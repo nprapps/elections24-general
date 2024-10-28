@@ -228,12 +228,15 @@ class CountyMap extends ElementBase {
     // Second pass: paint the map
     for (var d of dataKeys) {
       const entry = mapData[d];
+      var fips = entry.fips;
+
       var candidates = entry.candidates;
       var [top] = candidates.sort((a, b) => b.percent - a.percent);
       if (!top.votes) continue;
 
+
       // Use the same key format as above
-      const pathId = isNewEngland ? `fips-${entry.fips}-${entry.name}` : `fips-${entry.fips}`;
+      const pathId = isNewEngland ? `fips-${entry.censusID}` : `fips-${entry.fips}`;
       var path = this.svg.querySelector(`[id="${pathId}"]`);
       if (!path) continue;
 
@@ -304,13 +307,6 @@ class CountyMap extends ElementBase {
       }
 
     this.svg.appendChild(e.target);
-
-    console.log('>>>>>>>>>>')
-    console.log('Original FIPS:', fips);
-    console.log('Lookup Key:', lookupKey);
-    console.log('Result:', result);
-    console.log('FipsLookup:', this.fipsLookup);
-    console.log('>>>>>>>>>>')
 
 
     if (result) {

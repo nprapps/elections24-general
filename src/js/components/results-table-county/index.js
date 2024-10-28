@@ -221,8 +221,6 @@ class ResultsTableCounty extends ElementBase {
             return header;
         });
 
-        console.log(metric.key)
-
         let metricValue = row.county[metric.key];
         if (metric.format) {
             metricValue = metric.format(metricValue);
