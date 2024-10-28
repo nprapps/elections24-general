@@ -2,12 +2,12 @@ import { Sidechain } from "@nprapps/sidechain";
 
 import "./nav.js";
 
-require("./components/state-page-results")
-require("./components/results-table")
-require("./components/county-map")
-require("./components/county-dataviz")
-require("./components/county-map")
-require("./components/results-table-county")
+require("./components/state-page-results");
+require("./components/results-table");
+require("./components/county-map");
+require("./components/county-dataviz");
+require("./components/county-map");
+require("./components/results-table-county");
 
 let section = document.querySelector('input[name="nav"]:checked').value;
 
@@ -34,33 +34,39 @@ const offices = {
 
 const urlParams = new URLSearchParams(window.location.search);
 
-if (urlParams.has("embedded")) {
-  const isEmbedded = urlParams.get("embedded");
+const urlSection = urlParams.get("section");
 
-  if (isEmbedded) {
-    Sidechain.registerGuest();
-  }
 
-  const race = urlParams.get("race");
 
+window.onload = function() {
   const selectedSection = document.querySelector(
-    "#" + offices[race] + "-section"
+    "#" + offices[urlSection] + "-section"
   );
-
   document.querySelectorAll("section").forEach(section => {
     section.classList.remove("shown");
   });
   selectedSection.classList.add("shown");
-
-  hideHeader = urlParams.get("showHeader");
-
-  if (hideHeader) {
-    const headerElement = document.querySelector("header");
-
-    headerElement.style.display = "none";
+  
+  if (urlParams.has("embedded")) {
+    const isEmbedded = urlParams.get("embedded");
+  
+    if (isEmbedded) {
+      Sidechain.registerGuest();
+    }
+  
+    hideHeader = urlParams.get("showHeader");
+  
+    if (hideHeader) {
+      const headerElement = document.querySelector("header");
+  
+      headerElement.style.display = "none";
+    }
+  } else {
+    document.querySelector("#close-disclaimer").addEventListener("click", () => {
+      document.querySelector("#about-box").classList.add("closed");
+    });
   }
-} else {
-  document.querySelector("#close-disclaimer").addEventListener("click", () => {
-    document.querySelector("#about-box").classList.add("closed");
-  });
 }
+
+
+
