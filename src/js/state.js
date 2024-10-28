@@ -63,3 +63,7 @@ if (urlParams.has('embedded')) {
 
 
 }
+
+document.querySelector("#close-disclaimer").addEventListener("click", () => {
+	document.querySelector("#about-box").classList.add("closed");
+})

@@ -101,9 +101,9 @@ class ResultsBoard extends ElementBase {
 
         this.races.some(function (r) {
             let [winner] = r.candidates.filter(c => c.winner);
-            if (goingToRCVRunOff(r.id)) {
-                hasFlips = true;
-            }
+            // if (goingToRCVRunOff(r.id)) {
+            //     hasFlips = true;
+            // }
 
             if (winner && (
                 r.previousParty !== winner.party ||
@@ -120,7 +120,7 @@ class ResultsBoard extends ElementBase {
         if (this.split) {
             let half = Math.ceil(this.races.length / 2);
             let firstHalf = this.races.slice(0, half);
-            let secondHalf = this.races.slice(-half);
+            let secondHalf = this.races.slice(half);
             tables = [firstHalf, secondHalf];
         }
 
@@ -130,6 +130,8 @@ class ResultsBoard extends ElementBase {
             this.addClass,
             hasFlips ? "has-flips" : "no-flips"
         ];
+
+        const anyHasResult = this.races.some(r => r.eevp || r.reporting || r.called || r.runoff || r.rcvResult);
 
 
         this.innerHTML = `
@@ -142,9 +144,9 @@ class ResultsBoard extends ElementBase {
                       ${this.office === 'President' ? 
                         `<th class="state-hed">State</th>
                         <th class="electoral-hed">E.V.</th>
-                        <th class="party-hed">Harris</th>
-                        <th class="party-hed">Trump</th>
-                        <th class="reporting-hed">% in</th>` : 
+                        <th class="party-hed">${anyHasResult ? 'Harris' : ''}</th>
+                        <th class="party-hed">${anyHasResult ? 'Trump' : ''}</th>
+                        <th class="reporting-hed">${anyHasResult ? '% in' : ''}</th>` : 
                         ''
                       }
                       <th></th>
@@ -173,6 +175,7 @@ class ResultsBoard extends ElementBase {
                                     ${this.CandidateCells(r, winner)}
                                     <td role="cell" class="reporting">${percentIn}</td>
                                     <td role="cell" class="little-label ${flipped ? winner.party : ''}">
+                                        <span class="${r.rcvResult ? "rcv-label" : ""}">${r.rcvResult ? "RCV" : ""}</span>
                                         <span class="${r.runoff ? "runoff-label" : ""}">${r.runoff ? "R.O." : ""}</span>
                                         <span class="${flipped ? "flip-label" : ""}">${flipped ? "Flip" : ""}</span>
                                     </td>
@@ -211,6 +214,7 @@ class ResultsBoard extends ElementBase {
                                     <td class="reporting" role="cell">${percentIn}</td>
                                     ${this.office === "Senate" || this.office === "House" || this.office === "governor" ? `
                                         <td class="little-label ${flipped ? winner.party : ''}" role="cell">
+                                            <span class="${r.rcvResult ? "rcv-label" : ""}">${r.rcvResult ? "RCV" : ""}</span>
                                             <span class="${r.runoff ? "runoff-label" : ""}">${r.runoff ? "R.O." : ""}</span>
                                             ${this.office !== "House" ? `<span class="${flipped ? "flip-label" : ""}">${flipped ? "Flip" : ""}</span>` : ''}
                                         </td>
