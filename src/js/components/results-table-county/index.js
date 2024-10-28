@@ -257,14 +257,6 @@ class ResultsTableCounty extends ElementBase {
         const sortOrder = JSON.parse(this.getAttribute('sort-order') || '[]');
 
         const allCandidates = sortedData[0].candidates;
-<<<<<<< HEAD
-        console.log('/////')
-        console.log(sortedData)
-        console.log(allCandidates)
-        console.log('/////')
-
-=======
->>>>>>> origin/township-ap-data
         // Sort candidates by EEVP and get top 3
         const orderedCandidates = allCandidates
             .sort((a, b) => b.percent - a.percent)
