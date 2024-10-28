@@ -25,52 +25,44 @@ console.log(races)
       <h2>Customize your embed</h2>
       <div id="formContainer">
         <form>
+          <div id="topLevel">
           <label>
             <input
               type="radio"
               name="selection"
               value="president"
-              onclick="handleSelection('president')"
             />
             President
           </label>
-          <br />
           <label>
             <input
               type="radio"
               name="selection"
               value="governors"
-              onclick="handleSelection('governors')"
             />
             Governor
           </label>
-          <br />
           <label>
             <input
               type="radio"
               name="selection"
               value="senate"
-              onclick="handleSelection('senate')"
             />
             Senate
           </label>
-          <br />
           <label>
             <input
               type="radio"
               name="selection"
               value="house"
-              onclick="handleSelection('house')"
             />
             House
           </label>
-          <br />
           <label>
             <input
               type="radio"
               name="selection"
               value="state"
-              onclick="handleSelection('state')"
             />
             State Page
           </label>
@@ -79,17 +71,17 @@ console.log(races)
               type="radio"
               name="selection"
               value="bop"
-              onclick="handleSelection('bop')"
             />
             Balance of Power
           </label>
+        </div>
           <div
             id="stateConfig"
             class="hidden"
           >
             <label
               >State:
-              <select id="stateSelect" onchange="handleState(this.value)">
+              <select id="stateSelect">
               <% Object.keys(states).forEach( state => { 
 
                 if (/^[A-Z]{2}$/.test(state)) {
@@ -102,13 +94,13 @@ console.log(races)
               </select></label
             ><br /><label
               >Race:
-              <select id="stateRaceSelect" onchange="handleStateRace(this.value)">
+              <select id="stateRaceSelect">
               </select></label
             ><br /><label
             >Show header?
-          <input type="checkbox" id="stateHeaderTrue" checked onchange="handleStateHeader()"/></label>
+          <input type="checkbox" id="stateHeaderTrue" checked/></label>
           </div>
-          <div
+          <!-- <div
             id="checkboxSection"
             class="hidden"
           >
@@ -128,7 +120,7 @@ console.log(races)
                 value="check3"
               />Checkbox 3</label
             >
-          </div>
+          </div> -->
         </form>
       </div>
 

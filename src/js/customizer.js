@@ -1,6 +1,17 @@
-const { race } = require("async");
+require("async");
 var $ = require("./lib/qsa");
 require("@nprapps/sidechain");
+
+let customizerState = {
+  page: "governors",
+  params: {
+    embedded: true,
+  },
+};
+let stateConfigOptions,
+  stateSelectDropdown,
+  stateRaceDropdown,
+  stateHeaderCheckbox;
 
 const classify = function (str) {
   return (str + "")
@@ -17,11 +28,11 @@ const createURL = function (page, params = {}) {
   var baseURL = prefix + page + ".html";
   const url = new URL(baseURL);
 
-  params["embedded"] = true;
-  
   Object.keys(params).forEach(key => {
     url.searchParams.append(key, params[key]);
   });
+
+  console.log(url.toString());
   return url.toString();
 };
 
@@ -64,7 +75,11 @@ const createEmbed = function (page, config) {
   preview.setAttribute("src", url.toString().replace(prefix, ""));
 };
 
-const updateStateRaces = function (selectedState, stateRaceSelect) {
+const updateEmbed = function () {
+  createEmbed(customizerState["page"], customizerState["params"]);
+};
+
+const updateStateRaces = function (selectedState) {
   fetch("data/states/" + selectedState + ".json")
     .then(response => {
       if (!response.ok) {
@@ -88,67 +103,70 @@ const updateStateRaces = function (selectedState, stateRaceSelect) {
         sections.push("ballot-measures,I");
       }
 
-      stateRaceSelect.innerHTML = "";
+      stateRaceDropdown.innerHTML = "";
 
       sections.forEach(section => {
         var sectionItem = document.createElement("option");
         sectionItem.value = section.split(",")[1];
         sectionItem.textContent = section.split(",")[0];
 
-        stateRaceSelect.appendChild(sectionItem);
-      })
-
-      handleStateRace(stateRaceSelect.value)
+        stateRaceDropdown.appendChild(sectionItem);
+        stateRaceDropdown.addEventListener("change", function () {
+          console.log(stateRaceDropdown.value);
+          customizerState["params"]["race"] = stateRaceDropdown.value;
+          updateEmbed();
+        });
+      });
     });
 };
 
-window.handleStateHeader = function() {
-var options = {"race": stateRaceSelect.value}
-showHeader = document.getElementById('stateHeaderTrue').checked;
+const handleState = function () {
+  updateStateRaces(stateSelectDropdown.value.split(",")[0]);
 
-if (!showHeader) {
-  options["showHeader"] = false
-}
+  stateSelectDropdown.addEventListener("change", function () {
+    updateStateRaces(stateSelectDropdown.value.split(",")[0]);
+    customizerState["page"] = classify(stateSelectDropdown.value.split(",")[1]);
+    updateEmbed();
+  });
 
-createEmbed(classify(stateSelect.value.split(",")[1]), options)
-}
-
-window.handleStateRace = function (race) {
-  state = stateSelect.value.split(",")[1];
-
-  handleStateHeader();
+  stateHeaderCheckbox.addEventListener("change", function () {
+    if (!stateHeaderCheckbox.checked) {
+      customizerState["params"]["showHeader"] = false;
+    } else {
+      delete customizerState["params"]["showHeader"];
+    }
+    updateEmbed();
+  });
 };
 
-window.handleState = function (state = "MO,Missouri") {
-  stateSelect.value = state;
-  var selectedState = state.split(",")[0];
+const handleTopLevel = function (embedType) {
+  let plainEmbeds = ["president", "governors", "senate", "house"];
+  if (plainEmbeds.includes(embedType)) {
+    customizerState["page"] = embedType;
+    stateConfigOptions.classList.add("hidden");
+  } else if (embedType == "state") {
+    stateConfigOptions.classList.remove("hidden");
+    stateSelectDropdown.value = "MO,Missouri";
+    customizerState["page"] = classify(stateSelectDropdown.value.split(",")[1]);
+    customizerState["params"]["race"] = "key-races";
 
-  updateStateRaces(selectedState, stateRaceSelect);
-};
-
-window.handleSelection = function (option) {
-  // Show the relevant section based on the selected option
-  if (option === "state") {
-    stateConfig.classList.remove("hidden");
-    checkboxSection.classList.add("hidden");
-
-    handleState("MO,Missouri");
-  } else if (option === "bop") {
-    checkboxSection.classList.remove("hidden");
-    stateConfig.classList.add("hidden");
-    createEmbed(option);
-  } else {
-    stateConfig.classList.add("hidden");
-    checkboxSection.classList.add("hidden");
-    createEmbed(option);
+    handleState();
   }
 };
 
 window.onload = function () {
-  const dropdownSection = document.getElementById("stateConfig");
-  const checkboxSection = document.getElementById("checkboxSection");
-  const stateDropdown = document.getElementById("stateSelect");
-  const raceDropdown = document.getElementById("stateRaceSelect");
+  const topLevel = $("#topLevel label input");
+  stateConfigOptions = $.one("#stateConfig");
+  stateSelectDropdown = $.one("#stateSelect");
+  stateRaceDropdown = $.one("#stateRaceSelect");
+  stateHeaderCheckbox = $.one("#stateHeaderTrue");
 
-  createEmbed("president");
+  topLevel.forEach(el => {
+    el.addEventListener("change", function () {
+      handleTopLevel(el.value);
+      updateEmbed();
+    });
+  });
+
+  updateEmbed();
 };
