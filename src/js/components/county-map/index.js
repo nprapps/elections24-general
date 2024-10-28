@@ -294,32 +294,14 @@ class CountyMap extends ElementBase {
       newEnglandStates.includes(Object.values(this.fipsLookup)[0].state);
 
       let lookupKey = fips;
+      var result
 
-      if (isNewEngland && this.townCodesData) {
-        // Input FIPS looks like "50-009-25975"
-        const parts = fips.split('-');
-        if (parts.length === 3) {
-          const stateFips = parts[0];
-          const countyFips = parts[1];
-          const townFips = parts[2];
-          
-          // Create the clean FIPS for town lookup (e.g., "5000925975")
-          const cleanFips = stateFips + countyFips + townFips;
-          
-          // Find matching town in our town codes data
-          const matchingTown = this.townCodesData.find(town => {
-            const townFips = town.STATEFP + town.COUNTYFP + town.COUSUBFP;
-            return townFips === cleanFips;
-          });
-  
-          if (matchingTown) {
-            // Create lookup key in format "50001-Addison"
-            lookupKey = `${stateFips}${countyFips}-${matchingTown.NAME}`;
-          }
-        }
+      if (isNewEngland) {
+        result = Object.values(this.fipsLookup).find(entry => entry.censusID === lookupKey);
+
+      } else {
+        result = this.fipsLookup[lookupKey];
       }
-
-      var result = this.fipsLookup[lookupKey];
 
     this.svg.appendChild(e.target);
 
