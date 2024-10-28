@@ -35,9 +35,9 @@ class BalanceOfPowerBar extends ElementBase {
   processResults(results) {
 
     var InactiveSenateRaces = {
-      "GOP": 29,
-      "Dem": 34,
-      "Other": 2,
+      "GOP": 38,
+      "Dem": 28,
+      "Other": 0,
       "house_GOP": 0,
       "house_Dem": 0,
       "house_Other": 0
@@ -217,14 +217,6 @@ class BalanceOfPowerBar extends ElementBase {
           <div class="middle"></div>
         </div>
         <div class="chatter"><strong>218</strong> seats for majority</div>
-       <div class="net-gain-container">
-          <div class="gain-label">Net gain</div>
-          <div class="net-gain ${this.house.netGainParty}">
-            ${this.house.netGainParty != "none"
-              ? this.house.netGainParty + " +" + this.house.netGain
-              : "No change"}
-          </div>
-        </div>
         <div class="full-link"><span>See full results ›</span></div>
       </a>
       <div class="second divider"></div>
