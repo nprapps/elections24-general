@@ -96,12 +96,6 @@ class BoardPresident extends ElementBase {
   render() {
     const { results = [], test, latest } = this.state;
 
-    console.log('////')
-    console.log(this.state)
-    console.log(this.results[0].test)
-    console.log('////')
-
-
     var buckets = {
       likelyD: [],
       tossup: [],

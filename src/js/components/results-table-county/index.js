@@ -314,29 +314,6 @@ class ResultsTableCounty extends ElementBase {
                 </thead>
 <tbody class="${this.state.collapsed ? "collapsed" : ""}">
                 ${sortedData.map(county => {
-<<<<<<< HEAD
-            // Sort candidates by percent and get top 2
-            const topTwo = county.candidates
-                .sort((a, b) => b.percent - a.percent)
-                .slice(0, 2)
-                .map(candidate => ({
-                    last: candidate.last,
-                    party: candidate.party,
-                    percent: candidate.percent
-                }));
-
-            // Add "Other" if there are more than 2 candidates
-            let orderedCandidates = topTwo;
-            if (county.candidates.length > 2) {
-                const otherPercent = county.candidates
-                    .slice(2)
-                    .reduce((sum, candidate) => sum + candidate.percent, 0);
-
-                orderedCandidates.push({ last: "Other", party: "Other", percent: otherPercent });
-            }
-
-            return this.renderCountyRow(county, orderedCandidates);
-=======
             const countyOrderedCandidates = orderedCandidates.map(headerCand => {
                 if (headerCand.last === "Other") {
                     // Calculate other percentage for this county
@@ -355,7 +332,6 @@ class ResultsTableCounty extends ElementBase {
                 };
             });
             return this.renderCountyRow(county, countyOrderedCandidates);
->>>>>>> origin/township-ap-data
         }).join('')}
             </tbody>
             </table>

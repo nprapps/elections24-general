@@ -98,6 +98,11 @@ class ResultsBoardDisplay extends ElementBase {
             this.results = raceData.results || [];
             this.states = statesData || {};
 
+            // filter results shown to just key races (as designated in the config)
+            if (this.office.toLowerCase() == "house") {
+              this.results = this.results.filter(d => d.keyRace == "yes");
+            }
+
             this.isLoading = false;
             this.render();
         } catch (error) {
@@ -110,6 +115,7 @@ class ResultsBoardDisplay extends ElementBase {
     render() {
         //if (!this.senate || !this.house) return;
 
+        var thisOffice = this.office.toLowerCase();
         var { results, test, latest, alert } = this.state;
         this.state.results = this.results
 
@@ -130,10 +136,12 @@ class ResultsBoardDisplay extends ElementBase {
             };
 
             sorted.forEach(function (r) {
-                var bucketRating = getBucket(r.rating);
-                if (bucketRating) buckets[bucketRating].push(r);
+              var bucketRating = getBucket(r.rating, thisOffice);
+              if (bucketRating) buckets[bucketRating].push(r);
             });
         }
+
+        console.log(this.results)
 
         let content = `${this.results[0].test ? '<test-banner></test-banner>' : ''} `;
 
@@ -164,41 +172,53 @@ class ResultsBoardDisplay extends ElementBase {
                 </div>
             `;
         } else if (this.office.includes('House')) {
-
             content += `
-        <div class="board-container House">
-            ${this.results ? `
-                <results-board 
-                    office="House"
-                    hed="Likely/Solid Democratic"
-                    class="first"
-                    races='${JSON.stringify(buckets.likelyD || []).replace(/'/g, "&#39;")}'>
-                </results-board>
-                <results-board 
-                    office="House"
-                    hed="Likely/Solid Democratic"
-                    class="middle"
-                    races='${JSON.stringify(buckets.tossup || []).replace(/'/g, "&#39;")}'>
-                </results-board>
-                <results-board 
-                    office="House"
-                    hed="Likely/Solid Republican"
-                    class="last"
-                    races='${JSON.stringify(buckets.likelyR || []).replace(/'/g, "&#39;")}'>
-                </results-board>
-            ` : ''}
-        </div>
-    `;
+                <div class="board-container House">
+                    ${this.results ? `
+                        <results-board 
+                            office="House"
+                            hed="Lean Democratic"
+                            class="first"
+                            races='${JSON.stringify(buckets.likelyD || []).replace(/'/g, "&#39;")}'>
+                        </results-board>
+                        <results-board 
+                            office="House"
+                            hed="Toss-Up Seats"
+                            split="true"
+                            class="middle"
+                            races='${JSON.stringify(buckets.tossup || []).replace(/'/g, "&#39;")}'>
+                        </results-board>
+                        <results-board 
+                            office="House"
+                            hed="Lean Republican"
+                            class="last"
+                            races='${JSON.stringify(buckets.likelyR || []).replace(/'/g, "&#39;")}'>
+                        </results-board>
+                    ` : ''}
+                </div>
+            `;
         } else if (this.office.includes('governor')) {
             content += `
                 <div class="board-container Gov">
-                    ${this.results ? `
+                      ${this.results ? `
+                        <results-board 
+                            office="Governor"
+                            hed="Likely/Solid Democratic"
+                            class="first"
+                            races='${JSON.stringify(buckets.likelyD)}'>
+                        </results-board>
                         <results-board 
                             office="Governor"
                             split="true"
                             hed="Competitive Seats"
                             class="middle"
-                            races='${JSON.stringify(sorted)}'>
+                            races='${JSON.stringify(buckets.tossup)}'>
+                        </results-board>
+                        <results-board 
+                            office="Governor"
+                            hed="Likely/Solid Republican"
+                            class="last"
+                            races='${JSON.stringify(buckets.likelyR)}'>
                         </results-board>
                     ` : ''}
                 </div>

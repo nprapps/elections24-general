@@ -25,6 +25,9 @@ class CountyMap extends ElementBase {
     this.legendCands = []
     this.lastExecutionTime = 0;
     this.minInterval = 1000;
+    this.newEnglandStates = ['CT', 'MA', 'ME', 'NH', 'RI', 'VT'];
+    this.townCodesData = null;
+ 
   }
 
   async connectedCallback() {
@@ -36,15 +39,27 @@ class CountyMap extends ElementBase {
 
     if (race !== null) {
       url = `./data/counties/${race}.json`;
-      console.log('this is the county race')
-  } else {
+    } else {
       url = `./data/counties/${state}-0.json`;
-      console.log('this is the presid race')
-
-  }
+    }
 
     try {
-      const state = this.getAttribute('state');
+
+      const newEnglandStates = ['CT', 'MA', 'ME', 'NH', 'RI', 'VT'];
+
+      
+      if (newEnglandStates.includes(state)) {
+        console.log('fetching the response')
+        const townCodesResponse = await fetch('../../data/town_codes.json');
+        if (townCodesResponse.ok) {
+          this.townCodesData = await townCodesResponse.json();
+          console.log(townCodesResponse)
+        }
+        else {
+          console.log('this didnt wqork')
+        }
+      }
+
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -121,10 +136,10 @@ class CountyMap extends ElementBase {
   async loadSVG() {
     const state = this.getAttribute('state');
     const newEnglandStates = ['CT', 'MA', 'ME', 'NH', 'RI', 'VT'];
-    const basePath = newEnglandStates.includes(state) 
-        ? './assets/synced/towns/' 
-        : './assets/counties/';
-    
+    const basePath = newEnglandStates.includes(state)
+      ? './assets/synced/towns/'
+      : './assets/counties/';
+
     const response = await fetch(`${basePath}${state}.svg`);
     const text = await response.text();
     this.svgContainer = this.querySelector('.svg-container');
@@ -187,30 +202,45 @@ class CountyMap extends ElementBase {
   paint() {
     if (!this.svg) return;
     var mapData = this.data;
-
     var incomplete = false;
     this.fipsLookup = {};
 
+    const newEnglandStates = ['CT', 'MA', 'ME', 'NH', 'RI', 'VT'];
+    const isNewEngland = mapData.length > 0 && newEnglandStates.includes(mapData[0].state);
 
     const dataKeys = [...mapData.keys()];
 
+    console.log('++++++++')
+    console.log(mapData)
+    console.log('++++++++')
+
+
+    // First pass: build fipsLookup
     for (var d of dataKeys) {
       var [top] = mapData[d].candidates.sort((a, b) => b.percent - a.percent);
-      this.fipsLookup[mapData[d].fips] = mapData[d];
+      const entry = mapData[d];
+
+      // For New England states, use combination of FIPS and name as key
+      const lookupKey = isNewEngland ? `${entry.fips}-${entry.name}` : entry.fips;
+      this.fipsLookup[lookupKey] = entry;
     }
 
+    // Second pass: paint the map
     for (var d of dataKeys) {
-      var fips = mapData[d].fips;
-      var candidates = mapData[d].candidates;
+      const entry = mapData[d];
+      var candidates = entry.candidates;
       var [top] = candidates.sort((a, b) => b.percent - a.percent);
       if (!top.votes) continue;
 
-      var path = this.svg.querySelector(`[id="fips-${fips}"]`);
+      // Use the same key format as above
+      const pathId = isNewEngland ? `fips-${entry.fips}-${entry.name}` : `fips-${entry.fips}`;
+      var path = this.svg.querySelector(`[id="${pathId}"]`);
       if (!path) continue;
+
       path.classList.add("painted");
 
-      var hitThreshold = mapData[d].reportingPercent > 0.5;
-      var allReporting = mapData[d].reportingPercent >= 1;
+      var hitThreshold = entry.reportingPercent > 0.5;
+      var allReporting = entry.reportingPercent >= 1;
 
       if (!hitThreshold) {
         path.style.fill = "#e1e1e1";
@@ -259,11 +289,46 @@ class CountyMap extends ElementBase {
       return;
     }
 
-    this.svg.appendChild(e.target);
-    console.log(e.target)
-    console.log(fips)
+    const newEnglandStates = ['CT', 'MA', 'ME', 'NH', 'RI', 'VT'];
+    const isNewEngland = Object.values(this.fipsLookup).length > 0 &&
+      newEnglandStates.includes(Object.values(this.fipsLookup)[0].state);
 
-    var result = this.fipsLookup[fips];
+      let lookupKey = fips;
+
+      if (isNewEngland && this.townCodesData) {
+        // Input FIPS looks like "50-009-25975"
+        const parts = fips.split('-');
+        if (parts.length === 3) {
+          const stateFips = parts[0];
+          const countyFips = parts[1];
+          const townFips = parts[2];
+          
+          // Create the clean FIPS for town lookup (e.g., "5000925975")
+          const cleanFips = stateFips + countyFips + townFips;
+          
+          // Find matching town in our town codes data
+          const matchingTown = this.townCodesData.find(town => {
+            const townFips = town.STATEFP + town.COUNTYFP + town.COUSUBFP;
+            return townFips === cleanFips;
+          });
+  
+          if (matchingTown) {
+            // Create lookup key in format "50001-Addison"
+            lookupKey = `${stateFips}${countyFips}-${matchingTown.NAME}`;
+          }
+        }
+      }
+
+      var result = this.fipsLookup[lookupKey];
+
+    this.svg.appendChild(e.target);
+
+    console.log('>>>>>>>>>>')
+    console.log('Original FIPS:', fips);
+    console.log('Lookup Key:', lookupKey);
+    console.log('Result:', result);
+    console.log('FipsLookup:', this.fipsLookup);
+    console.log('>>>>>>>>>>')
 
 
     if (result) {
@@ -272,11 +337,6 @@ class CountyMap extends ElementBase {
 
       // Recalculate winningCandidates
       const winningCandidates = getCountyCandidates(this.sortOrder, [result]);
-<<<<<<< HEAD
-      console.log(winningCandidates)
-
-=======
->>>>>>> origin/township-ap-data
       // Your existing code, modified to check execution time
       const currentTime = Date.now();
       if (currentTime - this.lastExecutionTime >= this.minInterval) {
@@ -305,12 +365,6 @@ class CountyMap extends ElementBase {
         .sort((a, b) => b.percent - a.percent)
         .slice(0, 2);
 
-        console.log('>>>>>>>')
-        console.log(result)
-        console.log(result.candidates)
-        console.log(displayCandidates)
-        console.log('>>>>>>>')
-
 
       var candText = displayCandidates
         .map((cand, index) => {
@@ -325,19 +379,22 @@ class CountyMap extends ElementBase {
         })
         .join("");
 
+      var locationName = isNewEngland ? result.name :
+        result.county.countyName.replace(/\s[a-z]/g, match => match.toUpperCase());
+
       var countyName = result.county.countyName.replace(/\s[a-z]/g, match =>
         match.toUpperCase()
       );
       var perReporting = reportingPercentage(result.reportingPercent);
       tooltip.innerHTML = `
-        <div class="name">${countyName}</div>
+        <div class="name">${locationName}</div>
         ${candText}
         <div class="row pop">Population <span class="amt">${formatters.comma(
         result.county.population
       )}</span></div>
         <div class="row reporting">${perReporting}% in</div>
       `;
-    } 
+    }
     var bounds = this.svg.getBoundingClientRect();
     var x = e.clientX - bounds.left;
     var y = e.clientY - bounds.top;
