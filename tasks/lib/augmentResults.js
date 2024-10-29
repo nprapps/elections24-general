@@ -61,6 +61,7 @@ module.exports = function (results, data) {
       const apReportingUnit = data.csv.identifiers[result.reportingunitID];
       if (apReportingUnit) {
         result.censusID = apReportingUnit["combined"];
+        result.townshipName = apReportingUnit["NAME"];
       }
     }
 
@@ -142,7 +143,7 @@ module.exports = function (results, data) {
       }
       past_margin.party = top ? top.party : "";
       past_margin.margin = top ? top.votepct - second.votepct : "";
-      const census = data.csv.census_data[result.fips];
+      let census;
       let bls;
       let countyName;
       if (townshipStates.includes(result.state)) {
@@ -150,10 +151,12 @@ module.exports = function (results, data) {
         countyName = data.csv.unemployment_township[result.censusID]
           ? data.csv.unemployment_township[result.censusID]["township"]
           : "At large";
+        census = data.csv.census_township_data[result.censusID];
       } else {
         const fips = `${result.fips.slice(0, 2)}-${result.fips.slice(2)}`;
         bls = data.csv.unemployment_data[fips] || {};
         countyName = data.csv.county_names[result.fips] || "At large";
+        census = data.csv.census_data[result.fips];
       }
       const { unemployment } = bls;
 
