@@ -83,7 +83,7 @@ class BalanceOfPowerPresident extends ElementBase {
     
               <div class="bar-container">
                 <div class="bar dem" style="width: ${(president.Dem.total / 538 * 100)}%"></div>
-                <div class="bar other" style="width: ${(president.Other.total / 538 * 100)}%"></div>
+                <div class="bar other" style="width: ${president.Other.total ? (president.Other.total / 538 * 100) : 0}%; ${president.Other.total === 0 ? 'display: none;' : ''}"></div>
                 <div class="bar gop" style="width: ${(president.GOP.total / 538 * 100)}%"></div>
                 <div class="middle"></div>
               </div>

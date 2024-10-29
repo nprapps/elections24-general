@@ -1,5 +1,5 @@
 const ElementBase = require("../elementBase");
-import { reportingPercentage, winnerIcon } from "../util.js";
+import { classify, reportingPercentage, statePostalToFull, winnerIcon } from "../util.js";
 import track from "../../lib/tracking";
 import gopher from "../gopher.js";
 import TestBanner from "../test-banner";
@@ -160,8 +160,7 @@ class NationalMap extends ElementBase {
     this.initLabels();
     this.paint();
 
-    // Clear the SVG container and insert the new SVG
-    //this.svgContainerRef.current.innerHTML = '';
+    this.svgContainerRef.current.innerHTML = '';
     this.svgContainerRef.current.appendChild(this.svg);
 
     // Dispatch an event to signal that the SVG has been loaded and incorporated
@@ -173,7 +172,8 @@ class NationalMap extends ElementBase {
     const state = e.target.getAttribute("data-postal");
     if (state) {
       track("clicked-map", state);
-      window.location.href = `#/states/${state}/P`;
+      var stateFull = statePostalToFull(state);
+      window.location.href = `${ classify(stateFull) }.html?section=P`;
     }
   }
 

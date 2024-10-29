@@ -221,10 +221,12 @@ Geography
     this.loadData();
     gopher.watch(`./data/president.json`, this.loadData);
     this.illuminate();
+    gopher.watch(this.getAttribute("./data/president.json"), this.loadData);
   }
 
+
   disconnectedCallback() {
-    gopher.unwatch(this.getAttribute("data-file"), this.onData);
+    gopher.unwatch(this.getAttribute("./data/president.json"), this.loadData);
   }
 
   setupTabs() {
@@ -289,7 +291,6 @@ Geography
 
   render() {
     const { results = [], test, latest } = this.state;
-
 
     var buckets = {
       likelyD: [],

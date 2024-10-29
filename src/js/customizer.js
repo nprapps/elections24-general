@@ -1,4 +1,4 @@
-const { race } = require("async");
+require("async");
 var $ = require("./lib/qsa");
 require("@nprapps/sidechain");
 
@@ -12,40 +12,133 @@ const classify = function (str) {
     .replace(/-+$/, ""); // Trim - from end of text
 };
 
-const createURL = function (page, params = {}) {
+let customizerState = {
+  page: "index",
+  params: {
+    embedded: true,
+    stateName: "Missouri",
+    stateAbbrev: "MO",
+    section: "key-races",
+    showHeader: true,
+  },
+};
+
+let embedType,
+  stateConfigOptions,
+  stateSelectDropdown,
+  stateSectionDropdown,
+  stateRaceDropdown,
+  stateHeaderCheckbox;
+
+  const getSelectedCheckboxValues = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    const checkboxes = section.querySelectorAll('input[type="checkbox"]');
+    const selectedValues = [];
+    
+    checkboxes.forEach(checkbox => {
+      if (checkbox.checked) {
+        selectedValues.push(checkbox.value);
+      }
+    });
+    
+    return selectedValues;
+  };
+  
+
+const createURL = function (config) {
   var prefix = "localhost:8000/";
+  var page = config["page"];
+
+  if (page === 'bop' || page === 'presidentMaps') {
+    var baseURL = prefix + page + ".html";
+    const url = new URL(baseURL);
+    url.searchParams.append('embedded', 'true');
+    
+    // Add any additional parameters
+    if (config.params) {
+      Object.keys(config.params).forEach(key => {
+        if (key !== 'embedded' && config.params[key] !== undefined) {
+          url.searchParams.append(key, config.params[key]);
+        }
+      });
+    }
+    
+    return url.toString();
+  }
+
+  if (page == "state") {
+    page = classify(config["params"]["stateName"]);
+  }
+
   var baseURL = prefix + page + ".html";
   const url = new URL(baseURL);
 
-  params["embedded"] = true;
-  
-  Object.keys(params).forEach(key => {
-    url.searchParams.append(key, params[key]);
+  var neededParams = ["embedded"];
+  if (config["page"] == "state") {
+    moreParams = ["section", "showHeader"];
+    neededParams.push(...moreParams);
+  }
+  if (config["page"] == "race-embed") {
+    moreParams = ["stateAbbrev", "race", "showHeader"];
+    neededParams.push(...moreParams);
+  }
+  neededParams.forEach(key => {
+    url.searchParams.append(key, config["params"][key]);
   });
+
   return url.toString();
 };
 
-const createEmbed = function (page, config) {
+const createId = function (config) {
+  var id = "";
+  if (config["page"] == "state") {
+    id = config["params"]["stateAbbrev"] + "-" + config["params"]["section"];
+  } else if (config["page"] == "race-embed") {
+    id = config["params"]["stateAbbrev"] + "-" + config["params"]["race"];
+  } else {
+    id = config["page"];
+  }
+
+  return id;
+};
+
+// Special embed handlers
+const handleSpecialEmbed = function(page, params = {}) {
+  if (page === 'presidentMaps') {
+    const selectedOptions = getSelectedCheckboxValues('presidentOptions');
+    return {
+      ...params,
+      options: selectedOptions.join(',')
+    };
+  } else if (page === 'bop') {
+    const selectedRaces = getSelectedCheckboxValues('checkboxSection');
+    return {
+      ...params,
+      races: selectedRaces.join(',') || 'senate' // Default to senate if nothing selected
+    };
+  }
+  return params;
+}
+
+const createEmbed = function (config) {
   var form = $.one("form");
   var preview = $.one("side-chain");
   var embedPym = $.one("textarea#pym");
   var embedSidechain = $.one("textarea#sidechain");
   var prefix = "localhost:8000/";
-  var formData = {};
-  $("select, input", form).forEach(function (input) {
-    var name = input.name;
-    if (input.type == "checkbox") {
-      formData[name] = input.checked;
-    } else {
-      formData[name] = input.value;
-    }
-  });
-  var url = createURL(page, config);
+
+  let params = config.params || {};
+  if (config.page === 'presidentMaps' || config.page === 'bop') {
+    params = handleSpecialEmbed(config.page, params);
+  }
+
+  var url = createURL(config);
+  var id = createId(config);
 
   var embedPymHTML = `<p
   data-pym-loader
   data-child-src="${url.toString()}"
-  id="responsive-embed-${page}">
+  id="responsive-embed-${id}">
     Loading...
 </p>
 <script src="https://pym.nprapps.org/npr-pym-loader.v2.min.js"></script>`;
@@ -64,92 +157,20 @@ const createEmbed = function (page, config) {
   preview.setAttribute("src", url.toString().replace(prefix, ""));
 };
 
-const createPresidentEmbed = function(config = {}) {
-  var optionsSection = document.getElementById('presidentOptions');
-  var checkboxes = optionsSection.querySelectorAll('input[type="checkbox"]');
-  var selectedOptions = [];
-  
-  checkboxes.forEach(checkbox => {
-    if (checkbox.checked) {
-      selectedOptions.push(checkbox.value);
-    }
-  });
+const createPresidentEmbed = function() {
+  customizerState.params = handleSpecialEmbed('presidentMaps', customizerState.params);
+  createEmbed(customizerState);
+};
 
-  config.options = selectedOptions.join(',');
-  
-  createEmbed('presidentMaps', config);
+const createBOPEmbed = function() {
+  customizerState.params = handleSpecialEmbed('bop', customizerState.params);
+  createEmbed(customizerState);
 };
 
 
-const createBOPEmbed = function(config = {}) {
-  var checkboxSection = document.getElementById('checkboxSection');
-  var checkboxes = checkboxSection.querySelectorAll('input[type="checkbox"]');
-  var selectedRaces = [];
-  var components = [];
-  
-  // Gather all checked values
-  checkboxes.forEach(checkbox => {
-    if (checkbox.checked) {
-      selectedRaces.push(checkbox.value);
-    }
-  });
-
-  // Add selected races to config
-  config.races = selectedRaces.join(',');
-  
-
-
-  // Join all components
-  var template = components.join('\n');
-  
-  // If no checkboxes are selected, default to senate
-  if (!template) {
-    template = `<div class="bop-wrapper">
-      <balance-of-power-combined race="senate"></balance-of-power-combined>
-    </div>`;
-  }
-
-  // Create the embed code versions
-  var embedPym = $.one("textarea#pym");
-  var embedSidechain = $.one("textarea#sidechain");
-  var preview = $.one("side-chain");
-
-   // Create URL with selected options
-   var url = createURL('bop', config);
-  
-  // Create Pym embed code
-  var embedPymHTML = `<p
-    data-pym-loader
-    data-child-src="${url.toString()}"
-    id="responsive-embed-bop">
-      Loading...
-  </p>
-  <script src="https://pym.nprapps.org/npr-pym-loader.v2.min.js"></script>`;
-  
-  embedPym.innerHTML = embedPymHTML
-    .replace(/</g, "&lt;")
-    .replace(/[\n\s]+/g, " ");
-  
-  // Create Sidechain embed code
-  var embedSidechainHTML = `<side-chain src="${url.toString()}"></side-chain>
-    <script src="${PROJECT_URL}sidechain.js"></script>`;
-  
-  embedSidechain.innerHTML = embedSidechainHTML
-    .replace(/</g, "&lt;")
-    .replace(/[\n\s]+/g, " ");
-  
-  // Update preview
-  preview.setAttribute("src", url.toString().replace("localhost:8000/", ""));
-
-  console.log(template)
-  
-  return template;
-};
-
-
-
-const updateStateRaces = function (selectedState, stateRaceSelect) {
-  fetch("data/states/" + selectedState + ".json")
+const buildSections = function () {
+  var state = customizerState["params"]["stateAbbrev"];
+  fetch("data/states/" + state + ".json")
     .then(response => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -165,59 +186,111 @@ const updateStateRaces = function (selectedState, stateRaceSelect) {
       if (data.results.filter(d => d.office === "S").length > 0) {
         sections.push("senate,S");
       }
-      if (key != "DC") {
+      if (state != "DC") {
         sections.push("house,H");
       }
       if (data.results.filter(d => d.office === "I").length > 0) {
         sections.push("ballot-measures,I");
       }
 
-      stateRaceSelect.innerHTML = "";
+      stateSectionDropdown.innerHTML = "";
 
       sections.forEach(section => {
         var sectionItem = document.createElement("option");
         sectionItem.value = section.split(",")[1];
         sectionItem.textContent = section.split(",")[0];
 
-        stateRaceSelect.appendChild(sectionItem);
-      })
-
-      handleStateRace(stateRaceSelect.value)
+        stateSectionDropdown.appendChild(sectionItem);
+      });
     });
 };
 
-window.handleStateHeader = function() {
-var options = {"race": stateRaceSelect.value}
-showHeader = document.getElementById('stateHeaderTrue').checked;
+const buildRaces = function () {
+  var state = customizerState["params"]["stateAbbrev"];
+  fetch("data/states/" + state + ".json")
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json(); // Parse the JSON data
+    })
+    .then(data => {
+      const listOfStateRaces = data.results.map(race => ({
+        id: race.id,
+        office: race.office,
+        seat: race.seat,
+        keyRace: race.keyRace,
+      }));
 
-if (!showHeader) {
-  options["showHeader"] = false
-}
+      const raceTypeLookup = {
+        P: "President",
+        G: "Governor",
+        S: "Senate",
+        H: "House",
+        I: "Ballot Measure",
+      };
 
-createEmbed(classify(stateSelect.value.split(",")[1]), options)
-}
+      stateRaceDropdown.innerHTML = "";
 
-window.handleStateRace = function (race) {
-  state = stateSelect.value.split(",")[1];
+      listOfStateRaces.forEach(race => {
+        raceOffice = raceTypeLookup[race.office];
+        raceName = raceOffice;
+        if (race.office == "H" || race.office == "I") {
+          raceName += " " + race.seat;
+        }
 
-  handleStateHeader();
+        var sectionItem = document.createElement("option");
+        sectionItem.value = race.id;
+        sectionItem.textContent = raceName;
+
+        stateRaceDropdown.appendChild(sectionItem);
+      });
+    });
 };
 
-window.handleState = function (state = "MO,Missouri") {
-  stateSelect.value = state;
-  var selectedState = state.split(",")[0];
+const updateView = function () {
+  var page = customizerState["page"];
+  var params = customizerState["params"];
 
-  updateStateRaces(selectedState, stateRaceSelect);
+  if (page == "state") {
+    stateConfigOptions.classList.remove("hidden");
+    $.one("#stateSectionContain").classList.remove("hidden");
+    $.one("#stateRaceContain").classList.add("hidden");
+    checkboxSection.classList.add("hidden");
+    presidentOptions.classList.add("hidden");
+    buildSections();
+  } else if (page == "race-embed") {
+    stateConfigOptions.classList.remove("hidden");
+    $.one("#stateSectionContain").classList.add("hidden");
+    $.one("#stateRaceContain").classList.remove("hidden");
+    checkboxSection.classList.add("hidden");
+    presidentOptions.classList.add("hidden");
+    buildRaces();
+  } else if (page === "bop") {
+    checkboxSection.classList.remove("hidden");
+    stateConfig.classList.add("hidden");
+    presidentOptions.classList.add("hidden");
+    createBOPEmbed();
+    return;
+  } else if (page === "presidentMaps") {
+    presidentOptions.classList.remove("hidden");
+    stateConfig.classList.add("hidden");
+    checkboxSection.classList.add("hidden");
+    createPresidentEmbed();
+    return;
+  } else {
+    stateConfigOptions.classList.add("hidden");
+    checkboxSection.classList.add("hidden");
+    presidentOptions.classList.add("hidden");
+  }
+
+  createEmbed(customizerState);
 };
+
 
 window.handleSelection = function (option) {
   // Show the relevant section based on the selected option
-  if (option === "state") {
-    stateConfig.classList.remove("hidden");
-    checkboxSection.classList.add("hidden");
-    presidentOptions.classList.add("hidden");
-    handleState("MO,Missouri");
-  } else if (option === "bop") {
+  if (option === "bop") {
     checkboxSection.classList.remove("hidden");
     stateConfig.classList.add("hidden");
     presidentOptions.classList.add("hidden");
@@ -227,19 +300,55 @@ window.handleSelection = function (option) {
     stateConfig.classList.add("hidden");
     checkboxSection.classList.add("hidden");
     createPresidentEmbed();
-  } else {
-    presidentOptions.classList.add("hidden");
-    stateConfig.classList.add("hidden");
-    checkboxSection.classList.add("hidden");
-    createEmbed(option);
   }
 };
 
 window.onload = function () {
+  embedType = $("#embedType label input");
+  stateConfigOptions = $.one("#stateConfig");
+  stateSelectDropdown = $.one("#stateSelect");
+  stateSectionDropdown = $.one("#stateSectionSelect");
+  stateRaceDropdown = $.one("#stateRaceSelect");
+  stateHeaderCheckbox = $.one("#stateHeaderTrue");
+
+  embedType.forEach(el => {
+    el.addEventListener("change", () => {
+      if (!el.classList.contains('nestedCheckbox')) {
+        customizerState["page"] = el.value;
+        updateView();
+      } else {
+        console.log(el.value)
+      }
+    });
+  });
+
+  stateSelectDropdown.addEventListener("change", () => {
+    customizerState["params"]["stateName"] =
+      stateSelectDropdown.value.split(",")[1];
+    customizerState["params"]["stateAbbrev"] =
+      stateSelectDropdown.value.split(",")[0];
+    updateView();
+  });
+
+  stateSectionDropdown.addEventListener("change", () => {
+    customizerState["params"]["section"] = stateSectionDropdown.value;
+    createEmbed(customizerState);
+  });
+
+  stateRaceDropdown.addEventListener("change", () => {
+    customizerState["params"]["race"] = stateRaceDropdown.value;
+    createEmbed(customizerState);
+  });
+
+  stateHeaderCheckbox.addEventListener("change", () => {
+    customizerState["params"]["showHeader"] = stateHeaderCheckbox.checked;
+    createEmbed(customizerState);
+  });
+
   const dropdownSection = document.getElementById("stateConfig");
   const checkboxSection = document.getElementById("checkboxSection");
   const stateDropdown = document.getElementById("stateSelect");
   const raceDropdown = document.getElementById("stateRaceSelect");
   const presidentOptions = document.getElementById("presidentOptions");
-  createEmbed("president");
+  //createEmbed("president");
 };

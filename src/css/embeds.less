@@ -6,10 +6,6 @@ h1 {
     font-size: 24px;
 }
 
-#mcmullin_note {
-    margin: 0px;
-}
-
 #nav-list {
     width: 100%;
 
@@ -481,6 +477,10 @@ main.embed-bop {
         display: block;
     }
 
+    .bop-footer {
+      position: relative;
+    }
+
     .number-container {
         display: flex;
         justify-content: center;
@@ -559,6 +559,8 @@ main.embed-bop {
         background: #ddd;
         margin: 5px 0 10px;
         position: relative;
+        display: flex;
+        justify-content: space-between;
 
         .bar {
             height: 100%;
@@ -583,13 +585,10 @@ main.embed-bop {
 
             &.other {
                 background: @ind;
-                float: left;
 
-                path {
-                    fill: @ind;
-                }
+                path { fill: @ind; }
             }
-        }
+          }
 
         // .label {
         //   display: none;
@@ -673,6 +672,13 @@ main.embed-bop {
 
     .source {
         margin-top: 55px;
+    }
+
+    .footnote {
+      font-size: 11px;
+      font-style: italic;
+      color: #999;
+      margin-top: 5px;
     }
 }
 
@@ -1161,6 +1167,8 @@ main.embed-homepage {
         background: #ddd;
         margin: 5px 0 10px;
         position: relative;
+        display: flex;
+        justify-content: space-between;
 
         .bar {
             height: 100%;
@@ -1185,11 +1193,13 @@ main.embed-homepage {
 
             &.other {
                 background: @ind;
-                float: left;
 
                 path {
                     fill: @ind;
                 }
+
+                // &.dem { float: left; }
+                // &.gop { float: right; }
             }
         }
 

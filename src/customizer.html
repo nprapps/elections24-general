@@ -2,7 +2,6 @@
 var states = grunt.data.json.states;
 var races = grunt.data.json.races;
 
-console.log(races)
  %>
 
 <!DOCTYPE html>
@@ -27,52 +26,44 @@ console.log(races)
       <h2>Customize your embed</h2>
       <div id="formContainer">
         <form>
+          <div id="embedType">
           <label>
             <input
               type="radio"
               name="selection"
-              value="president"
-              onclick="handleSelection('president')"
+              value="index"
             />
             President
           </label>
-          <br />
           <label>
             <input
               type="radio"
               name="selection"
               value="governors"
-              onclick="handleSelection('governors')"
             />
             Governor
           </label>
-          <br />
           <label>
             <input
               type="radio"
               name="selection"
               value="senate"
-              onclick="handleSelection('senate')"
             />
             Senate
           </label>
-          <br />
           <label>
             <input
               type="radio"
               name="selection"
               value="house"
-              onclick="handleSelection('house')"
             />
             House
           </label>
-          <br />
           <label>
             <input
               type="radio"
               name="selection"
               value="state"
-              onclick="handleSelection('state')"
             />
             State Page
           </label>
@@ -80,8 +71,15 @@ console.log(races)
             <input
               type="radio"
               name="selection"
+              value="race-embed"
+            />
+            Individual state-level race
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="selection"
               value="bop"
-              onclick="handleSelection('bop')"
             />
             Balance of Power
           </label>
@@ -100,7 +98,7 @@ console.log(races)
           >
             <label
               >State:
-              <select id="stateSelect" onchange="handleState(this.value)">
+              <select id="stateSelect">
               <% Object.keys(states).forEach( state => { 
 
                 if (/^[A-Z]{2}$/.test(state)) {
@@ -111,14 +109,20 @@ console.log(races)
                 <option value="<%= state %>,<%= states[state]["name"] %>"><%= states[state]["name"] %></option>
                 <% }}) %>
               </select></label
-            ><br /><label
-              >Race:
-              <select id="stateRaceSelect" onchange="handleStateRace(this.value)">
+            ><div id="stateSectionContain"><br /><label
+              >Section:
+              <select id="stateSectionSelect">
               </select></label
-            ><br /><label
+            ></div><div id="stateRaceContain"><br /><label
+            >Race:
+            <select id="stateRaceSelect">
+            </select></label
+          ></div><br /><label
             >Show header?
-          <input type="checkbox" id="stateHeaderTrue" checked onchange="handleStateHeader()"/></label>
+          <input class="nestedCheckbox" type="checkbox" id="stateHeaderTrue" checked/></label>
           </div>
+        </form>
+        <form>
           <div
             id="checkboxSection"
             class="hidden"
@@ -129,6 +133,7 @@ console.log(races)
                 type="checkbox"
                 value="senate"
                 onchange="handleSelection('bop')"
+                class="nestedCheckbox"
               />Senate</label
             ><br /><label
               ><input
@@ -136,6 +141,7 @@ console.log(races)
                 type="checkbox"
                 value="house"
                 onchange="handleSelection('bop')"
+                class="nestedCheckbox"
               />House</label
             ><br /><label
               ><input
@@ -143,12 +149,14 @@ console.log(races)
                 type="checkbox"
                 value="president"
                 onchange="handleSelection('bop')"
+                class="nestedCheckbox"
               />President</label
             ><br /><label
               ><input
                 type="checkbox"
                 value="combined"
                 onchange="handleSelection('bop')"
+                class="nestedCheckbox"
               />
               Combined</label
           >
@@ -156,24 +164,29 @@ console.log(races)
           <div id="presidentOptions" class="hidden">
             <label>
               <input
+              checked 
                 type="checkbox"
                 value="national"
                 onchange="handleSelection('presidentMaps')"
+                class="nestedCheckbox"
               />National Map</label><br />
             <label>
               <input
+              checked 
                 type="checkbox"
                 value="cartogram"
                 onchange="handleSelection('presidentMaps')"
+                class="nestedCheckbox"
               />Electoral Map</label><br />
             <label>
               <input
+              checked 
                 type="checkbox"
                 value="bubbles"
                 onchange="handleSelection('presidentMaps')"
+                class="nestedCheckbox"
               />Margin Bubbles</label>
           </div>
-          
         </form>
       </div>
 

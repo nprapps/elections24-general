@@ -30,7 +30,7 @@
             const dataAttrs = options.map(opt => `data-${opt}`).join(' ');
 
             // Create component with data attributes if any are selected
-            const component = `<board-president${dataAttrs ? ' ' + dataAttrs : ''}></board-president>`;
+            const component = `<board-president${dataAttrs ? ' ' + dataAttrs : ''} data-hide-results></board-president>`;
 
             const container = document.getElementById('president-wrapper');
             if (container) {

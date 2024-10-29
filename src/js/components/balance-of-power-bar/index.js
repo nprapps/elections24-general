@@ -178,7 +178,7 @@ class BalanceOfPowerBar extends ElementBase {
         </div>
         <div class="bar-container">
           <div class="bar dem" style="width: ${this.president.Dem / 538 * 100}%"></div>
-          <div class="bar other" style="width: ${this.president.Other / 538 * 100}%"></div>
+          <div class="bar other" style="width: ${this.president.Other / 538 * 100}%; ${this.president.Other === 0 ? 'display: none;' : ''}"></div>
           <div class="bar gop" style="width: ${this.president.GOP / 538 * 100}%"></div>
           <div class="middle"></div>
         </div>
@@ -212,7 +212,7 @@ class BalanceOfPowerBar extends ElementBase {
         </div>
         <div class="bar-container">
           <div class="bar dem" style="width: ${this.house.Dem.total / 435 * 100}%"></div>
-          <div class="bar other" style="width: ${this.house.Ind.total / 435 * 100}%"></div>
+          <div class="bar other" style="width: ${this.house.Ind.total / 538 * 100}%; ${this.house.Ind.total === 0 ? 'display: none;' : ''}"></div>
           <div class="bar gop" style="width: ${this.house.GOP.total / 435 * 100}%"></div>
           <div class="middle"></div>
         </div>
