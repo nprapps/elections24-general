@@ -5,6 +5,7 @@ const states = require("../data/states.sheet.json");
  * @returns Object - State Config with updated timings
  *
  * For now, it doesn't have a way to add the returned data to the google sheet. Something to do in future
+ * Run this script using node/extras/get_ap_poll_hours.js
  */
 async function getData() {
   const url =
@@ -36,9 +37,11 @@ async function getData() {
       states[statePostal].notes = pollHours[i].notes ? pollHours[i].notes : "";
       states[statePostal].closingTime = lastPollClosingET;
     }
+    console.log({ states });
     return states;
   } catch (error) {
     console.error(error.message);
   }
 }
+
 getData();
