@@ -25,55 +25,103 @@ const createURL = function (page, params = {}) {
   return url.toString();
 };
 
-const getSelectedCheckboxValues = (sectionId) => {
-  const section = document.getElementById(sectionId);
-  const checkboxes = section.querySelectorAll('input[type="checkbox"]');
-  const selectedValues = [];
+const createEmbed = function (page, config) {
+  var form = $.one("form");
+  var preview = $.one("side-chain");
+  var embedPym = $.one("textarea#pym");
+  var embedSidechain = $.one("textarea#sidechain");
+  var prefix = "localhost:8000/";
+  var formData = {};
+  $("select, input", form).forEach(function (input) {
+    var name = input.name;
+    if (input.type == "checkbox") {
+      formData[name] = input.checked;
+    } else {
+      formData[name] = input.value;
+    }
+  });
+  var url = createURL(page, config);
+
+  var embedPymHTML = `<p
+  data-pym-loader
+  data-child-src="${url.toString()}"
+  id="responsive-embed-${page}">
+    Loading...
+</p>
+<script src="https://pym.nprapps.org/npr-pym-loader.v2.min.js"></script>`;
+  var embedPymHTML = embedPymHTML
+    .replace(/\</g, "&lt;")
+    .replace(/[\n\s]+/g, " ");
+  embedPym.innerHTML = embedPymHTML;
+
+  var embedSidechainHTML = `<side-chain src="${url.toString()}"></side-chain>
+  <script src="${PROJECT_URL}sidechain.js"></script>`;
+  embedSidechainHTML = embedSidechainHTML
+    .replace(/\</g, "&lt;")
+    .replace(/[\n\s]+/g, " ");
+  embedSidechain.innerHTML = embedSidechainHTML;
+
+  preview.setAttribute("src", url.toString().replace(prefix, ""));
+};
+
+const createPresidentEmbed = function(config = {}) {
+  var optionsSection = document.getElementById('presidentOptions');
+  var checkboxes = optionsSection.querySelectorAll('input[type="checkbox"]');
+  var selectedOptions = [];
   
   checkboxes.forEach(checkbox => {
     if (checkbox.checked) {
-      selectedValues.push(checkbox.value);
+      selectedOptions.push(checkbox.value);
     }
   });
+
+  config.options = selectedOptions.join(',');
   
-  return selectedValues;
+  createEmbed('presidentMaps', config);
 };
 
-// Enhanced createEmbed function that handles both president and BOP cases
-const createEmbed = function(page, config = {}) {
-  const form = $.one("form");
-  const preview = $.one("side-chain");
-  const embedPym = $.one("textarea#pym");
-  const embedSidechain = $.one("textarea#sidechain");
-  const prefix = "localhost:8000/";
+
+const createBOPEmbed = function(config = {}) {
+  var checkboxSection = document.getElementById('checkboxSection');
+  var checkboxes = checkboxSection.querySelectorAll('input[type="checkbox"]');
+  var selectedRaces = [];
+  var components = [];
   
-  // Handle checkbox selections based on page type
-  if (page === 'presidentMaps') {
-    const selectedOptions = getSelectedCheckboxValues('presidentOptions');
-    config.options = selectedOptions.join(',');
-  } else if (page === 'bop') {
-    const selectedRaces = getSelectedCheckboxValues('checkboxSection');
-    config.races = selectedRaces.join(',');
-    
-    // BOP-specific template handling
-    let template = '';
-    if (!selectedRaces.length) {
-      template = `<div class="bop-wrapper">
-        <balance-of-power-combined race="senate"></balance-of-power-combined>
-      </div>`;
+  // Gather all checked values
+  checkboxes.forEach(checkbox => {
+    if (checkbox.checked) {
+      selectedRaces.push(checkbox.value);
     }
-    
-    console.log(template);
+  });
+
+  // Add selected races to config
+  config.races = selectedRaces.join(',');
+  
+
+
+  // Join all components
+  var template = components.join('\n');
+  
+  // If no checkboxes are selected, default to senate
+  if (!template) {
+    template = `<div class="bop-wrapper">
+      <balance-of-power-combined race="senate"></balance-of-power-combined>
+    </div>`;
   }
 
-  // Create URL and embed codes
-  const url = createURL(page, config);
+  // Create the embed code versions
+  var embedPym = $.one("textarea#pym");
+  var embedSidechain = $.one("textarea#sidechain");
+  var preview = $.one("side-chain");
+
+   // Create URL with selected options
+   var url = createURL('bop', config);
   
-  // Generate Pym embed code
-  const embedPymHTML = `<p
+  // Create Pym embed code
+  var embedPymHTML = `<p
     data-pym-loader
     data-child-src="${url.toString()}"
-    id="responsive-embed-${page}">
+    id="responsive-embed-bop">
       Loading...
   </p>
   <script src="https://pym.nprapps.org/npr-pym-loader.v2.min.js"></script>`;
@@ -82,8 +130,8 @@ const createEmbed = function(page, config = {}) {
     .replace(/</g, "&lt;")
     .replace(/[\n\s]+/g, " ");
   
-  // Generate Sidechain embed code
-  const embedSidechainHTML = `<side-chain src="${url.toString()}"></side-chain>
+  // Create Sidechain embed code
+  var embedSidechainHTML = `<side-chain src="${url.toString()}"></side-chain>
     <script src="${PROJECT_URL}sidechain.js"></script>`;
   
   embedSidechain.innerHTML = embedSidechainHTML
@@ -91,21 +139,11 @@ const createEmbed = function(page, config = {}) {
     .replace(/[\n\s]+/g, " ");
   
   // Update preview
-  preview.setAttribute("src", url.toString().replace(prefix, ""));
+  preview.setAttribute("src", url.toString().replace("localhost:8000/", ""));
+
+  console.log(template)
   
-  // Return template for BOP case
-  if (page === 'bop') {
-    return template;
-  }
-};
-
-// Simplified wrapper functions
-const createPresidentEmbed = function(config = {}) {
-  return createEmbed('presidentMaps', config);
-};
-
-const createBOPEmbed = function(config = {}) {
-  return createEmbed('bop', config);
+  return template;
 };
 
 
