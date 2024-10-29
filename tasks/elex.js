@@ -65,7 +65,16 @@ module.exports = function (grunt) {
     }
 
     // turn AP into normalized race objects
-    const results = normalize(rawResults, grunt.data.json);
+    const normalizedResults = normalize(rawResults, grunt.data.json);
+    //AP returns county level data for both AK/DC when they both don't have counties (😕 I know)
+    //Here we are filtering out the data if it's not state level for both these states
+    let results = normalizedResults.filter(
+      (result) =>
+        !(
+          (result.state == "DC" || result.state == "AK") &&
+          result.level == "county"
+        )
+    );
 
     grunt.log.writeln("Merging in external data...");
     augment(results, grunt.data);
@@ -169,7 +178,7 @@ module.exports = function (grunt) {
         winner: r.winnerParty,
         electoral: r.electoral,
         previous: r.previousParty,
-        caucusWith: r.caucusWith
+        caucusWith: r.caucusWith,
       };
     };
 
