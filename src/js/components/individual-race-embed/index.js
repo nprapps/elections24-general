@@ -10,6 +10,9 @@ class IndividualRaceEmbed extends ElementBase {
   }
 
   connectedCallback() {
+    this.race = this.getAttribute("race");
+    this.state = this.getAttribute("state");
+
     gopher.watch("./data/states/" + this.getAttribute("state") + ".json", this.loadData);
   }
 

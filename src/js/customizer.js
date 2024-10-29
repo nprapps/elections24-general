@@ -2,17 +2,6 @@ require("async");
 var $ = require("./lib/qsa");
 require("@nprapps/sidechain");
 
-let customizerState = {
-  page: "governors",
-  params: {
-    embedded: true,
-  },
-};
-let stateConfigOptions,
-  stateSelectDropdown,
-  stateSectionDropdown,
-  stateHeaderCheckbox;
-
 const classify = function (str) {
   return (str + "")
     .toLowerCase()
@@ -23,40 +12,83 @@ const classify = function (str) {
     .replace(/-+$/, ""); // Trim - from end of text
 };
 
-const createURL = function (page, params = {}) {
+let customizerState = {
+  page: "index",
+  params: {
+    embedded: true,
+    stateName: "Missouri",
+    stateAbbrev: "MO",
+    section: "key-races",
+    showHeader: true
+  },
+};
+
+let embedType,
+  stateConfigOptions,
+  stateSelectDropdown,
+  stateSectionDropdown,
+  stateRaceDropdown,
+  stateHeaderCheckbox;
+
+const createURL = function (config) {
   var prefix = "localhost:8000/";
+  var page = config["page"];
+
+  if (page == "state") {
+    page = classify(config["params"]["stateName"]);
+  }
+
   var baseURL = prefix + page + ".html";
   const url = new URL(baseURL);
 
-  Object.keys(params).forEach(key => {
-    url.searchParams.append(key, params[key]);
+  var neededParams = ["embedded"];
+  if (config["page"] == "state") {
+    moreParams = ["section", "showHeader"]
+    neededParams.push(...moreParams);
+  }
+  if (config["page"] == "race-embed") {
+    moreParams = ["stateAbbrev", "race", "showHeader"]
+    neededParams.push(...moreParams);
+  }
+  neededParams.forEach(key => {
+    url.searchParams.append(key, config["params"][key]);
   });
 
-  console.log(url.toString());
   return url.toString();
 };
 
-const createEmbed = function (page, config) {
+const createId = function (config) {
+  var id = "";
+  if (config["page"] == "state") {
+    id =
+      config["params"]["stateAbbrev"] +
+      "-" +
+      config["params"]["section"];
+  } else if (config["page"] == "individual") {
+    id =
+      config["params"]["stateAbbrev"] +
+      "-" +
+      config["params"]["race"];
+  } else {
+    id = config["page"];
+  }
+  return id;
+};
+
+const createEmbed = function (config) {
   var form = $.one("form");
   var preview = $.one("side-chain");
   var embedPym = $.one("textarea#pym");
   var embedSidechain = $.one("textarea#sidechain");
   var prefix = "localhost:8000/";
-  var formData = {};
-  $("select, input", form).forEach(function (input) {
-    var name = input.name;
-    if (input.type == "checkbox") {
-      formData[name] = input.checked;
-    } else {
-      formData[name] = input.value;
-    }
-  });
-  var url = createURL(page, config);
+
+  var url = createURL(config);
+  var id = createId(config);
 
   var embedPymHTML = `<p
   data-pym-loader
   data-child-src="${url.toString()}"
-  id="responsive-embed-${page}">
+  id="responsive-embed-${id}">
     Loading...
 </p>
 <script src="https://pym.nprapps.org/npr-pym-loader.v2.min.js"></script>`;
@@ -75,12 +107,9 @@ const createEmbed = function (page, config) {
   preview.setAttribute("src", url.toString().replace(prefix, ""));
 };
 
-const updateEmbed = function () {
-  createEmbed(customizerState["page"], customizerState["params"]);
-};
-
-const updateStateSection = function (selectedState) {
-  fetch("data/states/" + selectedState + ".json")
+const buildSections = function () {
+  var state = customizerState["params"]["stateAbbrev"];
+  fetch("data/states/" + state + ".json")
     .then(response => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -96,7 +125,7 @@ const updateStateSection = function (selectedState) {
       if (data.results.filter(d => d.office === "S").length > 0) {
         sections.push("senate,S");
       }
-      if (selectedState != "DC") {
+      if (state != "DC") {
         sections.push("house,H");
       }
       if (data.results.filter(d => d.office === "I").length > 0) {
@@ -111,36 +140,13 @@ const updateStateSection = function (selectedState) {
         sectionItem.textContent = section.split(",")[0];
 
         stateSectionDropdown.appendChild(sectionItem);
-        stateSectionDropdown.addEventListener("change", function () {
-          console.log(stateSectionDropdown.value);
-          customizerState["params"]["section"] = stateSectionDropdown.value;
-          updateEmbed();
-        });
       });
     });
 };
 
-const handleStatewide = function () {
-  updateStateSection(stateSelectDropdown.value.split(",")[0]);
-
-  stateSelectDropdown.addEventListener("change", function () {
-    updateStateSection(stateSelectDropdown.value.split(",")[0]);
-    customizerState["page"] = classify(stateSelectDropdown.value.split(",")[1]);
-    updateEmbed();
-  });
-
-  stateHeaderCheckbox.addEventListener("change", function () {
-    if (!stateHeaderCheckbox.checked) {
-      customizerState["params"]["showHeader"] = false;
-    } else {
-      delete customizerState["params"]["showHeader"];
-    }
-    updateEmbed();
-  });
-};
-
-const updateStatesingleRaces = function (selectedState) {
-  fetch("data/states/" + selectedState + ".json")
+const buildRaces = function () {
+  var state = customizerState["params"]["stateAbbrev"];
+  fetch("data/states/" + state + ".json")
     .then(response => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -148,7 +154,7 @@ const updateStatesingleRaces = function (selectedState) {
       return response.json(); // Parse the JSON data
     })
     .then(data => {
-      const listOfCountyRaces = data.results.map(race => ({
+      const listOfStateRaces = data.results.map(race => ({
         id: race.id,
         office: race.office,
         seat: race.seat,
@@ -163,85 +169,78 @@ const updateStatesingleRaces = function (selectedState) {
         I: "Ballot Measure",
       };
 
-      stateSectionDropdown.innerHTML = "";
+      stateRaceDropdown.innerHTML = "";
 
-      listOfCountyRaces.forEach(race => {
+      listOfStateRaces.forEach(race => {
         raceOffice = raceTypeLookup[race.office];
         raceName = raceOffice;
         if (race.office == "H" || race.office == "I") {
-          raceName += " " + race.seat
+          raceName += " " + race.seat;
         }
 
         var sectionItem = document.createElement("option");
         sectionItem.value = race.id;
         sectionItem.textContent = raceName;
 
-        stateSectionDropdown.appendChild(sectionItem);
-      });
-
-      stateSectionDropdown.addEventListener("change", function () {
-        customizerState["params"]["race"] = stateSectionDropdown.value;
-        console.log(stateSectionDropdown.value)
-        updateEmbed();
+        stateRaceDropdown.appendChild(sectionItem);
       });
     });
 };
 
-const handleStatesingle = function () {
-  updateStatesingleRaces(stateSelectDropdown.value.split(",")[0]);
+const updateView = function () {
+  var page = customizerState["page"];
+  var params = customizerState["params"];
 
-  stateSelectDropdown.addEventListener("change", function () {
-    updateStateSection(stateSelectDropdown.value.split(",")[0]);
-    customizerState["page"] = classify(stateSelectDropdown.value.split(",")[1]);
-    updateEmbed();
-  });
-
-  stateHeaderCheckbox.addEventListener("change", function () {
-    if (!stateHeaderCheckbox.checked) {
-      customizerState["params"]["showHeader"] = false;
-    } else {
-      delete customizerState["params"]["showHeader"];
-    }
-    updateEmbed();
-  });
-};
-
-const handleTopLevel = function (embedType) {
-  let plainEmbeds = ["president", "governors", "senate", "house"];
-  if (plainEmbeds.includes(embedType)) {
-    customizerState["page"] = embedType;
+  if (page == "state") {
+    stateConfigOptions.classList.remove("hidden");
+    $.one("#stateSectionContain").classList.remove("hidden");
+    $.one("#stateRaceContain").classList.add("hidden");
+    buildSections();
+  } else if (page == "race-embed") {
+    stateConfigOptions.classList.remove("hidden");
+    $.one("#stateSectionContain").classList.add("hidden");
+    $.one("#stateRaceContain").classList.remove("hidden");
+    buildRaces();
+  } else {
     stateConfigOptions.classList.add("hidden");
-  } else if (embedType == "state") {
-    stateConfigOptions.classList.remove("hidden");
-    stateSelectDropdown.value = "MO,Missouri";
-    customizerState["page"] = classify(stateSelectDropdown.value.split(",")[1]);
-    customizerState["params"]["section"] = "key-races";
-
-    handleStatewide();
-  } else if (embedType == "individual") {
-    stateConfigOptions.classList.remove("hidden");
-    stateSelectDropdown.value = "MO,Missouri";
-    customizerState["page"] = "embeds/embed";
-    customizerState["params"]["state"] = "MO";
-    customizerState["params"]["race"] = "26795";
-
-    handleStatesingle();
   }
+
+  createEmbed(customizerState);
 };
 
 window.onload = function () {
-  const topLevel = $("#topLevel label input");
+  embedType = $("#embedType label input");
   stateConfigOptions = $.one("#stateConfig");
   stateSelectDropdown = $.one("#stateSelect");
   stateSectionDropdown = $.one("#stateSectionSelect");
+  stateRaceDropdown = $.one("#stateRaceSelect");
   stateHeaderCheckbox = $.one("#stateHeaderTrue");
 
-  topLevel.forEach(el => {
-    el.addEventListener("change", function () {
-      handleTopLevel(el.value);
-      updateEmbed();
+  embedType.forEach(el => {
+    el.addEventListener("change", () => {
+      customizerState["page"] = el.value;
+      updateView();
     });
   });
 
-  updateEmbed();
+  stateSelectDropdown.addEventListener("change", () => {
+    customizerState["params"]["stateName"] = stateSelectDropdown.value.split(",")[1];
+    customizerState["params"]["stateAbbrev"] = stateSelectDropdown.value.split(",")[0];
+    updateView();
+  });
+
+  stateSectionDropdown.addEventListener("change", () => {
+    customizerState["params"]["section"] = stateSectionDropdown.value;
+    createEmbed(customizerState);
+  });
+
+  stateRaceDropdown.addEventListener("change", () => {
+    customizerState["params"]["race"] = stateRaceDropdown.value;
+    createEmbed(customizerState);
+  });
+
+  stateHeaderCheckbox.addEventListener("change", () => {
+    customizerState["params"]["showHeader"] = stateHeaderCheckbox.checked;
+    createEmbed(customizerState);
+  });
 };
