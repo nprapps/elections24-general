@@ -141,16 +141,14 @@ const createEmbed = function (config) {
 </p>
 <script src="https://pym.nprapps.org/npr-pym-loader.v2.min.js"></script>`;
   var embedPymHTML = embedPymHTML
-    .replace(/\</g, "&lt;")
     .replace(/[\n\s]+/g, " ");
-  embedPym.innerHTML = embedPymHTML;
+  embedPym.textContent = embedPymHTML;
 
   var embedSidechainHTML = `<side-chain src="${url.toString()}"></side-chain>
   <script src="${PROJECT_URL}sidechain.js"></script>`;
   embedSidechainHTML = embedSidechainHTML
-    .replace(/\</g, "&lt;")
     .replace(/[\n\s]+/g, " ");
-  embedSidechain.innerHTML = embedSidechainHTML;
+  embedSidechain.textContent = embedSidechainHTML;
 
   preview.setAttribute("src", url.toString().replace(prefix, ""));
 };
