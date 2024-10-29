@@ -52,6 +52,10 @@ class StatePageResults extends ElementBase {
 
     const results = this.data.results;
     let template = "";
+    const electoral = results
+      .filter(d => d.office === "P")
+      .map(obj => obj.electoral)
+      .reduce((accumulator, current) => accumulator + current, 0);
 
     this.sections.forEach(section => {
       let sectionHTML = "";
@@ -77,7 +81,7 @@ class StatePageResults extends ElementBase {
           }" races='${JSON.stringify(races).replace(
             /'/g,
             "&#39;"
-          )}' key-races-only></results-collection>
+          )}' key-races-only electoral=${electoral}></results-collection>
           `;
         });
         sectionHTML += "</section>";
@@ -101,7 +105,8 @@ class StatePageResults extends ElementBase {
           }" races='${JSON.stringify(races).replace(
             /'/g,
             "&#39;"
-          )}'></results-collection>
+          )}' electoral=${electoral} 
+          ></results-collection>
               <h3 class="section-hed">Presidential results by county</h3>
               <county-map state="${this.state}"></county-map>
               <county-dataviz state="${this.state}"></county-dataviz>

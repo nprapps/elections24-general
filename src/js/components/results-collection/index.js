@@ -24,11 +24,25 @@ class ResultsCollection extends ElementBase {
     }
     let template = "";
 
-    template += `<h3 class="section-hed dotted-line"><span>${headers[this.getAttribute('office')]}</span></h3>`;
+    template += `
+      <h3 class="section-hed dotted-line">
+        <span>${headers[this.getAttribute('office')]}</span>
+      </h3>
+    `;
+
+    if (this.getAttribute('office') === "P") {
+      template += `
+        <p>${this.getAttribute("electoral")} electoral votes</p>
+        <a href="">County-level results</a>
+      `
+    }
 
     this.races.forEach(race => {
       let table = `
-        <results-table state="${this.getAttribute("state")}" result='${JSON.stringify(race).replace(/'/g, "&#39;")}'></results-table>
+        <results-table 
+          state="${this.getAttribute("state")}" 
+          result='${JSON.stringify(race).replace(/'/g, "&#39;")}'>
+        </results-table>
       `
       template += table;
     });
