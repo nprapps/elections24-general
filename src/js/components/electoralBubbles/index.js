@@ -1,7 +1,7 @@
 
 const ElementBase = require("../elementBase");
 
-import { reportingPercentage, winnerIcon } from "../util.js";
+import { classify, reportingPercentage, statePostalToFull, winnerIcon } from "../util.js";
 import track from "../../lib/tracking";
 import gopher from "../gopher.js";
 import stateSheet from "../../../../data/states.sheet.json";
@@ -253,7 +253,8 @@ class ElectoralBubbles extends ElementBase {
 
   goToState(state) {
     track("clicked-bubble", state);
-    window.location.href = `#/states/${state}/P`;
+    var stateFull = statePostalToFull(state);
+    window.location.href = `${ classify(stateFull) }.html?section=P`;
   }
 
   onMove(e) {

@@ -164,8 +164,6 @@ class ResultsBoard extends ElementBase {
                         var stateDetail = this.states[r.state] || {};
 
                         if (this.office === 'President') {
-                            console.log(classify(r.stateName));
-
                             // Presidential race case
                             return `
                                 <tr key="${r.state}${r.district}" role="row" class="${hasResult ? "closed" : "open"} index-${i}">
