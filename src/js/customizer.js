@@ -30,9 +30,41 @@ let embedType,
   stateRaceDropdown,
   stateHeaderCheckbox;
 
+  const getSelectedCheckboxValues = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    const checkboxes = section.querySelectorAll('input[type="checkbox"]');
+    const selectedValues = [];
+    
+    checkboxes.forEach(checkbox => {
+      if (checkbox.checked) {
+        selectedValues.push(checkbox.value);
+      }
+    });
+    
+    return selectedValues;
+  };
+  
+
 const createURL = function (config) {
   var prefix = "localhost:8000/";
   var page = config["page"];
+
+  if (page === 'bop' || page === 'presidentMaps') {
+    var baseURL = prefix + page + ".html";
+    const url = new URL(baseURL);
+    url.searchParams.append('embedded', 'true');
+    
+    // Add any additional parameters
+    if (config.params) {
+      Object.keys(config.params).forEach(key => {
+        if (key !== 'embedded' && config.params[key] !== undefined) {
+          url.searchParams.append(key, config.params[key]);
+        }
+      });
+    }
+    
+    return url.toString();
+  }
 
   if (page == "state") {
     page = classify(config["params"]["stateName"]);
@@ -70,12 +102,35 @@ const createId = function (config) {
   return id;
 };
 
+// Special embed handlers
+const handleSpecialEmbed = function(page, params = {}) {
+  if (page === 'presidentMaps') {
+    const selectedOptions = getSelectedCheckboxValues('presidentOptions');
+    return {
+      ...params,
+      options: selectedOptions.join(',')
+    };
+  } else if (page === 'bop') {
+    const selectedRaces = getSelectedCheckboxValues('checkboxSection');
+    return {
+      ...params,
+      races: selectedRaces.join(',') || 'senate' // Default to senate if nothing selected
+    };
+  }
+  return params;
+}
+
 const createEmbed = function (config) {
   var form = $.one("form");
   var preview = $.one("side-chain");
   var embedPym = $.one("textarea#pym");
   var embedSidechain = $.one("textarea#sidechain");
   var prefix = "localhost:8000/";
+
+  let params = config.params || {};
+  if (config.page === 'presidentMaps' || config.page === 'bop') {
+    params = handleSpecialEmbed(config.page, params);
+  }
 
   var url = createURL(config);
   var id = createId(config);
@@ -101,6 +156,17 @@ const createEmbed = function (config) {
 
   preview.setAttribute("src", url.toString().replace(prefix, ""));
 };
+
+const createPresidentEmbed = function() {
+  customizerState.params = handleSpecialEmbed('presidentMaps', customizerState.params);
+  createEmbed(customizerState);
+};
+
+const createBOPEmbed = function() {
+  customizerState.params = handleSpecialEmbed('bop', customizerState.params);
+  createEmbed(customizerState);
+};
+
 
 const buildSections = function () {
   var state = customizerState["params"]["stateAbbrev"];
@@ -190,17 +256,51 @@ const updateView = function () {
     stateConfigOptions.classList.remove("hidden");
     $.one("#stateSectionContain").classList.remove("hidden");
     $.one("#stateRaceContain").classList.add("hidden");
+    checkboxSection.classList.add("hidden");
+    presidentOptions.classList.add("hidden");
     buildSections();
   } else if (page == "race-embed") {
     stateConfigOptions.classList.remove("hidden");
     $.one("#stateSectionContain").classList.add("hidden");
     $.one("#stateRaceContain").classList.remove("hidden");
+    checkboxSection.classList.add("hidden");
+    presidentOptions.classList.add("hidden");
     buildRaces();
+  } else if (page === "bop") {
+    checkboxSection.classList.remove("hidden");
+    stateConfig.classList.add("hidden");
+    presidentOptions.classList.add("hidden");
+    createBOPEmbed();
+    return;
+  } else if (page === "presidentMaps") {
+    presidentOptions.classList.remove("hidden");
+    stateConfig.classList.add("hidden");
+    checkboxSection.classList.add("hidden");
+    createPresidentEmbed();
+    return;
   } else {
     stateConfigOptions.classList.add("hidden");
+    checkboxSection.classList.add("hidden");
+    presidentOptions.classList.add("hidden");
   }
 
   createEmbed(customizerState);
+};
+
+
+window.handleSelection = function (option) {
+  // Show the relevant section based on the selected option
+  if (option === "bop") {
+    checkboxSection.classList.remove("hidden");
+    stateConfig.classList.add("hidden");
+    presidentOptions.classList.add("hidden");
+    createBOPEmbed();
+  } else if (option === "presidentMaps") {
+    presidentOptions.classList.remove("hidden");
+    stateConfig.classList.add("hidden");
+    checkboxSection.classList.add("hidden");
+    createPresidentEmbed();
+  }
 };
 
 window.onload = function () {
@@ -213,8 +313,12 @@ window.onload = function () {
 
   embedType.forEach(el => {
     el.addEventListener("change", () => {
-      customizerState["page"] = el.value;
-      updateView();
+      if (!el.classList.contains('nestedCheckbox')) {
+        customizerState["page"] = el.value;
+        updateView();
+      } else {
+        console.log(el.value)
+      }
     });
   });
 
@@ -240,4 +344,11 @@ window.onload = function () {
     customizerState["params"]["showHeader"] = stateHeaderCheckbox.checked;
     createEmbed(customizerState);
   });
+
+  const dropdownSection = document.getElementById("stateConfig");
+  const checkboxSection = document.getElementById("checkboxSection");
+  const stateDropdown = document.getElementById("stateSelect");
+  const raceDropdown = document.getElementById("stateRaceSelect");
+  const presidentOptions = document.getElementById("presidentOptions");
+  //createEmbed("president");
 };
