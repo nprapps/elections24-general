@@ -1,14 +1,13 @@
 <%
 var states = grunt.data.json.states;
 var races = grunt.data.json.races;
-
- %>
+%>
 
 <!DOCTYPE html>
 <html lang="en-US">
   <head>
     <%= t.include("partials/_head.html", grunt.data.json) %>
-    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <!-- <link rel="stylesheet" type="text/css" href="style.css"/> -->
     <link rel="stylesheet" type="text/css" href="customizer.css"/>
 
     <script src="customizer.js"></script>
@@ -22,6 +21,18 @@ var races = grunt.data.json.races;
       );
     </script>
 
+
+    <nav class="results-nav">
+      <div class="results-logo">
+        <a href="https://www.npr.org/sections/elections/">
+          <img src="assets/elections-2024-logo-color-horizontal.svg" alt="2024 Elections" />
+        </a>
+        <hr aria-hidden="true" />
+        <a href="https://npr.org"><img src="./assets/logo.svg" alt="NPR" /></a>
+      </div>
+    </nav>
+    
+    
     <main class="customizer">
       <h2>Customize your embed</h2>
       <div id="formContainer">
@@ -110,7 +121,7 @@ var races = grunt.data.json.races;
                 <% }}) %>
               </select></label
             ><div id="stateSectionContain"><br /><label
-              >Section:
+              >Default section:
               <select id="stateSectionSelect">
               </select></label
             ></div><div id="stateRaceContain"><br /><label
@@ -118,8 +129,8 @@ var races = grunt.data.json.races;
             <select id="stateRaceSelect">
             </select></label
           ></div><br /><label
-            >Show header?
-          <input class="nestedCheckbox"type="checkbox" id="stateHeaderTrue" checked/></label>
+            >Show state header?
+          <input class="nestedCheckbox" type="checkbox" id="stateHeaderTrue" checked/></label>
           </div>
         </form>
         <form>
@@ -135,7 +146,7 @@ var races = grunt.data.json.races;
                 onchange="handleSelection('bop')"
                 class="nestedCheckbox"
               />Senate</label
-            ><br /><label
+            ><label
               ><input
               checked 
                 type="checkbox"
@@ -143,7 +154,7 @@ var races = grunt.data.json.races;
                 onchange="handleSelection('bop')"
                 class="nestedCheckbox"
               />House</label
-            ><br /><label
+            ><label
               ><input
               checked 
                 type="checkbox"
@@ -151,7 +162,7 @@ var races = grunt.data.json.races;
                 onchange="handleSelection('bop')"
                 class="nestedCheckbox"
               />President</label
-            ><br /><label
+            ><label
               ><input
                 type="checkbox"
                 value="combined"
@@ -170,7 +181,7 @@ var races = grunt.data.json.races;
                 value="national"
                 onchange="handleSelection('presidentMaps')"
                 class="nestedCheckbox"
-              />National Map</label><br />
+              />National Map</label>
             <label>
               <input
                 type="radio"
@@ -178,7 +189,7 @@ var races = grunt.data.json.races;
                 value="cartogram"
                 onchange="handleSelection('presidentMaps')"
                 class="nestedCheckbox"
-              />Electoral Map</label><br />
+              />Electoral Map</label>
             <label>
               <input
                 type="radio"
@@ -209,9 +220,11 @@ var races = grunt.data.json.races;
       <side-chain></side-chain>
     </main>
 
-      <script>
-        var PROJECT_URL = "<%= grunt.data.json.project.url %>";
-      </script>
-    </p>
+    <script>
+      var PROJECT_URL = "<%= grunt.data.json.project.url %>";
+      window.PROJECT_ANALYTICS = <%= JSON.stringify(json.project.analytics || {}) %>;
+    </script>
+
+    <%= t.include("partials/_analytics.html") %>
   </body>
 </html>
