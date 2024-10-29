@@ -22,6 +22,20 @@ class BoardPresident extends ElementBase {
     this.customElements = null;
     this.tabElementMap = null;
 
+
+    let initialSelectedTab = 0; 
+    if (this.hasAttribute("data-national")) {
+      initialSelectedTab = 0;
+  }
+  else if (this.hasAttribute("data-cartogram")) {
+      initialSelectedTab = 1;
+  } 
+  else if (this.hasAttribute("data-bubbles")) {
+      initialSelectedTab = 2;
+  }
+
+    this.initialSelectedTab = initialSelectedTab;
+
     this.cartogramButton = `
 <button role="tab" aria-controls="tab-1" aria-selected="false" data-tab="1">
   <inline-svg alt="" src="./assets/icons/ico-cartogram.svg" class="icon"><div class="inline-svg icon" role="img" alt=""><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 500">
@@ -233,7 +247,6 @@ Geography
     // Select all tab buttons and custom elements
     setTimeout(() => {
       this.tabButtons = this.querySelectorAll('.tabs [role="tab"]');
-      this.customElements = this.querySelectorAll('national-map, cartogram-map, electoral-bubbles');
 
       // Create an object to map tab indices to custom elements
       this.tabElementMap = {
@@ -242,32 +255,20 @@ Geography
         2: this.querySelector('electoral-bubbles')
       };
 
-      let initialSelectedTab = 0; // Default to national (index 0)
-
-      if (this.getAttribute("data-cartogram")) {
-        initialSelectedTab = 1;
-      } else if (this.getAttribute("data-bubbles")) {
-        initialSelectedTab = 2;
-      }
-
       // Attach click event listeners to all tab buttons
       this.tabButtons.forEach((tab, index) => {
         tab.addEventListener('click', () => this.updateTabSelection(tab));
       });
 
-      // Initialize the first tab as selected
+      // Initialize the selected tab as selected
       if (this.tabButtons.length > 0) {
-        this.updateTabSelection(this.tabButtons[0]);
+        this.updateTabSelection(this.tabButtons[this.initialSelectedTab]);
       }
-    }, 500);
+    }, 50);
   }
 
   updateTabSelection(clickedTab) {
 
-
-    console.log('--------')
-    console.log('this is running')
-    console.log('--------')
 
     // Deselect all tabs and hide all elements
     this.tabButtons.forEach(tab => {
