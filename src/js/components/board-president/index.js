@@ -242,6 +242,13 @@ Geography
         2: this.querySelector('electoral-bubbles')
       };
 
+      let initialSelectedTab = 0; // Default to national (index 0)
+
+      if (this.getAttribute("data-cartogram")) {
+        initialSelectedTab = 1;
+      } else if (this.getAttribute("data-bubbles")) {
+        initialSelectedTab = 2;
+      }
 
       // Attach click event listeners to all tab buttons
       this.tabButtons.forEach((tab, index) => {
@@ -256,6 +263,12 @@ Geography
   }
 
   updateTabSelection(clickedTab) {
+
+
+    console.log('--------')
+    console.log('this is running')
+    console.log('--------')
+
     // Deselect all tabs and hide all elements
     this.tabButtons.forEach(tab => {
       tab.setAttribute('aria-selected', 'false');
@@ -265,6 +278,8 @@ Geography
       }
     });
 
+    console.log(clickedTab)
+
     // Select clicked tab and show corresponding element
     clickedTab.setAttribute('aria-selected', 'true');
     const selectedTabIndex = clickedTab.getAttribute('data-tab');
@@ -273,7 +288,6 @@ Geography
       this.tabElementMap[selectedTabIndex].style.display = 'block';
     }
   }
-
 
 
   async loadData() {
@@ -321,18 +335,6 @@ Geography
       this.getAttribute("data-national") !== null ||
       this.getAttribute("data-bubbles") !== null;
 
-    let isCartogram = hasAnyDataAttribute ?
-      this.getAttribute("data-cartogram") !== null :
-      true;
-
-    let isNational = hasAnyDataAttribute ?
-      this.getAttribute("data-national") !== null :
-      true;
-
-    let isBubbles = hasAnyDataAttribute ?
-      this.getAttribute("data-bubbles") !== null :
-      true;
-
     let hideResultsBoard = hasAnyDataAttribute ?
       this.getAttribute("data-hide-results") !== null :
       false;
@@ -344,14 +346,14 @@ Geography
         <h1 tabindex="-1">Presidential Results</h1>       
         <leader-board called='${JSON.stringify(called)}'></leader-board>
         <div role="tablist" class="tabs">
-          ${isNational ? this.nationalButton : ''}
-          ${isCartogram ? this.cartogramButton : ''}
-          ${isBubbles ? this.bubblesButton : ''}
+          ${this.nationalButton}
+          ${this.cartogramButton}
+          ${this.bubblesButton}
         </div>
         <results-board-key race="president" simple="true"></results-board-key>
-        ${isNational ? '<national-map races="{results}"></national-map>' : ''}
-        ${isCartogram ? '<cartogram-map races="{results}"></cartogram-map>' : ''}
-        ${isBubbles ? '<electoral-bubbles results="{results}" races="{results}"></electoral-bubbles>' : ''}
+        <national-map races="{results}"></national-map>
+        <cartogram-map races="{results}"></cartogram-map>
+        <electoral-bubbles results="{results}" races="{results}"></electoral-bubbles>
         ${!hideResultsBoard ? `<results-board-display office="president" split="true" hed="Competitive"></results-board-display>` : ''}
       </div>
         ${!hideResultsBoard ? `<results-board-key race="president"></results-board-key> ` : ''};`;

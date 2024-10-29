@@ -32,18 +32,16 @@ let embedType,
 
   const getSelectedCheckboxValues = (sectionId) => {
     const section = document.getElementById(sectionId);
-    const checkboxes = section.querySelectorAll('input[type="checkbox"]');
-    const selectedValues = [];
-    
-    checkboxes.forEach(checkbox => {
-      if (checkbox.checked) {
-        selectedValues.push(checkbox.value);
-      }
-    });
-    
-    return selectedValues;
+    const inputType = section.querySelector('input')?.type || 'checkbox';
+
+    if (inputType === 'radio') {
+      const checkedRadio = section.querySelector('input[type="radio"]:checked');
+      return checkedRadio ? [checkedRadio.value] : [];
+    } else {
+    const checkedBoxes = section.querySelectorAll('input[type="checkbox"]:checked');
+    return Array.from(checkedBoxes).map(input => input.value);
+    }
   };
-  
 
 const createURL = function (config) {
   var prefix = "localhost:8000/";

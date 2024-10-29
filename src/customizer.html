@@ -119,7 +119,7 @@ var races = grunt.data.json.races;
             </select></label
           ></div><br /><label
             >Show header?
-          <input class="nestedCheckbox" type="checkbox" id="stateHeaderTrue" checked/></label>
+          <input class="nestedCheckbox"type="checkbox" id="stateHeaderTrue" checked/></label>
           </div>
         </form>
         <form>
@@ -164,24 +164,25 @@ var races = grunt.data.json.races;
           <div id="presidentOptions" class="hidden">
             <label>
               <input
-              checked 
-                type="checkbox"
+                checked 
+                type="radio"
+                name="presidentMaps"
                 value="national"
                 onchange="handleSelection('presidentMaps')"
                 class="nestedCheckbox"
               />National Map</label><br />
             <label>
               <input
-              checked 
-                type="checkbox"
+                type="radio"
+                name="presidentMaps"
                 value="cartogram"
                 onchange="handleSelection('presidentMaps')"
                 class="nestedCheckbox"
               />Electoral Map</label><br />
             <label>
               <input
-              checked 
-                type="checkbox"
+                type="radio"
+                name="presidentMaps"
                 value="bubbles"
                 onchange="handleSelection('presidentMaps')"
                 class="nestedCheckbox"
