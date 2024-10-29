@@ -19,7 +19,7 @@ let customizerState = {
     stateName: "Missouri",
     stateAbbrev: "MO",
     section: "key-races",
-    showHeader: true
+    showHeader: true,
   },
 };
 
@@ -43,11 +43,11 @@ const createURL = function (config) {
 
   var neededParams = ["embedded"];
   if (config["page"] == "state") {
-    moreParams = ["section", "showHeader"]
+    moreParams = ["section", "showHeader"];
     neededParams.push(...moreParams);
   }
   if (config["page"] == "race-embed") {
-    moreParams = ["stateAbbrev", "race", "showHeader"]
+    moreParams = ["stateAbbrev", "race", "showHeader"];
     neededParams.push(...moreParams);
   }
   neededParams.forEach(key => {
@@ -60,18 +60,13 @@ const createURL = function (config) {
 const createId = function (config) {
   var id = "";
   if (config["page"] == "state") {
-    id =
-      config["params"]["stateAbbrev"] +
-      "-" +
-      config["params"]["section"];
-  } else if (config["page"] == "individual") {
-    id =
-      config["params"]["stateAbbrev"] +
-      "-" +
-      config["params"]["race"];
+    id = config["params"]["stateAbbrev"] + "-" + config["params"]["section"];
+  } else if (config["page"] == "race-embed") {
+    id = config["params"]["stateAbbrev"] + "-" + config["params"]["race"];
   } else {
     id = config["page"];
   }
+
   return id;
 };
 
@@ -224,8 +219,10 @@ window.onload = function () {
   });
 
   stateSelectDropdown.addEventListener("change", () => {
-    customizerState["params"]["stateName"] = stateSelectDropdown.value.split(",")[1];
-    customizerState["params"]["stateAbbrev"] = stateSelectDropdown.value.split(",")[0];
+    customizerState["params"]["stateName"] =
+      stateSelectDropdown.value.split(",")[1];
+    customizerState["params"]["stateAbbrev"] =
+      stateSelectDropdown.value.split(",")[0];
     updateView();
   });
 
