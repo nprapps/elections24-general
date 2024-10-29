@@ -16,8 +16,8 @@ let customizerState = {
   page: "index",
   params: {
     embedded: true,
-    stateName: "Missouri",
-    stateAbbrev: "MO",
+    stateName: "Alabama",
+    stateAbbrev: "AL",
     section: "key-races",
     showHeader: true,
   },
@@ -44,7 +44,7 @@ let embedType,
   };
 
 const createURL = function (config) {
-  var prefix = "localhost:8000/";
+  var prefix = PROJECT_URL;
   var page = config["page"];
 
   if (page === 'bop' || page === 'presidentMaps') {
