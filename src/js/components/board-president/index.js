@@ -335,7 +335,7 @@ Geography
 
     let hideResultsBoard = hasAnyDataAttribute ?
       this.getAttribute("data-hide-results") !== null :
-      true;
+      false;
 
 
     this.innerHTML = `
