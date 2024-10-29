@@ -24,7 +24,6 @@ class BalanceOfPowerPresident extends ElementBase {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
           this.data = await response.json();
-          console.log(this.data)
           this.render();
         } catch (error) {
           console.error("Could not load JSON data:", error);

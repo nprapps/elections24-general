@@ -279,8 +279,6 @@ Geography
       }
     });
 
-    console.log(clickedTab)
-
     // Select clicked tab and show corresponding element
     clickedTab.setAttribute('aria-selected', 'true');
     const selectedTabIndex = clickedTab.getAttribute('data-tab');
