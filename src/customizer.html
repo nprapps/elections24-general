@@ -162,37 +162,30 @@ var races = grunt.data.json.races;
                 onchange="handleSelection('bop')"
                 class="nestedCheckbox"
               />President</label
-            ><label
-              ><input
-                type="checkbox"
-                value="combined"
-                onchange="handleSelection('bop')"
-                class="nestedCheckbox"
-              />
-              Combined</label
-          >
+            >
           </div>
           <div id="presidentOptions" class="hidden">
             <label>
               <input
-              checked 
-                type="checkbox"
+                checked 
+                type="radio"
+                name="presidentMaps"
                 value="national"
                 onchange="handleSelection('presidentMaps')"
                 class="nestedCheckbox"
               />National Map</label>
             <label>
               <input
-              checked 
-                type="checkbox"
+                type="radio"
+                name="presidentMaps"
                 value="cartogram"
                 onchange="handleSelection('presidentMaps')"
                 class="nestedCheckbox"
               />Electoral Map</label>
             <label>
               <input
-              checked 
-                type="checkbox"
+                type="radio"
+                name="presidentMaps"
                 value="bubbles"
                 onchange="handleSelection('presidentMaps')"
                 class="nestedCheckbox"
