@@ -55,7 +55,7 @@ class StatePageResults extends ElementBase {
       let sectionHTML = "";
 
       if (section === "key-races") {
-        sectionHTML += '<section id="key-races-section" section="key-races" class="shown">';
+        sectionHTML += '<section id="key-races-section" section="key-races">';
         this.keyRaceCollections.forEach(office => {
           let races = results.filter(d => {
             if (office === "president" && (this.state === "NE" || this.state === "ME")) {

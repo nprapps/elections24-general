@@ -32,21 +32,27 @@ const offices = {
   I: "ballot-measures",
 };
 
-const urlParams = new URLSearchParams(window.location.search);
-
-const urlSection = urlParams.get("section");
-
-
-
-window.onload = function() {
-  const selectedSection = document.querySelector(
-    "#" + offices[urlSection] + "-section"
-  );
+const showSection = selectedSection => {
   document.querySelectorAll("section").forEach(section => {
     section.classList.remove("shown");
   });
-  selectedSection.classList.add("shown");
-  
+
+  document.querySelectorAll("input[name='nav']").forEach(input => {
+    input.checked = false;
+  });
+
+  document.querySelector(`#${selectedSection}-section`).classList.add("shown");
+  document.querySelector(`input[id=${selectedSection}]`).checked = true;
+}
+
+window.onload = function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlSection = urlParams.get("section");
+
+  customElements.whenDefined('results-collection').then(() => {
+    showSection(offices[urlSection]);
+  });
+
   if (urlParams.has("embedded")) {
     const isEmbedded = urlParams.get("embedded");
   
@@ -63,10 +69,7 @@ window.onload = function() {
     }
   } else {
     document.querySelector("#close-disclaimer").addEventListener("click", () => {
-      document.querySelector("#about-box").classList.add("closed");
-    });
+    document.querySelector("#about-box").classList.add("closed");
+  });
   }
 }
-
-
-
