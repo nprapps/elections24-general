@@ -1,5 +1,5 @@
 const ElementBase = require("../elementBase");
-import { reportingPercentage, winnerIcon } from "../util.js";
+import { classify, reportingPercentage, statePostalToFull, winnerIcon } from "../util.js";
 import track from "../../lib/tracking";
 import gopher from "../gopher.js";
 import TestBanner from "../test-banner";
@@ -121,14 +121,15 @@ class Cartogram extends ElementBase {
     this.svg.addEventListener("click", this.onClick);
     return this.svg;
   }
-    
+
       onClick(e) {
         const group = e.target.closest("svg > g");
         if (!group) return;
         const state = group.getAttribute("data-postal");
         if (state) {
-          window.location.href = `#/states/${state}/P`;
           track("clicked-cartogram", state);
+          var stateFull = statePostalToFull(state);
+          window.location.href = `${ classify(stateFull) }.html?section=P`;
         }
       }
     
@@ -227,14 +228,21 @@ class Cartogram extends ElementBase {
     
           if (window.innerWidth > 650) {
             y -= labelBox.height / 2 - 2;
-            const votes = this.states[stateName].electoral;
+            let votes = this.states[stateName].electoral;
+            switch(stateName) {
+              case "NE":
+                votes = 5;
+                break;
+              case "ME":
+                votes = 4;
+                break;
+            }
             const electoralLabel = document.createElementNS(this.svg.namespaceURI, "text");
             electoralLabel.textContent = votes;
+
             g.appendChild(electoralLabel);
     
-            console.log(x)
-            console.log(y)
-            console.log('++++++++')
+            
             electoralLabel.setAttribute("x", x);
             electoralLabel.setAttribute("y", y + 10);
             electoralLabel.setAttribute("class", "votes");

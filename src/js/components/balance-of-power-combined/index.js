@@ -2,6 +2,8 @@ var ElementBase = require("../elementBase");
 import gopher from "../gopher.js";
 import BalanceOfPowerSenate from "../balance-of-power-senate";
 import BalanceOfPowerHouse from "../balance-of-power-house";
+import BalanceOfPowerPresident from "../balance-of-power-president";
+
 
 
 class BalanceOfPowerCombined extends ElementBase {
@@ -39,6 +41,7 @@ class BalanceOfPowerCombined extends ElementBase {
 
             this.senate = this.data.senate;
             this.house = this.data.house;
+
             this.render();
         } catch (error) {
             console.error("Could not load JSON data:", error);
@@ -59,6 +62,11 @@ class BalanceOfPowerCombined extends ElementBase {
         if (this.races.length === 0 || this.races.includes('house')) {
             content += `
                 <balance-of-power-house></balance-of-power-house>
+            `;
+        }
+        if (this.races.length === 0 || this.races.includes('president')) {
+            content += `
+                <balance-of-power-president></balance-of-power-president>
             `;
         }
 
