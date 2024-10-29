@@ -264,7 +264,7 @@ Geography
       if (this.tabButtons.length > 0) {
         this.updateTabSelection(this.tabButtons[this.initialSelectedTab]);
       }
-    }, 50);
+    }, 150);
   }
 
   updateTabSelection(clickedTab) {
