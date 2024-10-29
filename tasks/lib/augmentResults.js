@@ -146,25 +146,21 @@ module.exports = function (results, data) {
       let bls;
       let countyName;
       if (townshipStates.includes(result.state)) {
-        bls = data.csv.township_unemployment[result.censusID] || {};
-        countyName = data.csv.township_unemployment[result.censusID]
-          ? data.csv.township_unemployment[result.censusID]["township"]
+        bls = data.csv.unemployment_township[result.censusID] || {};
+        countyName = data.csv.unemployment_township[result.censusID]
+          ? data.csv.unemployment_township[result.censusID]["township"]
           : "At large";
-
-        if (!data.csv.township_unemployment[result.censusID]) {
-          console.log(result.censusID, result.fips);
-        }
       } else {
         const fips = `${result.fips.slice(0, 2)}-${result.fips.slice(2)}`;
         bls = data.csv.unemployment_data[fips] || {};
         countyName = data.csv.county_names[result.fips] || "At large";
       }
-      const { unemployment_rate } = bls;
+      const { unemployment } = bls;
 
       result.county = {
         past_margin,
         ...census,
-        unemployment_rate,
+        unemployment,
         countyName,
       };
     }
