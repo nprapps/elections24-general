@@ -352,10 +352,9 @@ Geography
         ${isNational ? '<national-map races="{results}"></national-map>' : ''}
         ${isCartogram ? '<cartogram-map races="{results}"></cartogram-map>' : ''}
         ${isBubbles ? '<electoral-bubbles results="{results}" races="{results}"></electoral-bubbles>' : ''}
-        ${hideResultsBoard ? '' : '<results-board-display office="president" split="true" hed="Competitive"></results-board-display>'}
-        <hr class="divider" />
+        ${!hideResultsBoard ? `<results-board-display office="president" split="true" hed="Competitive"></results-board-display>` : ''}
       </div>
-      <results-board-key race="president"></results-board-key> `;
+        ${!hideResultsBoard ? `<results-board-key race="president"></results-board-key> ` : ''};`;
     this.setupTabs();
   }
 }
