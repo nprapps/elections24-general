@@ -237,6 +237,7 @@ class ResultsTableCounty extends ElementBase {
         ).join('');
 
         const marginCell = this.marginCell(row.candidates, leadingCand, topCands);
+        const comparisonClass = metricValue.includes('D') ? 'Dem' : metricValue.includes('R') ? 'GOP' : '';
 
         return `
             <tr>
@@ -247,7 +248,7 @@ class ResultsTableCounty extends ElementBase {
                 <td class="precincts amt">${reportingPercent}</td>
                 ${candidateCells}
                 ${marginCell}
-                <td class="comparison">${metricValue}</td>
+                <td class="comparison ${comparisonClass}">${metricValue}</td>
             </tr>
         `;
     }
