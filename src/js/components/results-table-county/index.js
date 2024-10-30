@@ -119,6 +119,9 @@ class ResultsTableCounty extends ElementBase {
     sortCountyResults() {
         const { sortMetric, order } = this.state;
 
+        console.log(sortMetric)
+        console.log(order)
+
 
         return this.data.sort((a, b) => {
             let sorterA = a.county[sortMetric.key];
@@ -127,7 +130,14 @@ class ResultsTableCounty extends ElementBase {
             if (sortMetric.alpha) {
                 return sorterA == sorterB ? 0 : sorterA < sorterB ? order : order * -1;
             } else if (sortMetric.key == "past_margin") {
-                // Implement past_margin sorting logic here
+                if (sorterA.party !== sorterB.party) {
+                    return sorterA.party === 'Dem' ? -1 * order : 1 * order;
+                }
+                if (sorterA.party === 'Dem') {
+                    return (sorterB.margin - sorterA.margin) * order; 
+                } else {
+                    return (sorterA.margin - sorterB.margin) * order; 
+                }
             }
             return (sorterA - sorterB) * order;
         });
