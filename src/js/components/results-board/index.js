@@ -186,12 +186,15 @@ class ResultsBoard extends ElementBase {
                             // Existing case for other race types
                             var seatLabel = "";
                             var ballotLabel = "";
+
+                            console.log(r.office)
+                  
                             switch (r.office) {
-                                case "H": seatLabel = ` ${r.seatNumber}`;
+                                case "H": 
+                                    seatLabel = ` ${r.seatNumber}`;
+                                    break;
                                 case "S":
-                                    if (r.seatNumber) {
-                                        seatLabel = ` ${r.seatNumber}`;
-                                    }
+                                    seatLabel = ` `;
                                     break;
                                 case "I":
                                     ballotLabel = ` ${r.seat}`;
