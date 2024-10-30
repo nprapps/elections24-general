@@ -44,6 +44,9 @@ header, main {
 	}
 	@media (min-width: @breakpoint1) {
 		height: 4.5em;
+		&.wide {
+			height: 2.5em;
+		}
 	}
 }
 
@@ -215,6 +218,10 @@ a.section-info {
   margin: 50px 20px 0 20px;
 
   a { text-decoration: none; }
+}
+
+results-collection {
+  align-items: end;
 }
 
 @media (min-width: @breakpoint2) {
