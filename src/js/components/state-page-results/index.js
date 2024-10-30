@@ -104,8 +104,7 @@ class StatePageResults extends ElementBase {
           )}'></results-collection>
               <h3 class="section-hed">Presidential results by county</h3>
               <county-map state="${this.state}"></county-map>
-              <county-dataviz state="${this.state}"></county-dataviz>
-              <results-table-county
+                ${!races.some(d => d.office === "P" && d.eevp === 0) ? `<county-dataviz state="${this.state}"></county-dataviz>` : ''}              <results-table-county
                 state="${this.state}"
                 race-id="0"
                 order="1">
@@ -120,7 +119,7 @@ class StatePageResults extends ElementBase {
           races.forEach(race => {
             const countyHTML = `
               <county-map state="${this.state}" race-id="${this.state}-${race.id}"></county-map>
-              <county-dataviz state="${this.state}" race="${this.state}-${race.id}"></county-dataviz>
+              ${!races.some(d => d.office === "S" && d.eevp === 0) ? `<county-dataviz state="${this.state}" race="${this.state}-${race.id}"></county-dataviz>` : ''}
               <results-table-county
                 state="${this.state}"
                 race-id="${race.id}"
