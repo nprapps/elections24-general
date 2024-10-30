@@ -212,7 +212,7 @@ class CountyChart extends ElementBase {
         return `
           <g class="dots">
             ${data
-              .filter(t => t.x !== null)
+              .filter(t => t.x !== null && !isNaN(getCountyVariable(t, variable)) && getCountyVariable(t, variable) !== null)
               .map((t, i) => {
               const value = getCountyVariable(t, variable);
               console.log('this is the county variable')
@@ -251,7 +251,9 @@ class CountyChart extends ElementBase {
         // Get min/max for Y axis
         const variable = this.getAttribute('variable');
         const data = JSON.parse(this.getAttribute('data') || '[]');
-        const currV = data.map(d => getCountyVariable(d, variable));
+        const currV = data
+          .filter(d => !isNaN(getCountyVariable(d, variable)) && getCountyVariable(d, variable) !== null)
+          .map(d => getCountyVariable(d, variable));
         let maxY = Math.max(...currV);
         let minY = Math.min(...currV);
         maxY = Math.ceil(maxY * 100) / 100;
