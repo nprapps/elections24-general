@@ -160,6 +160,12 @@ results-table {
 		padding-left: 0.5em;
 	}
 
+	.first-name {
+		@media (@mobile) {
+			display: none;
+		}
+	}
+
 	.percentage, .votes {
 		text-align: right;
 		flex-basis: 25%;
@@ -181,6 +187,7 @@ results-table {
 
 	.footnote {
 		color: #787878;
+		font-size: 12px;
 		line-height: 1.4;
 		margin: 0;
 	}

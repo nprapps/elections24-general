@@ -5,6 +5,7 @@
 @import "about-box";
 @import "../js/components/results-table/results-table";
 @import "../js/components/test-banner/test-banner";
+@import "source-footnote";
 
 @breakpoint1: 650px;
 @breakpoint2: 900px;
@@ -37,16 +38,14 @@ header, main {
 
 .state-icon {
 	filter: invert(15%) sepia(4%) saturate(18%) hue-rotate(321deg) brightness(94%) contrast(84%);
+	height: 4.5em;
 	margin-right: 1em;
 	@media (max-width: @breakpoint1) {
-		height: 2.5em;
+		order: 1;
     margin-top: 0.5em;
 	}
-	@media (min-width: @breakpoint1) {
-		height: 4.5em;
-		&.wide {
-			height: 2.5em;
-		}
+	&.wide {
+		height: 2.5em;
 	}
 }
 
@@ -138,9 +137,14 @@ label {
 	}
 }
 
+input:first-child + label {
+	padding-left: 0;
+}
+
 input:checked + label {
 	color: black;
 	cursor: default;
+	white-space: nowrap;
 	&:hover {
 		text-decoration: none;
 	}
@@ -210,14 +214,6 @@ a.section-info {
 		color: @linkblue;
 		text-decoration: underline;
 	}
-}
-
-.source-footnote {
-  font-size: 12px;
-  color: #787878;
-  margin: 50px 20px 0 20px;
-
-  a { text-decoration: none; }
 }
 
 results-collection {
