@@ -285,9 +285,11 @@ class ResultsTableCounty extends ElementBase {
             orderedCandidates.push({ last: "Other", party: "Other", percent: otherEEVP });
         }
 
+        const townshipStates = ['CT', 'MA', 'ME', 'NH', 'RI', 'VT'];
+
         this.innerHTML = `
         <div class="results-counties ${this.state.sortMetric.key.split("_").join("-")}">
-            <h3>Demographics by county</h3>
+            <h3>Demographics by ${townshipStates.includes(this.currentState) ? 'township' : 'county'}</h3>
             ${this.getSorter()}
             <table class="results-table candidates-${orderedCandidates.length}">
                 <thead>

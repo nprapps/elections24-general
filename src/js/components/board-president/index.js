@@ -10,20 +10,7 @@ import Cartogram from "../cartogram";
 import NationalMap from "../nationalMap";
 import Tabs from "../tabs";
 
-/**
- * BoardPresident - Custom element for displaying presidential election results
- * Supports multiple visualization modes/sub components: national-map, cartogram-map, and electoral-bubbles, all of which should be imported above
- *
- * @class
- * @extends ElementBase
- 
- * The constructor nitializes the component with state management and tab handling
-  * @constructor
-  * @property {Object} state - Component state
-  * @property {PresidentRaceResult[]} results - Election results
-  * @property {number} initialSelectedTab - Initial tab selection (0: national, 1: cartogram, 2: bubbles)
-  * @property {Object} tabElementMap - Maps tab indices to visualization elements
-     */
+
 class BoardPresident extends ElementBase {
   constructor() {
     super();
@@ -37,16 +24,16 @@ class BoardPresident extends ElementBase {
     this.tabElementMap = null;
 
 
-    let initialSelectedTab = 0;
+    let initialSelectedTab = 0; 
     if (this.hasAttribute("data-national")) {
       initialSelectedTab = 0;
-    }
-    else if (this.hasAttribute("data-cartogram")) {
+  }
+  else if (this.hasAttribute("data-cartogram")) {
       initialSelectedTab = 1;
-    }
-    else if (this.hasAttribute("data-bubbles")) {
+  } 
+  else if (this.hasAttribute("data-bubbles")) {
       initialSelectedTab = 2;
-    }
+  }
 
     this.initialSelectedTab = initialSelectedTab;
 
@@ -245,12 +232,6 @@ Geography
 
   }
 
-  /**
-    * Sets up data watching and initial render     
-    * * Initializes data loading and sets up gopher watchers
-    * 
-    * @callback connectedCallback
-    */
   connectedCallback() {
     this.loadData();
     gopher.watch(`./data/president.json`, this.loadData);
@@ -263,12 +244,6 @@ Geography
     gopher.unwatch(this.getAttribute("./data/president.json"), this.loadData);
   }
 
-  /**
-     * Configures tab functionality and event listeners
-     * Sets up tab buttons and element mapping with 250ms delay to allow for cartogram-map to initLabels()
-     * 
-     * @function setupTabs
-     */
   setupTabs() {
     // Select all tab buttons and custom elements
     setTimeout(() => {
@@ -293,14 +268,8 @@ Geography
     }, 250);
   }
 
-  /**
-     * Handles tab selection changes
-     * Updates aria-selected states and element visibility based off of the tab that was clicked
-
-     * @function updateTabSelection
-     * @param {HTMLElement} clickedTab - The tab button that was clicked
-  */
   updateTabSelection(clickedTab) {
+
 
     // Deselect all tabs and hide all elements
     this.tabButtons.forEach(tab => {
@@ -321,43 +290,6 @@ Geography
   }
 
 
-  /**
-     * Loads presidential race data
-     * @async
-     * @function loadData
-     * Fetches and processes president.json data
-    * The data it fetches should look like this
-    * @typedef {Object} PresidentResult
-    * @property {boolean} test - Test data indicator
-    * @property {string} id - Race identifier
-    * @property {string} office - Office type ("P")
-    * @property {number} eevp - Expected election vote percentage
-    * @property {string} type - Election type
-    * @property {number} winThreshold - Percentage needed to win
-    * @property {boolean} rankedChoice - Ranked choice voting indicator
-    * @property {string} raceCallStatus - Race call status
-    * @property {string} level - Geographic level
-    * @property {string} state - State abbreviation
-    * @property {number} electoral - Electoral votes
-    * @property {number} updated - Last update timestamp
-    * @property {number} reporting - Precincts reporting count
-    * @property {number} precincts - Total precincts
-    * @property {string} reportingunitID - Reporting unit identifier
-    * @property {number} reportingPercent - Percentage of precincts reporting
-    * @property {string} stateName - Full state name
-    * @property {string} stateAP - AP style state name
-    * @property {string} rating - Race rating (e.g., "likely-r")
-    * @property {Object[]} candidates - Array of candidate information
-
-    * 
-      @typedef {Object} Candidate - stored in the candidates property of the Results object
-    * @property {string} first - First name
-    * @property {string} last - Last name
-    * @property {string} party - Political party ("Dem", "GOP", "Other")
-    * @property {string} id - Candidate identifier
-    * @property {number} votes - Vote count
-    * @property {number|null} percent - Vote percentage
-        */
   async loadData() {
     let presidentDataFile = './data/president.json';
 
@@ -371,13 +303,6 @@ Geography
     }
   }
 
-  /**
-     * Renders the presidential board interface
-     * Creates electoral bars, leaderboard, maps, and results display
-     * Handles conditional rendering based on data attributes
-     * @function render
-     * @property {Object} buckets - Groups races by rating (likelyD, tossup, likelyR)
-     */
   render() {
     const { results = [], test, latest } = this.state;
 
