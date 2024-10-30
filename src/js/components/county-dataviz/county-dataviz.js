@@ -215,9 +215,6 @@ class CountyChart extends ElementBase {
               .filter(t => t.x !== null && !isNaN(getCountyVariable(t, variable)) && getCountyVariable(t, variable) !== null)
               .map((t, i) => {
               const value = getCountyVariable(t, variable);
-              console.log('this is the county variable')
-              console.log(t)
-              console.log(value)
               const y = this.yScale(value);
               const x = this.xScale(t.x);
               return `

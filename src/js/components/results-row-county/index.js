@@ -63,7 +63,7 @@ class ResultsRowCounty extends ElementBase {
             metricValue = metric.format(metricValue);
         }
     
-        const leadingCand = row.reportingPercent > 0.5 ? row.candidates[0] : "";
+        const leadingCand = row.reportingPercent > 0 ? row.candidates[0] : "";
         const reportingPercent = reportingPercentage(row.reportingPercent) + "% in";
     
         const candidateCells = candidates.map(c =>
@@ -90,6 +90,8 @@ class ResultsRowCounty extends ElementBase {
     }
     
     candidatePercentCell(candidate, leading, percentIn) {
+        console.log('yerrr')
+        console.log(leading)
         const displayPercent = percentDecimal(candidate.percent);
         const party = getParty(candidate.party);
         const allIn = percentIn >= 1;

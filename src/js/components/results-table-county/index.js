@@ -57,6 +57,7 @@ class ResultsTableCounty extends ElementBase {
             }
             const data = await response.json();
             this.data = data.results || [];
+            this.initialCandidates = this.data[0].candidates.slice(0, 2);
             this.render();
             this.attachEventListeners();
         } catch (error) {
@@ -190,6 +191,8 @@ class ResultsTableCounty extends ElementBase {
     }
 
     candidatePercentCell(candidate, leading, percentIn) {
+        console.log('yerrr')
+        console.log(leading)
         const displayPercent = percentDecimal(candidate.percent);
         const party = getParty(candidate.party);
 
@@ -202,13 +205,11 @@ class ResultsTableCounty extends ElementBase {
     }
 
     marginCell(candidates, leadingCand, topCands) {
-        let party = "";
         let voteMargin = "-";
+        const party = getParty(candidates[0]?.party || "");
+        
         if (topCands.includes(candidates[0].last)) {
             voteMargin = this.calculateVoteMargin(candidates);
-            if (leadingCand) {
-                party = getParty(leadingCand.party);
-            }
         }
 
         return `<td class="vote margin ${party}">${voteMargin}</td>`;
@@ -232,7 +233,7 @@ class ResultsTableCounty extends ElementBase {
             metricValue = metric.format(metricValue);
         }
 
-        const leadingCand = row.reportingPercent > 0.5 ? row.candidates[0] : "";
+        const leadingCand = row.reportingPercent > 0 ? row.candidates[0] : "";
         const reportingPercent = reportingPercentage(row.reportingPercent) + "% in";
         const candidateCells = candidates.map(c =>
             this.candidatePercentCell(
@@ -267,14 +268,13 @@ class ResultsTableCounty extends ElementBase {
         const allCandidates = sortedData[0].candidates;
 
         // Sort candidates by EEVP and get top 3
-        const orderedCandidates = allCandidates
-            .sort((a, b) => b.percent - a.percent)
-            .slice(0, 2)
-            .map(candidate => ({
-                last: candidate.last,
-                party: candidate.party,
-                percent: candidate.percent
-            }));
+        const orderedCandidates = this.initialCandidates
+        .map(candidate => ({
+            last: candidate.last,
+            party: candidate.party,
+            percent: candidate.percent
+        }))
+        .sort((a, b) => a.last.localeCompare(b.last));
 
 
         // Add "Other" if there are more than 3 candidates
