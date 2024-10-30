@@ -44,14 +44,41 @@ class ResultsTable extends ElementBase {
       elements.wrapper.classList.add("president");
     }
 
-    if (result.name_override) {
-      elements.resultsTableHed.innerHTML = result.name_override;
-    } else if (result.office === "H") {
-      elements.resultsTableHed.innerHTML = result.seat;
-    } else if (result.office === "I") {
-      elements.resultsTableHed.innerHTML = result.description;
+    // individual race embeds - hed includes state name
+    if (this.hasAttribute("is-individual-embed")) {
+      let hed = ""
+      if (result.name_override) {
+        hed = result.stateName + " – " + result.name_override
+      } else if (result.office === "P") {
+        hed = result.stateName + " – President";
+      } else if (result.office === "G") {
+        hed = result.stateName + " – Governor";
+      } else if (result.office === "H") {
+        hed = result.stateName + " – House " + result.seat;
+      } else if (result.office === "I") {
+        hed = result.description;
+      }
+      elements.resultsTableHed.innerHTML = hed;
+    // on state pages, only show heds for house races and ballot measures
     } else {
-      elements.resultsTableHed.remove();
+      if (result.name_override) {
+        elements.resultsTableHed.innerHTML = result.name_override;
+      } else if (result.office === "H") {
+        elements.resultsTableHed.innerHTML = result.seat;
+      } else if (result.office === "I") {
+        elements.resultsTableHed.innerHTML = result.description;
+      } else {
+        elements.resultsTableHed.remove();
+      }
+    }
+
+    if (this.hasAttribute("is-individual-embed") && 
+        (result.office === "P" || result.office === "G" || result.office === "S")
+      ) {
+      elements.countyResultsLink
+        .setAttribute("href", `${classify(result.stateName)}.html?section=${result.office}`);
+    } else {
+      elements.countyResultsLink.remove();
     }
 
     const candidates = mapToElements(elements.tbody, result.candidates).filter(d => {

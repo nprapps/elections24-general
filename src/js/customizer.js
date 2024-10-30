@@ -16,8 +16,8 @@ let customizerState = {
   page: "index",
   params: {
     embedded: true,
-    stateName: "Missouri",
-    stateAbbrev: "MO",
+    stateName: "Alabama",
+    stateAbbrev: "AL",
     section: "key-races",
     showHeader: true,
   },
@@ -32,21 +32,19 @@ let embedType,
 
   const getSelectedCheckboxValues = (sectionId) => {
     const section = document.getElementById(sectionId);
-    const checkboxes = section.querySelectorAll('input[type="checkbox"]');
-    const selectedValues = [];
-    
-    checkboxes.forEach(checkbox => {
-      if (checkbox.checked) {
-        selectedValues.push(checkbox.value);
-      }
-    });
-    
-    return selectedValues;
+    const inputType = section.querySelector('input')?.type || 'checkbox';
+
+    if (inputType === 'radio') {
+      const checkedRadio = section.querySelector('input[type="radio"]:checked');
+      return checkedRadio ? [checkedRadio.value] : [];
+    } else {
+    const checkedBoxes = section.querySelectorAll('input[type="checkbox"]:checked');
+    return Array.from(checkedBoxes).map(input => input.value);
+    }
   };
-  
 
 const createURL = function (config) {
-  var prefix = "localhost:8000/";
+  var prefix = PROJECT_URL;
   var page = config["page"];
 
   if (page === 'bop' || page === 'presidentMaps') {
@@ -143,16 +141,14 @@ const createEmbed = function (config) {
 </p>
 <script src="https://pym.nprapps.org/npr-pym-loader.v2.min.js"></script>`;
   var embedPymHTML = embedPymHTML
-    .replace(/\</g, "&lt;")
     .replace(/[\n\s]+/g, " ");
-  embedPym.innerHTML = embedPymHTML;
+  embedPym.textContent = embedPymHTML;
 
   var embedSidechainHTML = `<side-chain src="${url.toString()}"></side-chain>
   <script src="${PROJECT_URL}sidechain.js"></script>`;
   embedSidechainHTML = embedSidechainHTML
-    .replace(/\</g, "&lt;")
     .replace(/[\n\s]+/g, " ");
-  embedSidechain.innerHTML = embedSidechainHTML;
+  embedSidechain.textContent = embedSidechainHTML;
 
   preview.setAttribute("src", url.toString().replace(prefix, ""));
 };
