@@ -211,8 +211,13 @@ class CountyChart extends ElementBase {
     
         return `
           <g class="dots">
-            ${data.map((t, i) => {
+            ${data
+              .filter(t => t.x !== null)
+              .map((t, i) => {
               const value = getCountyVariable(t, variable);
+              console.log('this is the county variable')
+              console.log(t)
+              console.log(value)
               const y = this.yScale(value);
               const x = this.xScale(t.x);
               return `
