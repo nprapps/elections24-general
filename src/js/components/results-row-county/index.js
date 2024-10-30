@@ -78,7 +78,8 @@ class ResultsRowCounty extends ElementBase {
     
         this.innerHTML = `
             <td class="county">
-                <span>${row.county.countyName}</span>
+                <span>${row.county.countyName.replace(/\s[a-z]/g, match =>
+                    match.toUpperCase())}</span>
                 <span class="precincts mobile">${reportingPercent}</span>
             </td>
             <td class="precincts amt">${reportingPercent}</td>
