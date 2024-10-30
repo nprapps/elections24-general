@@ -121,7 +121,11 @@ class StatePageResults extends ElementBase {
           let countiesHTML = "";
           let countyRaces = this.countyRaces.filter(d => d.office === offices[section]);
           races.forEach(race => {
-            const countyHTML = `
+            let countyHTML = "";
+            if (races.length > 1) {
+              countyHTML += "<h3>" + race.name_override + "</h3>"
+            }
+            countyHTML += `
               <county-map state="${this.state}" race-id="${this.state}-${race.id}"></county-map>
               <county-dataviz state="${this.state}" race="${this.state}-${race.id}"></county-dataviz>
               <results-table-county
