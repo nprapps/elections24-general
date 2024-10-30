@@ -141,8 +141,6 @@ class ResultsBoardDisplay extends ElementBase {
             });
         }
 
-        console.log(this.results)
-
         let content = `${this.results[0].test ? '<test-banner></test-banner>' : ''} `;
 
         //let content = `${this.results[0].test ? '<test-banner></test-banner>' : ''} `;

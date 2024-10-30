@@ -119,10 +119,6 @@ class ResultsTableCounty extends ElementBase {
     sortCountyResults() {
         const { sortMetric, order } = this.state;
 
-        console.log(sortMetric)
-        console.log(order)
-
-
         return this.data.sort((a, b) => {
             let sorterA = a.county[sortMetric.key];
             let sorterB = b.county[sortMetric.key];

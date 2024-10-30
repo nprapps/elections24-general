@@ -27,7 +27,6 @@ class CountyMap extends ElementBase {
     this.minInterval = 1000;
     this.newEnglandStates = ['CT', 'MA', 'ME', 'NH', 'RI', 'VT'];
     this.townCodesData = null;
- 
   }
 
   async connectedCallback() {
@@ -53,10 +52,9 @@ class CountyMap extends ElementBase {
         const townCodesResponse = await fetch('../../data/town_codes.json');
         if (townCodesResponse.ok) {
           this.townCodesData = await townCodesResponse.json();
-          console.log(townCodesResponse)
         }
         else {
-          console.log('this didnt wqork')
+          console.log('this didnt work')
         }
       }
 
@@ -205,15 +203,11 @@ class CountyMap extends ElementBase {
     var incomplete = false;
     this.fipsLookup = {};
 
+
     const newEnglandStates = ['CT', 'MA', 'ME', 'NH', 'RI', 'VT'];
     const isNewEngland = mapData.length > 0 && newEnglandStates.includes(mapData[0].state);
 
     const dataKeys = [...mapData.keys()];
-
-    console.log('++++++++')
-    console.log(mapData)
-    console.log('++++++++')
-
 
     // First pass: build fipsLookup
     for (var d of dataKeys) {
@@ -221,7 +215,7 @@ class CountyMap extends ElementBase {
       const entry = mapData[d];
 
       // For New England states, use combination of FIPS and name as key
-      const lookupKey = isNewEngland ? `${entry.fips}-${entry.name}` : entry.fips;
+      const lookupKey = isNewEngland ? `${entry.censusID}` : entry.fips;
       this.fipsLookup[lookupKey] = entry;
     }
 
@@ -301,10 +295,15 @@ class CountyMap extends ElementBase {
 
       if (isNewEngland) {
         result = Object.values(this.fipsLookup).find(entry => entry.censusID === lookupKey);
-
       } else {
         result = this.fipsLookup[lookupKey];
       }
+
+      console.log('________')
+      console.log(this.fipsLookup)
+      console.log(lookupKey)
+      console.log('________')
+
 
     this.svg.appendChild(e.target);
 
@@ -371,6 +370,11 @@ class CountyMap extends ElementBase {
         result.county.population
       )}</span></div>
         <div class="row reporting">${perReporting}% in</div>
+      `;
+    } else {
+      tooltip.innerHTML = `
+        <div class="name">N/A</div>
+        <div class="row">AP is not reporting results for this location</div>
       `;
     }
     var bounds = this.svg.getBoundingClientRect();

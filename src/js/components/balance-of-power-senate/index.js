@@ -130,10 +130,6 @@ class BalanceOfPowerSenate extends ElementBase {
             Lib: { total: (0), gains: 0  }
         }
 
-        console.log('=======')
-        console.log(senate)
-        console.log('=======')
-
         results.forEach(function (r) {
           if (r.hasOwnProperty('called') && r.called == true) {
             var winnerParty = r.winnerParty;
