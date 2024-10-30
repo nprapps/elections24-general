@@ -11,6 +11,7 @@ class ResultsBoard extends ElementBase {
       super();
       this.loadData = this.loadData.bind(this);
       this.races = JSON.parse(this.getAttribute('races') || '[]');
+      this.removeAttribute('races');
       this.states = {};
       this.office = this.getAttribute('office') || '';
       this.hed = this.getAttribute('hed') || '';
@@ -41,8 +42,8 @@ class ResultsBoard extends ElementBase {
 
     connectedCallback() {
       this.loadData();
-      gopher.watch(`./data/senate.json`, this.loadData);
-    }
+      const filename = this.office.toLowerCase() === 'governor' ? 'gov' : this.office.toLowerCase();
+      gopher.watch(`./data/${filename}.json`, this.loadData);    }
 
     async loadData() {
         this.isLoading = true;

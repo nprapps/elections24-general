@@ -19,6 +19,7 @@ class BoardHouse extends ElementBase {
 
     connectedCallback() {
         this.loadData();
+        gopher.watch(`./data/house.json`, this.loadData);
         this.illuminate();
     }
 
