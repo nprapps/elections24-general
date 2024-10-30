@@ -326,7 +326,7 @@ Geography
      * @async
      * @function loadData
      * Fetches and processes president.json data
-     *  * The data it fetches should look like this
+    * The data it fetches should look like this
     * @typedef {Object} PresidentResult
     * @property {boolean} test - Test data indicator
     * @property {string} id - Race identifier
