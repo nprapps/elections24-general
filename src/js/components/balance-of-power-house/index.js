@@ -120,7 +120,7 @@ class BalanceOfPowerHouse extends ElementBase {
     //! UPDATE OR REMOVE LINK (LINK IS ONLY NEEDED FOR EMBED)
     this.innerHTML = `
     <div id="embed-bop-on-page">
-      <a class="link-container house" href="http://apps.npr.org/election-results-live-2022/#/house" target="_top">
+      <a class="link-container house" href="/house.html" target="_top">
         <div class="number-container">
           <div class="candidate dem">
             <div class="name">Dem. ${house.Dem.total >= 218 ? winnerIcon : ""}</div>
@@ -144,13 +144,13 @@ class BalanceOfPowerHouse extends ElementBase {
           </div>
         </div>
 
-        <div class="bar-container">
+      <div class="bar-container">
           <div class="bar dem" style="width: ${(house.Dem.total / 435 * 100)}%"></div>
-          <div class="bar other dem" style="width: ${(house.IndCaucusDem.total / 435 * 100)}%"></div>
+          <div class="bar other" style="width: ${(house.Ind.total / 435 * 100)}%"></div>
           <div class="bar gop" style="width: ${(house.GOP.total / 435 * 100)}%"></div>
-          <div class="bar other gop" style="width: ${(house.IndCaucusGOP.total / 435 * 100)}%"></div>
           <div class="middle"></div>
         </div>
+
         <div class="bop-footer">
           <div class="chatter"><strong>218</strong> seats for majority</div>
         </div>

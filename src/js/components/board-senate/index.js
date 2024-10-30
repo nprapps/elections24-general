@@ -29,8 +29,6 @@ class BoardSenate extends ElementBase {
 
 
     async loadData() {
-        let presidentDataFile = './data/senate.json';
-    
         try {
             const response = await fetch('./data/senate.json');
             const { results = {} } = await response.json();
