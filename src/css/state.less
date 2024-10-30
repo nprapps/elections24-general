@@ -161,6 +161,7 @@ section {
 .section-hed {
 	color: #333;
 	font-size: 1.4em;
+	margin-bottom: 5px;
 }
 
 .dotted-line {
@@ -178,6 +179,33 @@ section {
 		position: absolute;
 		top: 50%;
 		width: calc(100% - 5px);
+	}
+}
+
+.section-info {
+	display: block;
+	margin: 0 0 10px;
+	width: 100%;
+}
+
+p.section-info {
+	color: #787878;
+	font-style: italic;
+	a {
+		font-style: normal;
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+			color: @linkblue;
+		}
+	}
+}
+
+a.section-info {
+	text-decoration: none;
+	&:hover {
+		color: @linkblue;
+		text-decoration: underline;
 	}
 }
 

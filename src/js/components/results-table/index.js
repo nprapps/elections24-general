@@ -68,7 +68,7 @@ class ResultsTable extends ElementBase {
       } else if (result.office === "I") {
         elements.resultsTableHed.innerHTML = result.description;
       } else {
-        elements.resultsTableHed.remove();
+        elements.resultsTableHeader.remove();
       }
     }
 

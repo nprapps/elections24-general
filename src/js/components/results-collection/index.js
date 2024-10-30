@@ -1,5 +1,6 @@
 import gopher from "../gopher.js";
 const ElementBase = require("../elementBase");
+const { classify } = require("../util");
 
 class ResultsCollection extends ElementBase {
   constructor() {
@@ -30,11 +31,30 @@ class ResultsCollection extends ElementBase {
       </h3>
     `;
 
-    if (this.getAttribute('office') === "P") {
-      template += `
-        <p>${this.getAttribute("electoral")} electoral votes</p>
-        <a href="">County-level results</a>
-      `
+    let stateSlug = classify(this.races[0].stateName);
+
+    if (this.hasAttribute("key-races-only")) {
+      if (this.getAttribute("office") === "P") {
+        template += `
+          <p class="section-info">
+            ${this.getAttribute("electoral")} electoral votes • 
+            <a href="${stateSlug}.html?section=P">County-level results</a>
+          </p>`
+      } else if (this.getAttribute("office") === "S") {
+        template += `<a class='section-info' href="${stateSlug}.html?section=S">
+          County-level results
+        </a>`
+      } else if (this.getAttribute("office") === "H") {
+        template += `<a class="section-info" href='${stateSlug}.html?section=H'>
+          All House results
+        </a>`
+      }
+    } else {
+      if (this.getAttribute("office") === "P") {
+        template += `
+          <p class="section-info">${this.getAttribute("electoral")} electoral votes</p>
+          `
+      }
     }
 
     this.races.forEach(race => {
