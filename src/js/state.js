@@ -38,19 +38,6 @@ const offices = {
   I: "ballot-measures",
 };
 
-// const showSection = selectedSection => {
-//   document.querySelectorAll("section").forEach(section => {
-//     section.classList.remove("shown");
-//   });
-
-//   document.querySelectorAll("input[name='nav']").forEach(input => {
-//     input.checked = false;
-//   });
-
-//   document.querySelector(`#${selectedSection}-section`).classList.add("shown");
-//   document.querySelector(`input[id=${selectedSection}]`).checked = true;
-// };
-
 window.onload = function () {
   const urlParams = new URLSearchParams(window.location.search);
   let urlSection = urlParams.get("section");
