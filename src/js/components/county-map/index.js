@@ -299,11 +299,6 @@ class CountyMap extends ElementBase {
         result = this.fipsLookup[lookupKey];
       }
 
-      console.log('________')
-      console.log(this.fipsLookup)
-      console.log(lookupKey)
-      console.log('________')
-
 
     this.svg.appendChild(e.target);
 

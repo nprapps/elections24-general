@@ -191,8 +191,6 @@ class ResultsTableCounty extends ElementBase {
     }
 
     candidatePercentCell(candidate, leading, percentIn) {
-        console.log('yerrr')
-        console.log(leading)
         const displayPercent = percentDecimal(candidate.percent);
         const party = getParty(candidate.party);
 
