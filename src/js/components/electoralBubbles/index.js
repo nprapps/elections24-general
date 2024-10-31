@@ -103,20 +103,15 @@ class ElectoralBubbles extends ElementBase {
     }
   }
 
-
   connectedCallback() {
     this.loadData()
     window.addEventListener("resize", this.resize);
-    gopher.watch(`./data/president.json`, this.loadData);
+    //gopher.watch(`./data/president.json`, this.loadData);
   }
 
   disconnectedCallback() {
     window.removeEventListener("resize", this.resize);
-    gopher.unwatch(`./data/president.json`, this.loadData);
-  }
-
-  static get observedAttributes() {
-    return ['results'];
+    //gopher.unwatch(`./data/president.json`, this.loadData);
   }
 
   xAccess(d) {

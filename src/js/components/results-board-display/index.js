@@ -40,7 +40,7 @@ class ResultsBoardDisplay extends ElementBase {
 
         // Watch the appropriate data file if it's set
         if (this.dataFileName) {
-            gopher.watch(`./data/${this.dataFileName}`, this.loadData);
+            //gopher.watch(`./data/${this.dataFileName}`, this.loadData);
         }
 
         // Always watch states data

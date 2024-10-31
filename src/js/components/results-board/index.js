@@ -41,7 +41,7 @@ class ResultsBoard extends ElementBase {
 
     connectedCallback() {
       this.loadData();
-      gopher.watch(`./data/senate.json`, this.loadData);
+      //gopher.watch(`./data/senate.json`, this.loadData);
     }
 
     async loadData() {
