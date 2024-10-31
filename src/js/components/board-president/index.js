@@ -338,6 +338,10 @@ Geography
       this.getAttribute("data-hide-results") !== null :
       false;
 
+      var updated = Math.max(...this.results.map(r => r.updated));
+      const date = new Date(updated);
+      const time = `${date.getHours() % 12 || 12}:${String(date.getMinutes()).padStart(2, '0')} ${date.getHours() >= 12 ? 'PM' : 'AM'}`;
+      const fullDate = `${date.toLocaleString('en-US', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()}`;
 
     this.innerHTML = `
       <div class="president board">
@@ -355,7 +359,8 @@ Geography
         <electoral-bubbles results="{results}" races="{results}"></electoral-bubbles>
         ${!hideResultsBoard ? `<results-board-display office="president" split="true" hed="Competitive"></results-board-display>` : ''}
       </div>
-        ${!hideResultsBoard ? `<results-board-key race="president"></results-board-key> ` : ''}`;
+        ${!hideResultsBoard ? `<results-board-key race="president"></results-board-key> ` : ''}
+        <div class="board source-footnote">Source: AP (as of ${time} on ${fullDate})</div>`;
     this.setupTabs();
   }
 }

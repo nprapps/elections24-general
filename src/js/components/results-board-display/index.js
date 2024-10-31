@@ -119,6 +119,7 @@ class ResultsBoardDisplay extends ElementBase {
         var { results, test, latest, alert } = this.state;
         this.state.results = this.results
 
+
         if (!alert) {
             alert = '';
         }

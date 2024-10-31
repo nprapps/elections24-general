@@ -99,6 +99,8 @@ class StatePageResults extends ElementBase {
         
 
         const townshipStates = ['CT', 'MA', 'ME', 'NH', 'RI', 'VT'];
+        const hiddenStates = ['DC', 'AK'];
+
 
         if (section === "president") {
           sectionHTML += `
@@ -110,8 +112,10 @@ class StatePageResults extends ElementBase {
             "&#39;"
           )}' electoral=${electoral} 
           ></results-collection>
-              <h3 class="section-hed">Presidential results by ${townshipStates.includes(this.state) ? 'township' : 'county'}</h3>
-              <county-map state="${this.state}"></county-map>
+                ${!hiddenStates.includes(this.state) ? `
+                    <h3 class="section-hed">Presidential results by ${townshipStates.includes(this.state) ? 'township' : 'county'}</h3>
+                ` : ''}              
+                <county-map state="${this.state}"></county-map>
                 ${!races.some(d => d.office === "P" && d.eevp === 0) ? `<county-dataviz state="${this.state}"></county-dataviz>` : ''}              <results-table-county
                 state="${this.state}"
                 race-id="0"
