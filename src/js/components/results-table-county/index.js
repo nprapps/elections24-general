@@ -141,13 +141,13 @@ class ResultsTableCounty extends ElementBase {
     }
 
     getSorter() {
-        return `
-      <ul class="sorter">
-        <li class="label">Sort Counties By:</li>
-        ${Object.keys(this.availableMetrics)
-                .map(m => this.getSorterLi(this.availableMetrics[m]))
-                .join('')}
-      </ul>
+      return `
+      <p class="label">Sort counties by:</p>
+        <ul class="sorter">
+          ${Object.keys(this.availableMetrics)
+            .map(m => this.getSorterLi(this.availableMetrics[m]))
+            .join('')}
+        </ul>
     `;
     }
 
@@ -159,7 +159,6 @@ class ResultsTableCounty extends ElementBase {
         return `
       <li class="sortButton ${selected}" data-sort-metric="${metric.key}">
         <span class="metric">${metric.name}</span>
-        <span class="pipe"> | </span>
       </li>
     `;
     }
