@@ -43,6 +43,12 @@ let embedType,
     }
   };
 
+/**
+ * Create the URL that will populate the embed code, including additional parameters
+ * 
+ * @param {*} config 
+ * @returns 
+ */
 const createURL = function (config) {
   var prefix = PROJECT_URL;
   var page = config["page"];
@@ -51,14 +57,28 @@ const createURL = function (config) {
     var baseURL = prefix + page + ".html";
     const url = new URL(baseURL);
     url.searchParams.append('embedded', 'true');
+
+    var allowedParams = []
     
     // Add any additional parameters
-    if (config.params) {
-      Object.keys(config.params).forEach(key => {
-        if (key !== 'embedded' && config.params[key] !== undefined) {
-          url.searchParams.append(key, config.params[key]);
-        }
-      });
+    // if (config.params) {
+    //   Object.keys(config.params).forEach(key => {
+    //     if (key !== 'embedded' && config.params[key] !== undefined) {
+    //       url.searchParams.append(key, config.params[key]);
+    //     }
+    //   });
+    // }
+
+    if (page === "bop") {
+      if (config.params["races"] !== undefined) {
+        url.searchParams.append("races", config.params["races"]);
+      }
+    }
+
+    if (page === "presidentMaps") {
+      if (config.params["options"] !== undefined) {
+        url.searchParams.append("options", config.params["options"]);
+      }
     }
     
     return url.toString();

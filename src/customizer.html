@@ -153,7 +153,16 @@ var races = grunt.data.json.races;
             id="checkboxSection"
             class="hidden"
           >
+            <h4>Select races to include</h4>
             <label
+              ><input
+              checked 
+                type="checkbox"
+                value="president"
+                onchange="handleSelection('bop')"
+                class="nestedCheckbox"
+              />President</label
+            ><label
               ><input
                checked 
                 type="checkbox"
@@ -169,17 +178,10 @@ var races = grunt.data.json.races;
                 onchange="handleSelection('bop')"
                 class="nestedCheckbox"
               />House</label
-            ><label
-              ><input
-              checked 
-                type="checkbox"
-                value="president"
-                onchange="handleSelection('bop')"
-                class="nestedCheckbox"
-              />President</label
             >
           </div>
           <div id="presidentOptions" class="hidden">
+            <h4>Select initial tab</h4>
             <label>
               <input
                 checked 
