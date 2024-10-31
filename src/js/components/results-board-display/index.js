@@ -236,7 +236,7 @@ class ResultsBoardDisplay extends ElementBase {
                         <results-board 
                             office="President"
                             split="true"
-                            hed="Competitive States"
+                            hed="Competitive states"
                             class="middle"
                             races='${JSON.stringify(buckets.tossup)}'>
                         </results-board>
