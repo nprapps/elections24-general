@@ -80,7 +80,6 @@ class ResultsTable extends ElementBase {
     if (candidates.length > 1) {
       elements.uncontestedFootnote.remove();
     } else {
-      elements.footnoteMetadata.remove();
     }
 
     if (result.flags) {
@@ -100,6 +99,13 @@ class ResultsTable extends ElementBase {
       }
     } else {
       elements.rcvFootnote.remove();
+    }
+
+    // show winThreshold for ballot measures where the threshold isn't a simple majority
+    if (result.office == "I" && result.winThreshold && result.winThreshold != 50) {
+      elements.winThresholdFootnote.innerHTML = `This measure must win at least ${ result.winThreshold }% of the vote to pass.`
+    } else {
+      elements.winThresholdFootnote.remove();
     }
 
     if (candidates.some(d => d[0].incumbent) === true) {
