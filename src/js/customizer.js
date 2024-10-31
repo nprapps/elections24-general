@@ -77,7 +77,7 @@ const createURL = function (config) {
     neededParams.push(...moreParams);
   }
   if (config["page"] == "race-embed") {
-    moreParams = ["stateAbbrev", "race", "showHeader"];
+    moreParams = [ "stateAbbrev", "race" ];
     neededParams.push(...moreParams);
   }
   neededParams.forEach(key => {
@@ -201,6 +201,9 @@ const buildSections = function () {
     });
 };
 
+/**
+ * Build dropdown list of available races in a state
+ */
 const buildRaces = function () {
   var state = customizerState["params"]["stateAbbrev"];
   fetch("data/states/" + state + ".json")
@@ -241,6 +244,10 @@ const buildRaces = function () {
 
         stateRaceDropdown.appendChild(sectionItem);
       });
+
+      stateRaceDropdown.selectedIndex = 0;
+      customizerState["params"]["race"] = stateRaceDropdown.value;
+      createEmbed(customizerState);
     });
 };
 
@@ -252,6 +259,7 @@ const updateView = function () {
     stateConfigOptions.classList.remove("hidden");
     $.one("#stateSectionContain").classList.remove("hidden");
     $.one("#stateRaceContain").classList.add("hidden");
+    $.one("#showStateHeader").classList.remove("hidden");
     checkboxSection.classList.add("hidden");
     presidentOptions.classList.add("hidden");
     buildSections();
@@ -261,6 +269,7 @@ const updateView = function () {
     $.one("#stateRaceContain").classList.remove("hidden");
     checkboxSection.classList.add("hidden");
     presidentOptions.classList.add("hidden");
+    $.one("#showStateHeader").classList.add("hidden");
     buildRaces();
   } else if (page === "bop") {
     checkboxSection.classList.remove("hidden");
