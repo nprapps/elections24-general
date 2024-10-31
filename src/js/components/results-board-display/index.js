@@ -144,7 +144,7 @@ class ResultsBoardDisplay extends ElementBase {
         let content = `${this.results[0].test ? '<test-banner></test-banner>' : ''} `;
 
         //let content = `${this.results[0].test ? '<test-banner></test-banner>' : ''} `;
-
+        if (results) {
         if (this.office.includes('Senate')) {
             content += `
                 <div class="board-container Senate">
@@ -250,6 +250,7 @@ class ResultsBoardDisplay extends ElementBase {
                 </div>
             `;
         }
+    }
 
         content += '</div>';
         this.innerHTML = content;

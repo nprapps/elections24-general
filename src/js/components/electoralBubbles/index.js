@@ -49,6 +49,7 @@ class ElectoralBubbles extends ElementBase {
     this.tick = this.tick.bind(this);
     this.xAccess = this.xAccess.bind(this);
     this.onMove = this.onMove.bind(this);
+    this.loadData = this.loadData.bind(this);
     this.onExit = this.onExit.bind(this);
 
     var simulation = d3.forceSimulation();
@@ -106,11 +107,12 @@ class ElectoralBubbles extends ElementBase {
   connectedCallback() {
     this.loadData()
     window.addEventListener("resize", this.resize);
+    gopher.watch(`./data/president.json`, this.loadData);
   }
 
   disconnectedCallback() {
-    this.observer.disconnect();
     window.removeEventListener("resize", this.resize);
+    gopher.unwatch(`./data/president.json`, this.loadData);
   }
 
   static get observedAttributes() {
