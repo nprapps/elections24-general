@@ -11,7 +11,7 @@ class CountyChart extends ElementBase {
       this.handleResize = this.handleResize.bind(this);
       this.resizeFrame = null;
 
-      this.data = JSON.parse(this.getAttribute('data') || '[]');
+      this.data = JSON.parse(decodeURIComponent(this.getAttribute('data') || '[]'));
       this.removeAttribute('data');
   
       this.margins = {

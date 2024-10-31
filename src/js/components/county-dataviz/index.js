@@ -105,7 +105,7 @@ class CountyDataViz extends ElementBase {
           <div class="${this.state.collapsed ? 'collapsed' : ''}" id="trendsRef">
             ${this.state.charts.map(c => `
                 <county-chart
-                  data='${JSON.stringify(this.state.cleanedData)}'
+                data="${encodeURIComponent(JSON.stringify(this.state.cleanedData))}"
                   variable="${c.key}" 
                   title="${c.name}" 
                   corr="${c.corr}"
