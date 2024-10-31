@@ -346,5 +346,10 @@ window.onload = function () {
   const stateDropdown = document.getElementById("stateSelect");
   const raceDropdown = document.getElementById("stateRaceSelect");
   const presidentOptions = document.getElementById("presidentOptions");
+
+  // load president board by default
+  document.querySelector("#embedType input[value='index']").setAttribute("checked", true);
+  updateView();  
+
   //createEmbed("president");
 };
