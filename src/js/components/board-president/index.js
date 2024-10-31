@@ -304,50 +304,73 @@ Geography
 
   render() {
     const { results = [], test, latest } = this.state;
+  
+  // Pre-calculate hasAnyDataAttribute once
+  const hasAnyDataAttribute = ['data-cartogram', 'data-national', 'data-bubbles']
+    .some(attr => this.getAttribute(attr) !== null);
+  
+  const hideResultsBoard = hasAnyDataAttribute ? 
+    this.getAttribute("data-hide-results") !== null : false;
 
-    var buckets = {
+  // Process results once and create all derived data
+  const processedData = results.reduce((acc, r) => {
+    // Process district display
+    r.districtDisplay = r.district !== "AL" ? r.district : "";
+    
+    // Sort into buckets
+    const bucketRating = getBucket(r.rating);
+    if (bucketRating) {
+      acc.buckets[bucketRating].push(r);
+    }
+    
+    // Track max updated time
+    acc.maxUpdated = Math.max(acc.maxUpdated, r.updated);
+    
+    return acc;
+  }, {
+    buckets: {
       likelyD: [],
       tossup: [],
-      likelyR: [],
-    };
+      likelyR: []
+    },
+    maxUpdated: 0
+  });
 
-    results.forEach(function (r) {
-      r.districtDisplay = (r.district !== "AL") ? r.district : "";
-    });
+  // Sort results in a single pass
+  const sorted = [...results].sort((a, b) => {
+    const stateCompare = a.stateName.localeCompare(b.stateName);
+    return stateCompare || a.districtDisplay.localeCompare(b.districtDisplay);
+  });
 
-    var sorted = results.slice().sort(function (a, b) {
-      if (a.stateName > b.stateName) return 1;
-      if (a.stateName < b.stateName) return -1;
-      if (a.districtDisplay > b.districtDisplay) return 1;
-      if (a.districtDisplay < b.districtDisplay) return -1;
-      return 0;
-    });
+  // Format date once
+  const date = new Date(processedData.maxUpdated);
+  const timeString = new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  }).format(date);
+  
+  const dateString = new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  }).format(date);
 
-    sorted.forEach(function (r) {
-      var bucketRating = getBucket(r.rating);
-      if (bucketRating) buckets[bucketRating].push(r);
-    }, this);
+  // Get called results
+  const called = groupCalled(this.results);
+  const calledJSON = JSON.stringify(called);
 
-    var called = groupCalled(this.results);
+  // Build HTML using template literals
+  const resultsBoard = !hideResultsBoard ? `
+    <results-board-display office="president" split="true" hed="Competitive"></results-board-display>
+    <results-board-key race="president"></results-board-key>
+  ` : '';
 
-    let hasAnyDataAttribute = this.getAttribute("data-cartogram") !== null ||
-      this.getAttribute("data-national") !== null ||
-      this.getAttribute("data-bubbles") !== null;
-
-    let hideResultsBoard = hasAnyDataAttribute ?
-      this.getAttribute("data-hide-results") !== null :
-      false;
-
-      var updated = Math.max(...this.results.map(r => r.updated));
-      const date = new Date(updated);
-      const time = `${date.getHours() % 12 || 12}:${String(date.getMinutes()).padStart(2, '0')} ${date.getHours() >= 12 ? 'PM' : 'AM'}`;
-      const fullDate = `${date.toLocaleString('en-US', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()}`;
-
-    this.innerHTML = `
+      this.innerHTML = `
       <div class="president board">
-        <electoral-bars called='${JSON.stringify(called)}'></electoral-bars>
+        <electoral-bars called='${calledJSON}'></electoral-bars>
         <h1 tabindex="-1">Presidential Results</h1>       
-        <leader-board called='${JSON.stringify(called)}'></leader-board>
+        <leader-board called='${calledJSON}'></leader-board>
         <div role="tablist" class="tabs">
           ${this.nationalButton}
           ${this.cartogramButton}
@@ -357,10 +380,9 @@ Geography
         <national-map races="{results}"></national-map>
         <cartogram-map races="{results}"></cartogram-map>
         <electoral-bubbles results="{results}" races="{results}"></electoral-bubbles>
-        ${!hideResultsBoard ? `<results-board-display office="president" split="true" hed="Competitive"></results-board-display>` : ''}
+        ${resultsBoard}
       </div>
-        ${!hideResultsBoard ? `<results-board-key race="president"></results-board-key> ` : ''}
-        <div class="board source-footnote">Source: AP (as of ${time} on ${fullDate})</div>`;
+      <div class="board source-footnote">Source: AP (as of ${timeString} on ${dateString})</div>`;
     this.setupTabs();
   }
 }
