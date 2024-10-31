@@ -80,6 +80,7 @@ class ResultsTable extends ElementBase {
     if (candidates.length > 1) {
       elements.uncontestedFootnote.remove();
     } else {
+      elements.footnoteMetadata.style.display = "none";
     }
 
     if (result.flags) {
