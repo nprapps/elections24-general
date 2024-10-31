@@ -297,7 +297,7 @@ class ResultsTableCounty extends ElementBase {
                     <tr>
                         <th class="county sortable" data-sort="countyName">
                             <div>
-                                <span class="county">County</span>
+                                <span class="county">${townshipStates.includes(this.currentState) ? 'Township' : 'County'}</span>
                             </div>
                         </th>
                         <th class="amt precincts" data-sort="countyName">

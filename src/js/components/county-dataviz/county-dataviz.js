@@ -218,11 +218,6 @@ class CountyChart extends ElementBase {
       else {
           yScale = this.yScale
       }
-
-      console.log('///////')
-      console.log('this is the county')
-      console.log(data)
-      console.log('///////')
       
         return `
           <g class="dots">
@@ -230,10 +225,6 @@ class CountyChart extends ElementBase {
               .filter(t => t.x !== null && !isNaN(getCountyVariable(t, variable)) && getCountyVariable(t, variable) !== null)
               .map((t, i) => {
               const value = getCountyVariable(t, variable);
-              console.log(t)
-              console.log(variable)
-              console.log(value)
-              console.log(yScale(value))
               const y = yScale(value);
               const x = this.xScale(t.x);
               return `

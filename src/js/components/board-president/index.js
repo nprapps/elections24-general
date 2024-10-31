@@ -359,7 +359,7 @@ Geography
         ${!hideResultsBoard ? `<results-board-display office="president" split="true" hed="Competitive"></results-board-display>` : ''}
       </div>
         ${!hideResultsBoard ? `<results-board-key race="president"></results-board-key> ` : ''}
-        <div class="board source-footnote">Source: AP (as of ${time} on ${fullDate})</div>`;
+        <div class="board source-footnote">Last updated ${fullDate} at ${time}</div>`;
     this.setupTabs();
   }
 }
