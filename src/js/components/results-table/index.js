@@ -51,7 +51,7 @@ class ResultsTable extends ElementBase {
       var winnerDateTime = result.candidates[0].winnerDateTime;
       elements.callTimestamp.innerHTML = ` &bull; Winner called: ${formatAPDate(new Date(winnerDateTime))} at ${formatTime(new Date(winnerDateTime))}.`;
     } else {
-      elements.callTimestamp.innerHTML.remove();
+      elements.callTimestamp.remove();
     }
 
     if (result.office === "P") {
