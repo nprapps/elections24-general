@@ -6,9 +6,6 @@ class ResultsCollection extends ElementBase {
   constructor() {
     super();
     this.races = JSON.parse(this.getAttribute("races"));
-    if (this.getAttribute("office") === "H") {
-      this.races.sort((a, b) => a.seatNumber - b.seatNumber < 0 ? -1 : 1);
-    }
   }
 
   connectedCallback() {
@@ -38,11 +35,16 @@ class ResultsCollection extends ElementBase {
 
     if (this.hasAttribute("key-races-only")) {
       if (this.getAttribute("office") === "P") {
+        const isAKorDC =
+          stateSlug !== "alaska" && stateSlug !== "district-of-columbia"
+            ? `<a href="${stateSlug}.html?section=P">County-level results</a>`
+            : "";
+
         template += `
           <p class="section-info">
             ${this.getAttribute("electoral")} electoral votes • 
-            <a href="${stateSlug}.html?section=P">County-level results</a>
-          </p>`
+        
+            ${isAKorDC}</p>`;
       } else if (this.getAttribute("office") === "S") {
         template += `<a class='section-info' href="${stateSlug}.html?section=S">
           County-level results
