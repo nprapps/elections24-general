@@ -27,7 +27,7 @@ def getTownship():
   all_states = pd.DataFrame() 
 
   #We want township data for these six states
-  state_fips_arr = [ "23", "25", "33", "44", "50" ]
+  state_fips_arr = ["09", "23", "25", "33", "44", "50" ]
 
   # For new_england_states, get all the towns
   for state in new_england_states:

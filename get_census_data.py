@@ -28,8 +28,7 @@ def getAllCounties():
   # For every state, get all counties
   for state in states:
     print("getting: ", state)
-    if state == "Alaska":
-      print('hello')
+    if state == "Alaska" or state == "District of Columbia":
       continue
     state_fips = states[state].geo[0][1]
     counties = censusdata.geographies(censusdata.censusgeo([('state', state_fips), ('county', '*')]), 'acs5', CENSUS_YEAR)
