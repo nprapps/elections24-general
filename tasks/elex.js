@@ -8,7 +8,8 @@ const normalize = require("./lib/normalizeResults");
 const nullify = require("./lib/nullifyResults");
 const augment = require("./lib/augmentResults");
 const fs = require("fs").promises;
-
+const { writeDataToSheets } = require("../extras/writeDataToSheets");
+const { emptyGSheets } = require("../extras/emptyGsheets");
 module.exports = function (grunt) {
   // Grunt doesn't like top-level async, so define this here and call it immediately
   var task = async function () {
@@ -104,14 +105,34 @@ module.exports = function (grunt) {
       serialize({ test, results: geo.national })
     );
 
+    //internal dashboard
+    const dashboard = [];
     // state-level results
     await fs.mkdir("build/data/states", { recursive: true });
     const states = {};
     geo.state.forEach(function (result) {
+      if (result.office === "H" || result.office === "S") {
+        dashboard.push([
+          result.state,
+          result.office,
+          result.seatNumber,
+          result.rating,
+          result.called ? "Called" : "",
+          result.winnerParty ? result.winnerParty : "",
+        ]);
+      }
       const { state } = result;
       if (!states[state]) states[state] = [];
       states[state].push(result);
     });
+
+    try {
+      await emptyGSheets();
+      await writeDataToSheets(dashboard);
+    } catch (e) {
+      console.log("Error with google sheets: ", e);
+    }
+
     for (let state in states) {
       let stateOutput = {
         test,
@@ -198,6 +219,7 @@ module.exports = function (grunt) {
     };
 
     await fs.writeFile(`build/data/bop.json`, serialize(bop));
+    console.log({ dashboard });
   };
 
   const serialize = (d) => JSON.stringify(d, null, 2);
