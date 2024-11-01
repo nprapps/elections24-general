@@ -135,7 +135,7 @@ class CountyDataViz extends ElementBase {
         const second = sortedOrder[1].party;
 
         //original line
-        //const resultsIn = this.data.filter(d => d.reportingPercent > 0.5);
+        //const resultsIn = this.data.filter(d => d.reportingPercent > 0.1);
         const resultsIn = data
 
 
@@ -153,6 +153,7 @@ class CountyDataViz extends ElementBase {
             party: f.candidates[0].party,
             fips: f.fips,
             ...f.county,
+            ...(f.censusID ? { censusID: f.censusID } : {})
         }));
     }
 
