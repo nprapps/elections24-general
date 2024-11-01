@@ -36,6 +36,9 @@ class TabbedResultsCollection extends ElementBase {
 	  this.races.forEach((race, i) => {
 	    let table = `
 	    	<div id="table-${race.id}" class="table${i === 0 ? ' shown' : ''}">
+	    		<p class="section-info">
+	    			${race.electoral} ${race.seat ? "district" : "at-large"} electoral vote${race.electoral > 1 ? "s" : ""}
+	    		</p>
 		      <results-table 
 		        state="${this.getAttribute("state")}" 
 		        result='${JSON.stringify(race).replace(/'/g, "&#39;")}'>
