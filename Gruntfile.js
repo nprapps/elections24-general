@@ -31,7 +31,7 @@ module.exports = function (grunt) {
     "template",
   ]);
   grunt.registerTask("startup", "Build all files and data", function (arg = "stage") {
-    grunt.task.run(`update:${arg}`, "clean", "ap", "static");
+    grunt.task.run(`update:${arg}`, "clean", "ap", "copy", "bundle", "less", "build");
   });
   grunt.registerTask("quick", "Build without assets", [
     "clean",
