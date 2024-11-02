@@ -95,10 +95,6 @@ class CountyDataViz extends ElementBase {
             return;
         }
 
-        console.log('+++')
-        console.log(this.state.cleanedData)
-        console.log('/////')
-
         const footnote = this.ommittedCounties
             ? "Counties where leading parties differ from statewide leading parties are omitted."
             : "";
