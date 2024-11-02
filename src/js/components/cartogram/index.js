@@ -382,15 +382,15 @@ class Cartogram extends ElementBase {
   * @requires {SVGElement} this.svg - SVG element must be loaded
   * @requires {Array} this.races - Array of race results with at least these elements 
   *   {
-  *     eevp: number,           // Expected vote percentage
-  *     reportingPercent: number,
-  *     district: string,       // District identifier
-  *     seatNumber: string,     // Alternate district identifier
-  *     state: string,          // State abbreviation
+  *     eevp: number -  Expected vote percentage
+  *     reportingPercent - number,
+  *     district: string -  District identifier
+  *     seatNumber: string -  Alternate district identifier
+  *     state: string - State abbreviation
   *     candidates: [{
-  *       party: string         // Party identifier
+  *       party: string  - Party identifier
   *     }],
-  *     winnerParty: string     // Winner's party if race called
+  *     winnerParty: string - Winner's party if race called
   *   }
   * 
   * @effects

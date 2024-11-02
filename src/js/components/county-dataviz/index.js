@@ -90,10 +90,14 @@ class CountyDataViz extends ElementBase {
     }
 
     render() {
-        if (!this.state.cleanedData) {
+        if (!this.state.cleanedData || this.state.cleanedData.length === 0) {
             this.innerHTML = '';
             return;
         }
+
+        console.log('+++')
+        console.log(this.state.cleanedData)
+        console.log('/////')
 
         const footnote = this.ommittedCounties
             ? "Counties where leading parties differ from statewide leading parties are omitted."
@@ -135,7 +139,7 @@ class CountyDataViz extends ElementBase {
         const second = sortedOrder[1].party;
 
         //original line
-        const resultsIn = this.data.filter(d => d.reportingPercent > 0.5);
+        const resultsIn = this.data.filter(d => d.reportingPercent > 0.01);
         //const resultsIn = data
 
 

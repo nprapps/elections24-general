@@ -224,7 +224,7 @@ class CountyMap extends ElementBase {
 
       path.classList.add("painted");
 
-      var hitThreshold = entry.reportingPercent > 0.5;
+      var hitThreshold = entry.reportingPercent > 0.01;
       var allReporting = entry.reportingPercent >= 1;
 
       if (!hitThreshold) {

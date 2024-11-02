@@ -32,10 +32,14 @@ class BoardPresident extends ElementBase {
     this.results = []
     //this.onData = this.onData.bind(this);
     this.loadData = this.loadData.bind(this);
+    this.renderLoadingState = this.renderLoadingState.bind(this);
+    this.checkComponents = this.checkComponents.bind(this);
     this.updateTabSelection = this.updateTabSelection.bind(this);
     this.tabButtons = null;
     this.customElements = null;
     this.tabElementMap = null;
+    this.style.opacity = '0';
+    this.style.transition = 'opacity 0.1s ease-in';
 
 
     let initialSelectedTab = 0; 
@@ -253,6 +257,7 @@ Geography
     * @callback connectedCallback
     */
   connectedCallback() {
+    this.renderLoadingState();
     this.loadData();
     gopher.watch(`./data/president.json`, this.loadData);
     this.illuminate();
@@ -262,6 +267,38 @@ Geography
   disconnectedCallback() {
     gopher.unwatch("./data/president.json"), this.loadData;
   }
+
+  checkComponents() {
+    return new Promise(resolve => {
+        const check = () => {
+            
+            const components = [
+                'results-board-display'
+            ];
+
+            // Find any component that exists in the DOM
+            const foundComponent = components.find(tag => document.querySelector(tag));
+            
+            if (!foundComponent) {
+                requestAnimationFrame(check);
+                return;
+            }
+
+            // Check if the found component has undefined content
+            const element = document.querySelector(foundComponent);
+            const hasUndefinedContent = element.innerHTML === 'undefined' || 
+                                      element.innerText === 'undefined' ||
+                                      element.innerHTML === 'undefined undefined';
+
+            if (hasUndefinedContent) {
+                requestAnimationFrame(check);
+            } else {
+                resolve();
+            }
+        };
+        check();
+    });
+}
 
 
   /**
@@ -374,6 +411,14 @@ Geography
     }
   }
 
+  renderLoadingState() {
+    this.innerHTML = `
+        <div class="board-wrapper loading">
+            <span>Loading presidential results data...</span>
+        </div>
+    `;
+}
+
   /**
      * Renders the presidential board interface
      * Creates electoral bars, leaderboard, maps, and results display
@@ -381,7 +426,7 @@ Geography
      * @function render
      * @property {Object} buckets - Groups races by rating (likelyD, tossup, likelyR)
      */
-  render() {
+  async render() {
     const { results = [], test, latest } = this.state;
 
     var buckets = {
@@ -440,6 +485,8 @@ Geography
         ${!hideResultsBoard ? `<results-board-key race="president"></results-board-key> ` : ''}
         <div class="board source-footnote">Last updated ${fullDate} at ${time}</div>`;
     this.setupTabs();
+    await this.checkComponents();
+    this.style.opacity = '1';
   }
 }
 
