@@ -8,13 +8,9 @@ class BalanceOfPowerSenate extends ElementBase {
     super();
     this.loadData = this.loadData.bind(this);
     this.race = this.getAttribute('race');
-    this.renderLoadingState = this.renderLoadingState.bind(this);
-    this.isLoading = true;
-    this.innerHTML = '';
   }
 
   connectedCallback() {
-    this.renderLoadingState();
     this.loadData();
     this.illuminate();
     //gopher.watch(`./data/senate.json`, this.loadData);
@@ -30,33 +26,17 @@ class BalanceOfPowerSenate extends ElementBase {
   //TODO: verify how to make this senate vs house
   /*====================*/
   async loadData() {
-    this.isLoading = true; 
-    this.renderLoadingState();
     try {
       const response = await fetch('./data/senate.json');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       this.data = await response.json();
-      this.isLoading = false;
-      this.render();
+      this.render()
     } catch (error) {
       console.error("Could not load JSON data:", error);
     }
   }
-
-  renderLoadingState() {
-    console.log('we are calling renderLoading for the senate')
-    this.innerHTML = `
-        <div class="board-wrapper loading">
-            <span>Loading senate data...</span>
-        </div>
-    `;
-    console.log(this)
-    console.log('////')
-}
-
-
   /*====================*/
   //Some render logic, then return the template of the inner html code
   /*====================*/

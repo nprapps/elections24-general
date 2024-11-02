@@ -1,4 +1,6 @@
 var ElementBase = require("../elementBase");
+const { formatAPDate, formatTime, winnerIcon } = require("../util");
+
 
 import gopher from "../gopher.js";
 import { getBucket, sumElectoral, groupCalled } from "../util.js";
@@ -12,12 +14,12 @@ import Tabs from "../tabs";
 
 /**
  * BoardPresident - Custom element for displaying presidential election results
- * Supports multiple visualization modes/sub components: national-map, cartogram-map, and electoral-bubbles, all of which should be imported above
+ * Supports multiple visualization sub components: national-map, cartogram-map, and electoral-bubbles, all of which should be imported above
  *
  * @class
  * @extends ElementBase
  
- * The constructor nitializes the component with state management and tab handling
+ * The constructor intializes a few variables, including a container for the results (this.results = []) and a container for the loadData function. initialSelectedTab is used only for the embed
   * @constructor
   * @property {Object} state - Component state
   * @property {PresidentRaceResult[]} results - Election results
@@ -247,8 +249,8 @@ Geography
   }
 
   /**
-    * Sets up data watching and initial render     
-    * * Initializes data loading and sets up gopher watchers
+    * Initializes data loading and sets up gopher watchers. if there's anything wrong with the refresh or initial load, the call will start here   
+    * 
     * 
     * @callback connectedCallback
     */
@@ -265,8 +267,7 @@ Geography
 
 
   /**
-     * Configures tab functionality and event listeners
-     * Sets up tab buttons and element mapping with 250ms delay to allow for cartogram-map to initLabels()
+     * Sets up tab buttons and element mapping with 250ms delay to allow for all of the subcomponents to render correctly. watch out for cartogram's initLabels()
      * 
      * @function setupTabs
      */
@@ -296,16 +297,13 @@ Geography
 
 
   /**
-     * Handles tab selection changes
-     * Updates aria-selected states and element visibility based off of the tab that was clicked
-
+     * Handles tab selection changes and element visibility based off of the tab that was clicked
      * @function updateTabSelection
      * @param {HTMLElement} clickedTab - The tab button that was clicked
   */
   updateTabSelection(clickedTab) {
 
 
-    // Deselect all tabs and hide all elements
     this.tabButtons.forEach(tab => {
       tab.setAttribute('aria-selected', 'false');
       const tabIndex = tab.getAttribute('data-tab');
@@ -314,7 +312,6 @@ Geography
       }
     });
 
-    // Select clicked tab and show corresponding element
     clickedTab.setAttribute('aria-selected', 'true');
     const selectedTabIndex = clickedTab.getAttribute('data-tab');
     this.tabElementMap[selectedTabIndex]
@@ -376,8 +373,8 @@ Geography
 
   /**
      * Renders the presidential board interface
-     * Creates electoral bars, leaderboard, maps, and results display
-     * Handles conditional rendering based on data attributes
+     * Creates sub components, including the electoral bars, leaderboard, maps, and results display. 
+     * Ech component handles conditional rendering based on data attributes passed through their parent, or by that component's loadData() function
      * @function render
      * @property {Object} buckets - Groups races by rating (likelyD, tossup, likelyR)
      */
@@ -417,9 +414,18 @@ Geography
       false;
 
       var updated = Math.max(...this.results.map(r => r.updated));
+
       const date = new Date(updated);
-      const time = `${date.getHours() % 12 || 12}:${String(date.getMinutes()).padStart(2, '0')} ${date.getHours() >= 12 ? 'PM' : 'AM'}`;
-      const fullDate = `${date.toLocaleString('en-US', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()}`;
+      const winnerResult = this.results.find(r => r.candidates?.[0]?.winner === "X");
+      const winnerDateTime = winnerResult?.candidates?.[0]?.winnerDateTime;
+
+      // Build the footer timestamp HTML
+      let timestampHTML = `Last updated ${formatAPDate(date)} at ${formatTime(date)}`;
+      if (winnerDateTime) {
+        const winnerDate = new Date(winnerDateTime);
+        timestampHTML += ` • Winner called: ${formatAPDate(winnerDate)} at ${formatTime(winnerDate)}`;
+      }
+    
 
     this.innerHTML = `
       <div class="president board">
@@ -438,7 +444,10 @@ Geography
         ${!hideResultsBoard ? `<results-board-display office="president" split="true" hed="Competitive"></results-board-display>` : ''}
       </div>
         ${!hideResultsBoard ? `<results-board-key race="president"></results-board-key> ` : ''}
-        <div class="board source-footnote">Last updated ${fullDate} at ${time}</div>`;
+        <div class="board-footer">
+        ${!hideResultsBoard ? '' : `<div class="full-link"><span><a href="">See full results ›</a></span></div>`}
+        <div class="board source-footnote">${timestampHTML}</div>
+        </div>`;
     this.setupTabs();
   }
 }

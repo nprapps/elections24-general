@@ -1,4 +1,5 @@
 var ElementBase = require("../elementBase");
+const { formatAPDate, formatTime, winnerIcon } = require("../util");
 
 import gopher from "../gopher.js";
 import { getBucket, sumElectoral, groupCalled } from "../util.js";
@@ -9,8 +10,8 @@ import BalanceOfPowerCombined from "../balance-of-power-combined";
 
 /**
  * BoardHouse - An element for displaying the board/page that holds the House key-races election results
- * Extends ElementBase to create a component inline with the rest of the project,
- * including competitive races and a results key.
+ * Extends ElementBase to create a component inline with the rest of the project. Also has properties and classes assigned to have the three column design.
+ * The results are stored and accessed in this.results = []
  *
  * @class
  * @extends ElementBase
@@ -101,7 +102,7 @@ class BoardHouse extends ElementBase {
 
   /**
    * Renders the house board interface
-   * Creates balance of power component and results display after sorting into buckets
+   * Creates balance-of-power-combined component and results-board-display component after sorting into buckets
    * Handles conditional rendering based on data attributes
    * @function render
    * @property {Object} buckets - Groups races by rating (likelyD, tossup, likelyR)
@@ -134,6 +135,12 @@ class BoardHouse extends ElementBase {
 
     var called = groupCalled(this.results);
 
+    var updated = Math.max(...this.results.map(r => r.updated));
+
+        const date = new Date(updated);
+
+        let timestampHTML = `Last updated ${formatAPDate(date)} at ${formatTime(date)}`;
+
     this.innerHTML = `
         <div class="president board">
           <div class="header">
@@ -146,6 +153,9 @@ class BoardHouse extends ElementBase {
           </div>
           <results-board-display office="House" split="true" hed="Competitive"></results-board-display>
           <results-board-key race="house"></results-board-key>
+        </div>
+          <div class="board-footer">
+        <div class="board source-footnote">${timestampHTML}</div>
         </div>
       `;
   }

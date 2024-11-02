@@ -1,4 +1,5 @@
 var ElementBase = require("../elementBase");
+const { formatAPDate, formatTime, winnerIcon } = require("../util");
 
 import gopher from "../gopher.js";
 import { getBucket, sumElectoral, groupCalled } from "../util.js";
@@ -126,6 +127,12 @@ class BoardGovernor extends ElementBase {
 
         var called = groupCalled(this.results);
 
+        var updated = Math.max(...this.results.map(r => r.updated));
+
+        const date = new Date(updated);
+
+        let timestampHTML = `Last updated ${formatAPDate(date)} at ${formatTime(date)}`;
+
         this.innerHTML = `
         <div class="president board">
           ${test ? '<test-banner></test-banner>' : ''}
@@ -136,6 +143,9 @@ class BoardGovernor extends ElementBase {
         </div>
             <results-board-display office="governor"  hed="Competitive"></results-board-display>
             <results-board-key race="gov"></results-board-key>
+        </div>
+        <div class="board-footer">
+        <div class="board source-footnote">${timestampHTML}</div>
         </div>
       `;
     }
