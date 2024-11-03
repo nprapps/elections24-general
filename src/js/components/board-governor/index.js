@@ -141,7 +141,7 @@ class BoardGovernor extends ElementBase {
             <results-board-key race="gov"></results-board-key>
         </div>
         <div class="board-footer">
-        <div class="board source-footnote">${timestampHTML}</div>
+        <div class="footnote board-footnote">${timestampHTML}</div>
         </div>
       `;
     }

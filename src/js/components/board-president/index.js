@@ -447,7 +447,7 @@ Geography
         ${!hideResultsBoard ? `<results-board-key race="president"></results-board-key> ` : ''}
         <div class="board-footer">
         ${!hideResultsBoard ? '' : `<div class="full-link"><span><a href="">See full results ›</a></span></div>`}
-        <div class="board source-footnote">${timestampHTML}</div>
+        <div class="footnote board-footnote">${timestampHTML}</div>
         </div>`;
     this.setupTabs();
   }
