@@ -68,11 +68,11 @@ class BoardSenate extends ElementBase {
         var called = groupCalled(this.results);
 
         this.innerHTML = `
-        <div class="president board">
+        <div class="senate board">
           ${test ? '<test-banner></test-banner>' : ''}
         <div class="header">
           <div class="title-wrapper">
-            <h1 tabindex="-1">Senate Results</h1>
+            <h1 tabindex="-1">Senate results</h1>
           </div>
           <div class="bop-wrapper">
            <balance-of-power-combined race="senate"></balance-of-power-combined>

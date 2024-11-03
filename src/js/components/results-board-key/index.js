@@ -41,11 +41,6 @@ class ResultsBoardKey extends ElementBase {
 
       let stateNavHTML = `
         <hr class="divider" />
-        <h2>State-level results</h2>
-        <label>Jump to a state</label>
-        <select>
-          <option>Alabama</option>
-        </select>
       `
 
       this.innerHTML = `

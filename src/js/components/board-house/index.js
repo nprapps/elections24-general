@@ -69,7 +69,7 @@ class BoardHouse extends ElementBase {
         var called = groupCalled(this.results);
 
         this.innerHTML = `
-        <div class="president board">
+        <div class="house board">
           <div class="header">
             <div class="title-wrapper">
               <h1 tabindex="-1">Key House results</h1>

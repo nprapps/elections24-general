@@ -4,6 +4,15 @@
   h1 {
     text-align: center;
     margin-bottom: 30px;
+    @media (@mobile) {
+      font-size: 2.4em;
+    }
+    @media (@mobile-above) {
+      font-size: 3em;
+    }
+    @media (@tablet-above) {
+      font-size: 3.6em;
+    }
   }
   .electoral-leaderboard {
     display: flex;
