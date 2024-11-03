@@ -181,7 +181,7 @@ class BalanceOfPowerBar extends ElementBase {
   render() {
 
     const date = new Date(this.latest);
-    let timestampHTML = `Last updated ${formatAPDate(date)} at ${formatTime(date)}`;
+    let timestampHTML = `Source: AP. Last updated ${formatAPDate(date)} at ${formatTime(date)}`;
 
     const winnerIcon = `<span class="winner-icon" role="img" aria-label="check mark">
       <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -190,18 +190,16 @@ class BalanceOfPowerBar extends ElementBase {
     </span>`;
 
     this.innerHTML = `
-          <main class="embed-bop">
-    <div class="inline">
-      <div class="container ${this.embedClass}">
-      ${!this.races || this.races.includes('president') ? this.renderPresident(winnerIcon) : ''}
-      ${!this.races || this.races.includes('house') ? this.renderHouse(winnerIcon) : ''}
-      ${!this.races || this.races.includes('senate') ? this.renderSenate(winnerIcon) : ''}
-      </div>
-    </div>
-        </main>
-        <div class="board-footer">
-        <div class="board source-footnote">${timestampHTML}</div>
+    <main class="embed-bop">
+      <div class="inline">
+        <div class="container ${this.embedClass}">
+        ${!this.races || this.races.includes('president') ? this.renderPresident(winnerIcon) : ''}
+        ${!this.races || this.races.includes('house') ? this.renderHouse(winnerIcon) : ''}
+        ${!this.races || this.races.includes('senate') ? this.renderSenate(winnerIcon) : ''}
         </div>
+      </div>
+    </main>
+      <div class="board source source-footnote">${timestampHTML}</div>
     `;
   }
 
