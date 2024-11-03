@@ -140,10 +140,12 @@ class ResultsTableCounty extends ElementBase {
         });
     }
 
-    getSorter() {
+    getSorter(currentState) {
+
+        const townshipStates = ['CT', 'MA', 'ME', 'NH', 'RI', 'VT'];
         return `
       <ul class="sorter">
-        <li class="label">Sort Counties By:</li>
+        <li class="label">Sort ${townshipStates.includes(currentState) ? 'Townships' : 'Counties'} By:</li>
         ${Object.keys(this.availableMetrics)
                 .map(m => this.getSorterLi(this.availableMetrics[m]))
                 .join('')}
@@ -159,7 +161,6 @@ class ResultsTableCounty extends ElementBase {
         return `
       <li class="sortButton ${selected}" data-sort-metric="${metric.key}">
         <span class="metric">${metric.name}</span>
-        <span class="pipe"> | </span>
       </li>
     `;
     }
@@ -226,6 +227,18 @@ class ResultsTableCounty extends ElementBase {
             return header;
         });
 
+        candidates.forEach(c => {
+            if (c.party === 'Other' && c.percent === 0) {
+              const sum = candidates
+                .filter(c => c.party !== 'Other')
+                .reduce((sum, c) => sum + (c.percent || 0), 0);
+              
+              if (sum < 1) {
+                c.percent = Math.max(0, 1 - sum);
+              }
+            }
+        });
+
         let metricValue = row.county[metric.key];
         if (metric.format) {
             metricValue = metric.format(metricValue);
@@ -289,13 +302,13 @@ class ResultsTableCounty extends ElementBase {
         this.innerHTML = `
         <div class="results-counties ${this.state.sortMetric.key.split("_").join("-")}">
             <h3>Demographics by ${townshipStates.includes(this.currentState) ? 'township' : 'county'}</h3>
-            ${this.getSorter()}
+            ${this.getSorter(this.currentState)}
             <table class="results-table candidates-${orderedCandidates.length}">
                 <thead>
                     <tr>
                         <th class="county sortable" data-sort="countyName">
                             <div>
-                                <span class="county">County</span>
+                                <span class="county">${townshipStates.includes(this.currentState) ? 'Township' : 'County'}</span>
                             </div>
                         </th>
                         <th class="amt precincts" data-sort="countyName">
@@ -325,15 +338,23 @@ class ResultsTableCounty extends ElementBase {
                 ${sortedData.map(county => {
             const countyOrderedCandidates = orderedCandidates.map(headerCand => {
                 if (headerCand.last === "Other") {
-                    // Calculate other percentage for this county
-                    const otherPercent = county.candidates
-                        .filter(c => !orderedCandidates.find(h => h.last === c.last))
-                        .reduce((sum, c) => sum + (c.percent || 0), 0);
-                    return { ...headerCand, percent: otherPercent };
+                    if (county.censusID) {
+                        const otherCandidate = county.candidates.find(c => c.last === 'Other' || c.party === 'Other');
+                        return { ...headerCand, percent: otherCandidate?.percent || 0 };
+                    } else {
+                        // Original logic for non-census counties
+                        const otherPercent = county.candidates
+                            .filter(c => !orderedCandidates.find(h => h.last === c.last))
+                            .reduce((sum, c) => sum + (c.percent || 0), 0);
+                        return { ...headerCand, percent: otherPercent };
+                    }
                 }
                 // Find matching candidate from this county
-                const countyCand = county.candidates.find(c => c.last === headerCand.last) ||
-                    { ...headerCand, percent: 0 };
+                const countyCand = county.candidates.find(c => 
+                    c.last === headerCand.last || 
+                    (headerCand.last === 'Other' && (c.last === 'Other' || c.party === 'Other'))
+                ) || { ...headerCand, percent: 0 };
+                
                 return {
                     last: headerCand.last,
                     party: headerCand.party,

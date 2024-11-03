@@ -1,5 +1,6 @@
 import gopher from "../gopher.js";
 const ResultsCollection = require("../results-collection");
+const TabbedResultsCollection = require("../tabbed-results-collection");
 const ElementBase = require("../elementBase");
 
 const offices = {
@@ -10,6 +11,8 @@ const offices = {
   "house": "H",
   "ballot-measures": "I"
 }
+
+const townshipStates = ["CT", "MA", "ME", "NH", "RI", "VT"];
 
 class StatePageResults extends ElementBase {
   constructor() {
@@ -69,8 +72,10 @@ class StatePageResults extends ElementBase {
               (this.state === "NE" || this.state === "ME")
             ) {
               return d.office === "P" && d.electoral === 2;
-            } else if (office === "H" || office === "I") {
-              return d.office === offices[office] && d.keyRace === "yes";
+            } else if (office === "house") {
+              return d.office === "H" && d.keyRace === "yes";
+            } else if (office === "ballot-measures") {
+              return d.office === "I" && d.featured === "yes";
             } else {
               return d.office === offices[office];
             }
@@ -86,39 +91,63 @@ class StatePageResults extends ElementBase {
         });
         sectionHTML += "</section>";
       } else {
-        let races = results.filter(d => {
-          if (
-            section === "president" &&
-            (this.state === "NE" || this.state === "ME")
-          ) {
-            return d.office === "P" && d.electoral === 2;
-          } else {
-            return d.office === offices[section];
-          }
-        });
-        
-
-        const townshipStates = ['CT', 'MA', 'ME', 'NH', 'RI', 'VT'];
+        let races = results.filter(d => d.office === offices[section]);
 
         if (section === "president") {
-          sectionHTML += `
-            <section id="${section}-section" section="${section}">
-              <results-collection state="${this.state}" office="${
-            offices[section]
-          }" races='${JSON.stringify(races).replace(
-            /'/g,
-            "&#39;"
-          )}' electoral=${electoral} 
-          ></results-collection>
-              <h3 class="section-hed">Presidential results by ${townshipStates.includes(this.state) ? 'township' : 'county'}</h3>
-              <county-map state="${this.state}"></county-map>
-                ${!races.some(d => d.office === "P" && d.eevp === 0) ? `<county-dataviz state="${this.state}"></county-dataviz>` : ''}              <results-table-county
-                state="${this.state}"
-                race-id="0"
-                order="1">
-              </results-table-county>
-            </section>
-          `
+          if (this.state === "AK" || this.state === "DC") {
+            sectionHTML += `
+              <section id="president-section" section="president">
+                <results-collection 
+                  state=${this.state}
+                  office="${offices[section]}" 
+                  races='${JSON.stringify(races).replace(/'/g, "&#39;")}' 
+                  electoral=${electoral} 
+                >
+                </results-collection>
+
+                <p class="county-data-note"> County-level results not available for ${
+                  this.state === "AK" ? "Alaska" : "District of Columbia"
+                }. </p>
+              </section>
+            `;
+          } else if (this.state === "NE" || this.state === "ME") {
+            sectionHTML += `
+              <section id="president-section" section="president">
+                <tabbed-results-collection
+                  state="${this.state}"
+                  races='${JSON.stringify(races).replace(/'/g, "&#39;")}'
+                ></tabbed-results-collection>
+                <h3 class="section-hed">Presidential results by ${townshipStates.includes(this.state) ? 'township' : 'county'}</h3>
+                <county-map state="${this.state}"></county-map>
+                ${!races.some(d => d.office === "P" && d.eevp === 0) ? `<county-dataviz state="${this.state}"></county-dataviz>` : ''}
+                <results-table-county
+                  state="${this.state}"
+                  race-id="0"
+                  order="1">
+                </results-table-county>
+              </section>
+            `
+          } else {
+            sectionHTML += `
+              <section id="president-section" section="president">
+                <results-collection state="${this.state}" office="${
+                  offices[section]
+                }" races='${JSON.stringify(races).replace(
+                  /'/g,
+                  "&#39;"
+                )}' electoral=${electoral} 
+                ></results-collection>
+                <h3 class="section-hed">Presidential results by ${townshipStates.includes(this.state) ? 'township' : 'county'}</h3>
+                <county-map state="${this.state}"></county-map>
+                ${!races.some(d => d.office === "P" && d.eevp === 0) ? `<county-dataviz state="${this.state}"></county-dataviz>` : ''}
+                <results-table-county
+                  state="${this.state}"
+                  race-id="0"
+                  order="1">
+                </results-table-county>
+              </section>
+            `
+          }
         } else if (section === "senate" || section === "governor") {
           let countiesHTML = "";
           let countyRaces = this.countyRaces.filter(d => d.office === offices[section]);

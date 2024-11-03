@@ -16,32 +16,12 @@ class ResultsBoard extends ElementBase {
       this.hed = this.getAttribute('hed') || '';
       this.split = this.getAttribute('split') === 'true';
       this.addClass = this.getAttribute('add-class') || '';
-    }
-
-    static get observedAttributes() {
-        return ['data-races', 'office', 'split', 'add-class'];
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        switch (name) {
-            case 'office':
-                this.office = newValue;
-                break;
-            case 'split':
-                this.split = newValue === 'true';
-                break;
-            case 'add-class':
-                this.addClass = newValue;
-                break;
-            case 'hed':
-                this.hed = newValue;
-                break;
-        }
+      
     }
 
     connectedCallback() {
       this.loadData();
-      gopher.watch(`./data/senate.json`, this.loadData);
+      //gopher.watch(`./data/senate.json`, this.loadData);
     }
 
     async loadData() {
@@ -168,7 +148,7 @@ class ResultsBoard extends ElementBase {
                                 <tr key="${r.state}${r.district}" role="row" class="${hasResult ? "closed" : "open"} index-${i}">
                                     <td role="cell" class="state">
                                         <a href="./${ classify(r.stateName) }.html?section=${r.office}" target="_top">
-                                            ${stateDetail.ap} ${r.district && r.district !== "AL" ? r.district : ""}
+                                            ${stateDetail.ap} ${r.seatNumber && r.seatNumber !== "AL" ? r.seatNumber : ""}
                                         </a>
                                     </td>
                                     <td role="cell" class="electoral">${r.electoral}</td>
@@ -186,8 +166,6 @@ class ResultsBoard extends ElementBase {
                             // Existing case for other race types
                             var seatLabel = "";
                             var ballotLabel = "";
-
-                            console.log(r.office)
                   
                             switch (r.office) {
                                 case "H": 

@@ -90,7 +90,7 @@ class CountyDataViz extends ElementBase {
     }
 
     render() {
-        if (!this.state.cleanedData) {
+        if (!this.state.cleanedData || this.state.cleanedData.length === 0) {
             this.innerHTML = '';
             return;
         }
@@ -105,12 +105,10 @@ class CountyDataViz extends ElementBase {
           <div class="${this.state.collapsed ? 'collapsed' : ''}" id="trendsRef">
             ${this.state.charts.map(c => `
                 <county-chart
-                  data='${JSON.stringify(this.state.cleanedData)}'
+                data="${encodeURIComponent(JSON.stringify(this.state.cleanedData))}"
                   variable="${c.key}" 
-                  order='${JSON.stringify(this.state.sorted)}'
                   title="${c.name}" 
                   corr="${c.corr}"
-                  formatter="${c.format}"
                 ></county-chart>
             `).join('')}
           </div>
@@ -137,8 +135,8 @@ class CountyDataViz extends ElementBase {
         const second = sortedOrder[1].party;
 
         //original line
-        //const resultsIn = this.data.filter(d => d.reportingPercent > 0.5);
-        const resultsIn = data
+        const resultsIn = this.data.filter(d => d.reportingPercent > 0.01);
+        //const resultsIn = data
 
 
         // Filter out counties whose top 2 candidates don't match state.
@@ -155,6 +153,7 @@ class CountyDataViz extends ElementBase {
             party: f.candidates[0].party,
             fips: f.fips,
             ...f.county,
+            ...(f.censusID ? { censusID: f.censusID } : {})
         }));
     }
 

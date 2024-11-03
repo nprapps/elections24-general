@@ -4,6 +4,7 @@
 @import "sponsorship";
 @import "about-box";
 @import "../js/components/results-table/results-table";
+@import "../js/components/tabbed-results-collection/tabbed-results-collection";
 @import "../js/components/test-banner/test-banner";
 @import "source-footnote";
 
@@ -216,11 +217,8 @@ a.section-info {
 	}
 }
 
-results-collection {
-  align-items: end;
-}
-
 @media (min-width: @breakpoint2) {
+	tabbed-results-collection results-table,
 	results-collection[office="P"] results-table,
 	results-collection[office="S"] results-table,
 	results-collection[office="G"] results-table {
@@ -249,4 +247,11 @@ results-collection {
 
 county-map {
 	margin: 40px 0;
+}
+
+.county-data-note{
+	color: #787878;
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 0;
 }
