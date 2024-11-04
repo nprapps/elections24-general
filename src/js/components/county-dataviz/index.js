@@ -90,7 +90,7 @@ class CountyDataViz extends ElementBase {
     }
 
     render() {
-        if (!this.state.cleanedData) {
+        if (!this.state.cleanedData || this.state.cleanedData.length === 0) {
             this.innerHTML = '';
             return;
         }
@@ -135,8 +135,8 @@ class CountyDataViz extends ElementBase {
         const second = sortedOrder[1].party;
 
         //original line
-        //const resultsIn = this.data.filter(d => d.reportingPercent > 0.1);
-        const resultsIn = data
+        const resultsIn = this.data.filter(d => d.reportingPercent > 0.01);
+        //const resultsIn = data
 
 
         // Filter out counties whose top 2 candidates don't match state.

@@ -4,19 +4,14 @@
     <%= t.include("partials/_head.html", grunt.data.json) %>
     <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" type="text/css" href="customizer.css">
-
+    <base target="_blank">
   </head>
   <body>
-    <div >
+
+    <div id="bop-embed-wrapper">
+      <div id="bop-wrapper"></div>   
     </div>
 
-    <main class="app constrained">
-     <div id="bop-embed-wrapper">
-        <div id="bop-wrapper">
-          </div>   
-          <div class="source">Source: AP (as of <date-formatter value="${this.results?.latest}"></date-formatter>)</div> 
-        </div>
-    </main>
     <script>
         window.PROJECT_ANALYTICS = <%= JSON.stringify(json.project.analytics || {}) %>;
     </script>

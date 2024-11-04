@@ -1,5 +1,6 @@
 var ElementBase = require("../elementBase");
 import gopher from "../gopher.js";
+import {winnerIcon} from "../util.js";
 
 class BalanceOfPowerHouse extends ElementBase {
   constructor() {
@@ -94,7 +95,7 @@ class BalanceOfPowerHouse extends ElementBase {
         }
       }
     });
-  
+
     var footnote = "";
     if (showUnaffiliated) {
       footnote = `<div class="footnote">* Independents who caucus with Democrats (${ house.IndCaucusDem.total }) or Republicans (${ house.IndCaucusGOP.total }) are shown in the bar chart. Unaffiliated independents (${ house.IndUnaffiliated.total }) are not shown in the chart but are included in the overall count.</div>`
@@ -111,14 +112,8 @@ class BalanceOfPowerHouse extends ElementBase {
       house.netGain = topHouse.gains;
     }
 
-    var winnerIcon = `<span class="winner-icon" role="img" aria-label="check mark">
-    </span>`
-    
-
-    //! UPDATE OR REMOVE LINK (LINK IS ONLY NEEDED FOR EMBED)
     this.innerHTML = `
     <div id="embed-bop-on-page">
-      <a class="link-container house" href="/house.html" target="_top">
         <div class="number-container">
           <div class="candidate dem">
             <div class="name">Dem. ${house.Dem.total >= 218 ? winnerIcon : ""}</div>
@@ -142,10 +137,11 @@ class BalanceOfPowerHouse extends ElementBase {
           </div>
         </div>
 
-      <div class="bar-container">
+        <div class="bar-container">
           <div class="bar dem" style="width: ${(house.Dem.total / 435 * 100)}%"></div>
-          <div class="bar other" style="width: ${(house.Ind.total / 435 * 100)}%"></div>
+          <div class="bar other dem" style="width: ${(house.IndCaucusDem.total / 435 * 100)}%"></div>
           <div class="bar gop" style="width: ${(house.GOP.total / 435 * 100)}%"></div>
+          <div class="bar other gop" style="width: ${(house.IndCaucusGOP.total / 435 * 100)}%"></div>
           <div class="middle"></div>
         </div>
 
@@ -153,9 +149,8 @@ class BalanceOfPowerHouse extends ElementBase {
           <div class="chatter"><strong>218</strong> seats for majority</div>
         </div>
 
-      ${ footnote }
+        ${ footnote }
       </div>
-      </a>
     </div>
   `;
   }
