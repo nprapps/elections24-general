@@ -18,88 +18,100 @@ import BalanceOfPowerCombined from "../balance-of-power-combined";
  * @extends ElementBase
  */
 class BoardSenate extends ElementBase {
-    constructor() {
-        super();
-        this.state = {};
-        this.results = []
-        this.loadData = this.loadData.bind(this);
-    }
+  constructor() {
+    super();
+    this.state = {};
+    this.results = []
+    this.loadData = this.loadData.bind(this);
 
-     /**
-   * Lifecycle method called when component is added to the DOM
-   * Initiates the initial data loading, after which it should keep watching gopher. Technically, no other subcomponent should need to watch gopher
-   * 
-   * @callback connectedCallback
-   */
-    connectedCallback() {
-        this.loadData();
-        this.illuminate();
-        gopher.watch("./data/senate.json", this.loadData);
-    }
+    // Set up gopher watcher directly in constructor
+    const senateDataFile = './data/senate.json';
+    this.gopherCallback = (data) => {
+      if (data && data.results) {
+        this.results = data.results;
+        this.render();
+      }
+    };
+    gopher.watch(senateDataFile, this.gopherCallback);
+  }
 
-    disconnectedCallback() {
-        gopher.unwatch("./data/senate.json",  this.loadData);
-    }
+  /**
+* Lifecycle method called when component is added to the DOM
+* Initiates the initial data loading, after which it should keep watching gopher. Technically, no other subcomponent should need to watch gopher
+* 
+* @callback connectedCallback
+*/
+  connectedCallback() {
+    this.loadData();
+    this.illuminate();
+  }
 
-    async loadData() {
-        try {
-            const response = await fetch('./data/senate.json');
-            const { results = {} } = await response.json();
-            this.results = results;
-            this.render();
-          } catch (error) {
-            console.error('Error fetching senate data:', error);
-            // Optionally show error state
-            this.innerHTML = `
+  disconnectedCallback() {
+    if (this.gopherCallback) {
+      const senateDataFile = './data/senate.json';
+      gopher.unwatch(senateDataFile, this.gopherCallback);
+    }
+  }
+
+  async loadData() {
+    try {
+      const response = await fetch('./data/senate.json');
+      const { results = {} } = await response.json();
+      this.results = results;
+      this.render();
+    } catch (error) {
+      console.error('Error fetching senate data:', error);
+      // Optionally show error state
+      this.innerHTML = `
                 <div class="error-message">
                     Error loading Senate results. Please try again later.
                 </div>
             `;
-        }
     }
+  }
 
-    /**
-   * Renders the senate board interface
-   * Creates Creates balance-of-power-combined component and results-board-display component after sorting into buckets
-   * Handles conditional rendering based on data attributes
-   * @function render
-   * @property {Object} buckets - Groups races by rating (likelyD, tossup, likelyR)
-   */
-    render() {
-        const { results = [], test, latest } = this.state;
+  /**
+ * Renders the senate board interface
+ * Creates Creates balance-of-power-combined component and results-board-display component after sorting into buckets
+ * Handles conditional rendering based on data attributes
+ * @function render
+ * @property {Object} buckets - Groups races by rating (likelyD, tossup, likelyR)
+ */
+  render() {
+    const { results = [], test, latest } = this.state;
 
-        var buckets = {
-            likelyD: [],
-            tossup: [],
-            likelyR: [],
-        };
+    var buckets = {
+      likelyD: [],
+      tossup: [],
+      likelyR: [],
+    };
 
-        results.forEach(function (r) {
-            r.districtDisplay = (r.district !== "AL") ? r.district : "";
-        });
+    results.forEach(function (r) {
+      r.districtDisplay = (r.district !== "AL") ? r.district : "";
+    });
 
-        var sorted = results.slice().sort(function (a, b) {
-            if (a.stateName > b.stateName) return 1;
-            if (a.stateName < b.stateName) return -1;
-            if (a.districtDisplay > b.districtDisplay) return 1;
-            if (a.districtDisplay < b.districtDisplay) return -1;
-            return 0;
-        });
+    var sorted = results.slice().sort(function (a, b) {
+      if (a.stateName > b.stateName) return 1;
+      if (a.stateName < b.stateName) return -1;
+      if (a.districtDisplay > b.districtDisplay) return 1;
+      if (a.districtDisplay < b.districtDisplay) return -1;
+      return 0;
+    });
 
-        sorted.forEach(function (r) {
-            var bucketRating = getBucket(r.rating);
-            if (bucketRating) buckets[bucketRating].push(r);
-        }, this);
+    sorted.forEach(function (r) {
+      var bucketRating = getBucket(r.rating);
+      if (bucketRating) buckets[bucketRating].push(r);
+    }, this);
 
-        var called = groupCalled(this.results);
+    var called = groupCalled(this.results);
 
-        var updated = Math.max(...this.results.map(r => r.updated));
+    var updated = Math.max(...this.results.map(r => r.updated));
 
-        const date = new Date(updated);
+    const date = new Date(updated);
 
-        let timestampHTML = `Last updated ${formatAPDate(date)} at ${formatTime(date)}`;
+    let timestampHTML = `Last updated ${formatAPDate(date)} at ${formatTime(date)}`;
 
-        this.innerHTML = `
+    this.innerHTML = `
         <div class="senate board">
           ${test ? '<test-banner></test-banner>' : ''}
         <div class="header">
@@ -117,7 +129,7 @@ class BoardSenate extends ElementBase {
         <div class="footnote board-footnote">${timestampHTML}</div>
         </div>
       `;
-    }
+  }
 }
 
 customElements.define('board-senate', BoardSenate);
