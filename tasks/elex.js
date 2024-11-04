@@ -112,26 +112,33 @@ module.exports = function (grunt) {
     const states = {};
     geo.state.forEach(function (result) {
       if (result.office === "H" || result.office === "S") {
-        dashboard.push([
-          result.state,
-          result.office,
-          result.seatNumber,
-          result.rating,
-          result.called ? "Called" : "",
-          result.winnerParty ? result.winnerParty : "",
-        ]);
+        dashboard.push({
+          state: result.state,
+          office: result.office,
+          seatNumber: result.seatNumber,
+          rating: result.rating,
+          called: result.called ? "Called" : "",
+          winnerParty: result.winnerParty ? result.winnerParty : "",
+        });
       }
       const { state } = result;
       if (!states[state]) states[state] = [];
       states[state].push(result);
     });
 
-    try {
-      await emptyGSheets();
-      await writeDataToSheets(dashboard);
-    } catch (e) {
-      console.log("Error with google sheets: ", e);
-    }
+    //converts into csv to upload to google sheets
+    const replacer = (key, value) => (value === null ? "" : value); // specify how you want to handle null values here
+    const header = Object.keys(dashboard[0]);
+    const csv = [
+      header.join(","), // header row first
+      ...dashboard.map((row) =>
+        header
+          .map((fieldName) => JSON.stringify(row[fieldName], replacer))
+          .join(",")
+      ),
+    ].join("\r\n");
+
+    fs.writeFile(`build/data/dashboard.csv`, csv);
 
     for (let state in states) {
       let stateOutput = {
@@ -219,7 +226,6 @@ module.exports = function (grunt) {
     };
 
     await fs.writeFile(`build/data/bop.json`, serialize(bop));
-    console.log({ dashboard });
   };
 
   const serialize = (d) => JSON.stringify(d, null, 2);
