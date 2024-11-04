@@ -1,6 +1,7 @@
 var ElementBase = require("../elementBase.js");
 import { getParty } from "../util.js";
 import gopher from "../gopher.js";
+const { formatAPDate, formatTime, winnerIcon } = require("../util");
 
 
 class BalanceOfPowerBar extends ElementBase {
@@ -9,6 +10,7 @@ class BalanceOfPowerBar extends ElementBase {
     this.loadData = this.loadData.bind(this);
     this.embedClass = '';
     this.results;
+    this.latest;
   }
 
   connectedCallback() {
@@ -20,7 +22,7 @@ class BalanceOfPowerBar extends ElementBase {
       this.races = raceAttr.toLowerCase().split(' ');
       
       this.embedClass = this.races.length === 2 ? 'twoEmbeds' :
-        this.races.length === 1 ? 'oneEmbed' : '';
+      this.races.length === 1 ? 'oneEmbed' : '';
     } else {
       this.races = ['president', 'house', 'senate'];
     }
@@ -47,6 +49,8 @@ class BalanceOfPowerBar extends ElementBase {
 
   processResults(results) {
 
+    this.latest = this.results.latest
+
     var InactiveSenateRaces = {
       "GOP": 38,
       "Dem": 28,
@@ -66,19 +70,28 @@ class BalanceOfPowerBar extends ElementBase {
       Dem: { total: parseInt(InactiveSenateRaces["house_Dem"]), gains: 0 },
       GOP: { total: parseInt(InactiveSenateRaces["house_GOP"]), gains: 0 },
       Ind: { total: parseInt(InactiveSenateRaces["house_Other"]), gains: 0 },
+      IndCaucusDem: { total: 0, gains: 0 },
+      IndCaucusGOP: { total: 0, gains: 0 },
+      IndUnaffiliated: { total: 0, gains: 0 },
     };
     this.senate = {
       Dem: { total: InactiveSenateRaces.Dem, gains: 0 },
       GOP: { total: InactiveSenateRaces.GOP, gains: 0 },
       Ind: { total: InactiveSenateRaces.Other, gains: 0 },
+      IndCaucusDem: { total: 0, gains: 0 },
+      IndCaucusGOP: { total: 0, gains: 0 },
+      IndUnaffiliated: { total: 0, gains: 0 },
     };
 
     results.president.forEach(r => this.president[r.winner] += r.electoral);
 
-    this.mcmullinWon = false;
-
     results.house.forEach(r => {
-      const winnerParty = getParty(r.winner);
+      let winnerParty = getParty(r.winner);
+      if (winnerParty != "Dem" && winnerParty != "GOP") {
+        winnerParty = "Ind";
+      }
+      var previousParty = r.previousParty;
+
       const priorWinner = getParty(r.previous);
 
       if (!this.house[winnerParty]) {
@@ -94,10 +107,27 @@ class BalanceOfPowerBar extends ElementBase {
         this.house[winnerParty].gains += 1;
         this.house[priorWinner].gains -= 1;
       }
+
+      // account for how an independent candidate may caucus
+      if (winnerParty == "Ind") {
+        if (r.caucusWith && r.caucusWith == "GOP") {
+          this.house.IndCaucusGOP.total += 1;
+        }
+        if (r.caucusWith && r.caucusWith == "Dem") {
+          this.house.IndCaucusDem.total += 1;
+        }
+        if (!r.caucusWith) {
+          this.house.IndUnaffiliated.total += 1;
+        }
+      }      
     });
 
     results.senate.forEach(r => {
-      const winnerParty = getParty(r.winner);
+      let winnerParty = getParty(r.winner);
+      if (winnerParty != "Dem" && winnerParty != "GOP") {
+        winnerParty = "Ind";
+      }
+
       const previousParty = getParty(r.previous);
 
       if (!this.senate[winnerParty]) {
@@ -107,24 +137,26 @@ class BalanceOfPowerBar extends ElementBase {
         this.senate[previousParty] = { total: 0, gains: 0 };
       }
 
-      if (r.hasOwnProperty('winner')) {
-        if (r.id == '46329' && r.winner == 'Ind') {
-          this.mcmullinWon = true;
-        }
-      }
-
       this.senate[winnerParty].total += 1;
 
       if (r.winner !== r.previous) {
         this.senate[winnerParty].gains += 1;
         this.senate[previousParty].gains -= 1;
       }
-    });
 
-    this.senate.Ind.width = this.senate.Ind.total;
-    if (this.mcmullinWon) {
-      this.senate.Ind.width = (this.senate.Ind.total) - 1;
-    }
+      // account for how an independent candidate may caucus
+      if (winnerParty == "Ind") {
+        if (r.caucusWith && r.caucusWith == "GOP") {
+          this.senate.IndCaucusGOP.total += 1;
+        }
+        if (r.caucusWith && r.caucusWith == "Dem") {
+          this.senate.IndCaucusDem.total += 1;
+        }
+        if (!r.caucusWith) {
+          this.senate.IndUnaffiliated.total += 1;
+        }
+      }
+    });
 
     // Calculate net gains
     this.calculateNetGains();
@@ -148,6 +180,9 @@ class BalanceOfPowerBar extends ElementBase {
 
   render() {
 
+    const date = new Date(this.latest);
+    let timestampHTML = `Source: AP. Last updated ${formatAPDate(date)} at ${formatTime(date)}`;
+
     const winnerIcon = `<span class="winner-icon" role="img" aria-label="check mark">
       <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
         <path fill="#333" d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path>
@@ -155,21 +190,22 @@ class BalanceOfPowerBar extends ElementBase {
     </span>`;
 
     this.innerHTML = `
-          <main class="embed-bop">
-    <div class="inline">
-      <div class="container ${this.embedClass}">
-      ${!this.races || this.races.includes('president') ? this.renderPresident(winnerIcon) : ''}
-      ${!this.races || this.races.includes('house') ? this.renderHouse(winnerIcon) : ''}
-      ${!this.races || this.races.includes('senate') ? this.renderSenate(winnerIcon) : ''}
+    <main class="embed-bop">
+      <div class="inline">
+        <div class="container ${this.embedClass}">
+        ${!this.races || this.races.includes('president') ? this.renderPresident(winnerIcon) : ''}
+        ${!this.races || this.races.includes('house') ? this.renderHouse(winnerIcon) : ''}
+        ${!this.races || this.races.includes('senate') ? this.renderSenate(winnerIcon) : ''}
+        </div>
       </div>
-    </div>
-        </main>
+    </main>
+      <div class="board source source-footnote">${timestampHTML}</div>
     `;
   }
 
   renderPresident(winnerIcon) {
     return `
-      <a class="link-container president ${this.embedClass}" href="/" target="_blank">
+      <a class="link-container president ${this.embedClass}" href="https://apps.npr.org/2024-election-results/" target="_blank">
         <h3>President</h3>
         <div class="number-container">
           <div class="candidate dem">
@@ -202,7 +238,7 @@ class BalanceOfPowerBar extends ElementBase {
 
   renderHouse(winnerIcon) {
     return `
-      <a class="link-container house ${this.embedClass}" href="/house.html" target="_blank">
+      <a class="link-container house ${this.embedClass}" href="house.html" target="_blank">
         <h3>House</h3>
         <div class="number-container">
           <div class="candidate dem">
@@ -221,9 +257,10 @@ class BalanceOfPowerBar extends ElementBase {
           </div>
         </div>
         <div class="bar-container">
-          <div class="bar dem" style="width: ${this.house.Dem.total / 435 * 100}%"></div>
-          <div class="bar other" style="width: ${this.house.Ind.total / 538 * 100}%; ${this.house.Ind.total === 0 ? 'display: none;' : ''}"></div>
-          <div class="bar gop" style="width: ${this.house.GOP.total / 435 * 100}%"></div>
+          <div class="bar dem" style="width: ${(this.house.Dem.total / 435 * 100)}%"></div>
+          <div class="bar other dem" style="width: ${(this.house.IndCaucusDem.total / 435 * 100)}%"></div>
+          <div class="bar gop" style="width: ${(this.house.GOP.total / 435 * 100)}%"></div>
+          <div class="bar other gop" style="width: ${(this.house.IndCaucusGOP.total / 435 * 100)}%"></div>
           <div class="middle"></div>
         </div>
         <div class="chatter"><strong>218</strong> seats for majority</div>
@@ -235,7 +272,7 @@ class BalanceOfPowerBar extends ElementBase {
 
   renderSenate(winnerIcon) {
     return `
-      <a class="link-container senate ${this.embedClass}" href="/senate.html" target="_blank">
+      <a class="link-container senate ${this.embedClass}" href="senate.html" target="_blank">
         <h3>Senate</h3>
         <div class="number-container">
           <div class="candidate dem">
@@ -245,7 +282,7 @@ class BalanceOfPowerBar extends ElementBase {
           ${this.senate.Ind.total ? `
             <div class="candidate other">
               <div class="name">Ind. ${this.senate.Ind.total >= 51 ? winnerIcon : ""}</div>
-              <div class="votes">${this.senate.Ind.total}${this.mcmullinWon ? "*" : ""}</div>
+              <div class="votes">${this.senate.Ind.total}${this.IndUnaffiliated > 0 ? "*" : ""}</div>
             </div>
           ` : ""}
           <div class="candidate gop">
@@ -255,8 +292,9 @@ class BalanceOfPowerBar extends ElementBase {
         </div>
         <div class="bar-container">
           <div class="bar dem" style="width: ${this.senate.Dem.total}%"></div>
-          <div class="bar other" style="width: ${this.senate.Ind.width}%"></div>
+          <div class="bar other dem" style="width: ${this.senate.IndCaucusDem.total}%"></div>
           <div class="bar gop" style="width: ${this.senate.GOP.total}%"></div>
+          <div class="bar other gop" style="width: ${this.senate.IndCaucusGOP.total}%"></div>
           <div class="middle"></div>
         </div>
         <div class="chatter"><strong>51</strong> seats for majority</div>

@@ -16,27 +16,7 @@ class ResultsBoard extends ElementBase {
       this.hed = this.getAttribute('hed') || '';
       this.split = this.getAttribute('split') === 'true';
       this.addClass = this.getAttribute('add-class') || '';
-    }
-
-    static get observedAttributes() {
-        return ['data-races', 'office', 'split', 'add-class'];
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        switch (name) {
-            case 'office':
-                this.office = newValue;
-                break;
-            case 'split':
-                this.split = newValue === 'true';
-                break;
-            case 'add-class':
-                this.addClass = newValue;
-                break;
-            case 'hed':
-                this.hed = newValue;
-                break;
-        }
+      
     }
 
     connectedCallback() {
@@ -202,7 +182,7 @@ class ResultsBoard extends ElementBase {
                             return `
                                 <tr key="${r.id}" class="tr ${hasResult ? "closed" : "open"} index-${i}" role="row">
                                     <td class="state" role="cell">
-                                        <a target="_top" href="./${ classify(r.stateName) }.html?section=${r.office}">
+                                        <a href="./${ classify(r.stateName) }.html?section=${r.office}">
                                             <span class="not-small">
                                                 ${this.states[r.state].ap + seatLabel + ballotLabel}
                                             </span>

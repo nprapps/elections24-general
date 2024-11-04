@@ -36,7 +36,6 @@ class ResultsCollection extends ElementBase {
     const locality = townshipStates.includes(this.getAttribute("state"))
       ? "Township"
       : "County";
-
     if (this.hasAttribute("key-races-only")) {
       if (this.getAttribute("office") === "P") {
         let linkElement = ` • <a href="${stateSlug}.html?section=P">${locality}-level results</a>`;
@@ -57,6 +56,10 @@ class ResultsCollection extends ElementBase {
       } else if (this.getAttribute("office") === "H") {
         template += `<a class="section-info" href='${stateSlug}.html?section=H'>
           All House results
+        </a>`;
+      } else if (this.getAttribute("office") === "I") {
+        template += `<a class="section-info" href='${stateSlug}.html?section=I'>
+          All ballot measure results
         </a>`;
       }
     } else {
