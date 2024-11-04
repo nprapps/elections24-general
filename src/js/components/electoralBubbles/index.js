@@ -8,6 +8,20 @@ import stateSheet from "../../../../data/states.sheet.json";
 
 var d3 = require("d3-force/dist/d3-force.min.js");
 
+/**
+ * @constant {number} Y_FORCE - Vertical force strength 
+ * @constant {number} X_FORCE - Horizontal force strength
+ * @constant {number} COLLIDE_FORCE - Strength of collision detection between nodes
+ * @constant {number} MIN_DOMAIN - Minimum domain value for margin calculations
+ * @constant {number} MAX_DOMAIN - Maximum domain value for margin calculations
+ * @constant {number} POLAR_OFFSET - Offset value for party alignment positioning
+ * @constant {number} HIDE_TEXT - Threshold for hiding text labels
+ * @constant {number} MIN_TEXT - Minimum text size
+ * @constant {number} MIN_RADIUS - Minimum radius for electoral bubbles
+ * @constant {number} FROZEN - Threshold for considering simulation frozen
+ * @constant {number} HEIGHT_STEP - Vertical step size for layout
+ */
+
 var { sqrt, PI, cos, sin } = Math;
 
 const Y_FORCE = .03;
@@ -28,6 +42,26 @@ var nextTick = function (f) {
 
 var clamp = (v, l, h) => Math.min(Math.max(v, l), h);
 
+/**
+ * ElectoralBubbles - Interactive electoral component that is part of the board-president parent component. 
+ * Creates a bubble for each state and maps it according to its vote margin in d3. 
+ * Also creates a D3 force simulation with three forces: horizontal (x), vertical (y), and collision detection. 
+ * For each state race that's called (or >50% reported): 
+  - Creates a bubble (node) sized by electoral votes
+  - Positions it based on margin of victory (larger margins = further left/right)
+  - Democrats positioned left, Republicans right
+  - Uses D3's force simulation to prevent overlapping
+* For each state race that's called (or >50% reported): 
+  - Continuously updates bubble positions through D3's force simulation
+  - Renders bubbles as SVG circles with state abbreviations
+* Updates when:
+- New data arrives
+- Window is resized
+- Simulation ticks (animation frames)
+ * @extends ElementBase
+ * 
+ * @class
+ */
 class ElectoralBubbles extends ElementBase {
 
   constructor() {
@@ -70,6 +104,19 @@ class ElectoralBubbles extends ElementBase {
     window.addEventListener("resize", this.resize);
   }
 
+  /**
+   * @method connectedCallback
+   * @async
+   * @description When the component is created, call loadDatA() to fetch and processes electoral data, and initializing the visualization
+   * @returns {Promise<void>}
+   * @throws {Error} If there's an error fetching or processing the data
+   */
+  connectedCallback() {
+    this.loadData()
+    window.addEventListener("resize", this.resize);
+    //gopher.watch(`./data/president.json`, this.loadData);
+  }
+
   async loadData() {
     let presidentDataFile = './data/president.json';
 
@@ -86,11 +133,11 @@ class ElectoralBubbles extends ElementBase {
       this.tooltip = this.querySelector('.bubble-tooltip');
       this.observer = new IntersectionObserver(this.intersect);
       this.observer.observe(this.svg);
-      
+
 
       if (this.races && Object.keys(this.races).length > 0) {
         this.updateNodes(this.races);
-        for(let i = 0; i < 20; i++) {
+        for (let i = 0; i < 20; i++) {
           this.simulation.tick();
           this.resize();
         }
@@ -103,17 +150,17 @@ class ElectoralBubbles extends ElementBase {
     }
   }
 
-  connectedCallback() {
-    this.loadData()
-    window.addEventListener("resize", this.resize);
-    //gopher.watch(`./data/president.json`, this.loadData);
-  }
-
   disconnectedCallback() {
     window.removeEventListener("resize", this.resize);
     //gopher.unwatch(`./data/president.json`, this.loadData);
   }
 
+  /**
+  * @method xAccess
+  * @description Calculates the x-coordinate for a node based on its alignment and margin
+  * @param {Object} d - Node data
+  * @returns {number} Calculated x-coordinate
+  */
   xAccess(d) {
     const centerX = this.state.width / 2;
     const { mx, alignment } = d;
@@ -123,39 +170,33 @@ class ElectoralBubbles extends ElementBase {
     return x;
   }
 
+  /**
+   * @method nodeRadius
+   * @description Calculates the radius for a node based on electoral votes
+   * @param {Object} d - Node data
+   * @returns {number} Calculated radius value
+   */
   nodeRadius(d) {
     const a = d.electoral;
     const r = Math.sqrt(a / Math.PI);
     return Math.max(r * (this.state.width / 60), MIN_RADIUS);
   }
 
+  /**
+* @method collisionRadius
+* @description Calculates the collision radius for node collision detection by adding a 1-unit buffer to the node radius
+* @param {Object} d - Node data
+* @returns {number} Collision radius value
+*/
   collisionRadius(d) {
     return this.nodeRadius(d) + 1;
   }
 
-  resize() {
-    if (!this.svg) return;
-    const bounds = this.svg.getBoundingClientRect();
-    const { width, height } = bounds;
-
-    if (width != this.state.width) {
-      // Reset forces with new width
-      const xForce = d3.forceX().x(this.xAccess).strength(X_FORCE);
-      const yForce = d3.forceY().strength(Y_FORCE);
-      const collider = d3.forceCollide().strength(COLLIDE_FORCE);
-      collider.radius(this.collisionRadius);
-
-      this.simulation
-          .force("x", xForce)
-          .force("y", yForce)
-          .force("collide", collider)
-          .alpha(1)
-          .restart();
-    }
-    this.state.width = window.innerWidth;
-    this.render();
-  }
-
+  /**
+    * @method intersect
+    * @description Handles intersection observer callback for simulation control
+    * @param {Array<IntersectionObserverEntry>} entries - Intersection observer entries
+   */
   intersect([e]) {
     if (e.isIntersecting) {
       if (!this.running) {
@@ -174,6 +215,33 @@ class ElectoralBubbles extends ElementBase {
     }
   }
 
+  /**
+    * @method createNode
+    * @description Creates a node object representing an electoral result. uses data it gets from the race results
+    * @param {Object} r - Raw race data
+    * @param {number} dataDomain - Domain value for margin calculations
+    * 
+    * @returns {Object} Processed node object with position and display properties
+    */
+  createNode(r, dataDomain) {
+    const [winner, loser] = r.candidates;
+    const margin = winner.percent - loser.percent;
+    const party = r.winnerParty || winner.party;
+    const alignment = winner.party;
+    const mx = Math.log(Math.min(margin, MAX_DOMAIN) / dataDomain + 1) * (alignment == "Dem" ? -1 : 1);
+    const { state, district, called, electoral } = r;
+    const key = district ? state + district : state;
+    return { key, state, district, called, electoral, margin, mx, party, alignment, original: r };
+  }
+
+
+  /**
+ * @method tick
+ * @description Handles the animation frame updates for the force simulation and controls the continuous update loop for node positions and rendering
+ * @fires requestAnimationFrame
+ * @fires render
+ * @returns {void}
+ */
   tick() {
     if (!this.running) return;
     nextTick(this.tick);
@@ -194,17 +262,15 @@ class ElectoralBubbles extends ElementBase {
     }
   }
 
-  createNode(r, dataDomain) {
-    const [winner, loser] = r.candidates;
-    const margin = winner.percent - loser.percent;
-    const party = r.winnerParty || winner.party;
-    const alignment = winner.party;
-    const mx = Math.log(Math.min(margin, MAX_DOMAIN) / dataDomain + 1) * (alignment == "Dem" ? -1 : 1);
-    const { state, district, called, electoral } = r;
-    const key = district ? state + district : state;
-    return { key, state, district, called, electoral, margin, mx, party, alignment, original: r };
-  }
-
+  /**
+* @method updateNodes
+* @description Updates the node data and positions based on fetched electoral results. Fires a restart whenever resized
+* 
+* @param {Array<Object>} results - Array of electoral race results
+* 
+* @fires d3.forceSimulation.restart
+* @fires render
+*/
   updateNodes(results) {
     let { nodes } = this.state;
 
@@ -230,9 +296,9 @@ class ElectoralBubbles extends ElementBase {
         touched.add(existing);
       } else {
         upsert.x = this.xAccess(upsert);
-        upsert.y = (maxRadius * 2 - this.nodeRadius(r)) * 
-        (Math.random() > 0.5 ? 1.2 : -1.2) * 
-        (Math.random() + 0.5);
+        upsert.y = (maxRadius * 2 - this.nodeRadius(r)) *
+          (Math.random() > 0.5 ? 1.2 : -1.2) *
+          (Math.random() + 0.5);
         nodes.push(upsert);
         touched.add(upsert);
       }
@@ -248,37 +314,70 @@ class ElectoralBubbles extends ElementBase {
     this.render();
   }
 
-      goToState(state) {
-        track("clicked-bubble", state);
-        var linkTarget = document.head.querySelector("base").target || "_blank";
-        var stateFull = statePostalToFull(state);
-        window.open(`./${ classify(stateFull) }.html?section=P`, linkTarget);
-      }
-    
-      onMove(e) {
+    /**
+     * Interaction  functions
+     * These methods are the core interaction functions of the ElectoralBubbles component:
+      - resize() handles responsive layout updates
+      - goToState() manages navigation
+      - onMove() controls tooltip behavior and content
+      - onExit() handles cleanup when leaving interactive elements
+     * @description Handles intersection observer callback for simulation control
+     * @param {Array<IntersectionObserverEntry>} entries - Intersection observer entries
+    */
+  resize() {
+    if (!this.svg) return;
+    const bounds = this.svg.getBoundingClientRect();
+    const { width, height } = bounds;
 
-        const bounds = this.getBoundingClientRect();
-        const offsetX = e.clientX - bounds.left;
-        const offsetY = e.clientY - bounds.top;
-        
-    
-        const key = e.target.dataset.key;
-        const data = this.state.lookup[key];
+    if (width != this.state.width) {
+      // Reset forces with new width
+      const xForce = d3.forceX().x(this.xAccess).strength(X_FORCE);
+      const yForce = d3.forceY().strength(Y_FORCE);
+      const collider = d3.forceCollide().strength(COLLIDE_FORCE);
+      collider.radius(this.collisionRadius);
+
+      this.simulation
+        .force("x", xForce)
+        .force("y", yForce)
+        .force("collide", collider)
+        .alpha(1)
+        .restart();
+    }
+    this.state.width = window.innerWidth;
+    this.render();
+  }
+
+  goToState(state) {
+    track("clicked-bubble", state);
+    var linkTarget = document.head.querySelector("base").target || "_blank";
+    var stateFull = statePostalToFull(state);
+    window.open(`./${classify(stateFull)}.html?section=P`, linkTarget);
+  }
+
+  onMove(e) {
+
+    const bounds = this.getBoundingClientRect();
+    const offsetX = e.clientX - bounds.left;
+    const offsetY = e.clientY - bounds.top;
 
 
-        if (!key || !data) {
-          return this.tooltip.classList.remove("show");
-        }
-    
-        this.tooltip.classList.add("show");
-    
-        if (this.lastHover != key) {
-          const stateName = stateSheet[data.state].name;
-          const districtDisplay = data.district == "AL" ? "At-Large" : data.district;
-          const h3 = data.district ? `${stateName} ${districtDisplay}` : stateName;
-          const candidates = data.candidates.filter(c => c.percent);
-    
-          this.tooltip.innerHTML = `
+    const key = e.target.dataset.key;
+    const data = this.state.lookup[key];
+
+
+    if (!key || !data) {
+      return this.tooltip.classList.remove("show");
+    }
+
+    this.tooltip.classList.add("show");
+
+    if (this.lastHover != key) {
+      const stateName = stateSheet[data.state].name;
+      const districtDisplay = data.district == "AL" ? "At-Large" : data.district;
+      const h3 = data.district ? `${stateName} ${districtDisplay}` : stateName;
+      const candidates = data.candidates.filter(c => c.percent);
+
+      this.tooltip.innerHTML = `
             <h3>${h3} (${data.electoral})</h3>
             <div class="candidates">${candidates.map(c =>
         `<div class="row">
@@ -304,23 +403,28 @@ class ElectoralBubbles extends ElementBase {
     this.tooltip.classList.remove("show");
   }
 
-    
-      onExit() {
-        this.tooltip.classList.remove("show");
-      }
-    
-      render() {
-        let { nodes, width } = this.state;
-        let distance = 0;
-        nodes.forEach(n => {
-          n.r = this.nodeRadius(n);
-          const outerBounds = Math.abs(n.y) + n.r;
-          if (outerBounds > distance) {
-            distance = outerBounds;
-          }
-        });
 
-        this.simulation.nodes(nodes);
+  onExit() {
+    this.tooltip.classList.remove("show");
+  }
+
+    /**
+   * Creates DOM structure and d3 structure when rendering. Repeats a lot of the stuff done in the constructor for posterity 
+   * Called on first load and when data updates
+   * @method render
+   */
+  render() {
+    let { nodes, width } = this.state;
+    let distance = 0;
+    nodes.forEach(n => {
+      n.r = this.nodeRadius(n);
+      const outerBounds = Math.abs(n.y) + n.r;
+      if (outerBounds > distance) {
+        distance = outerBounds;
+      }
+    });
+
+    this.simulation.nodes(nodes);
 
     const xForce = d3.forceX().x(this.xAccess).strength(X_FORCE);
     const yForce = d3.forceY().strength(Y_FORCE);
@@ -334,7 +438,7 @@ class ElectoralBubbles extends ElementBase {
       .nodes(nodes)
       .alpha(1)
       .restart();
-        
+
 
     var yBounds = Math.ceil(distance / HEIGHT_STEP) * HEIGHT_STEP;
     if (yBounds - distance < 30) yBounds += 30;
