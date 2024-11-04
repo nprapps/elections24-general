@@ -59,7 +59,7 @@ class ResultsCollection extends ElementBase {
         </a>`;
       } else if (this.getAttribute("office") === "I") {
         template += `<a class="section-info" href='${stateSlug}.html?section=I'>
-          All Ballot measure results
+          All ballot measure results
         </a>`;
       }
     } else {
