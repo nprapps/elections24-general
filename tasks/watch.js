@@ -22,6 +22,10 @@ module.exports = function(grunt) {
         files: ["src/**/*.less"],
         tasks: ["less"]
       },
+      templates: {
+        files: ["src/**/*.html", "data/**/*", "src/**/*.md"],
+        tasks: ["template"]
+      },
       js: {
         files: ["src/js/**/*"], //everything, due to templating, GLSL, LESS, etc.
         tasks: ["bundle"]
