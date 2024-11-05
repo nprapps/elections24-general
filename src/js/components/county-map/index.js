@@ -254,12 +254,18 @@ class CountyMap extends ElementBase {
 
       path.classList.add("painted");
 
-      var hitThreshold = entry.reportingPercent > 0.01;
+      var hitThreshold = entry.reportingPercent > 0.50;
       var allReporting = entry.reportingPercent >= 1;
+      console.log('////')
+      console.log(entry)
+      console.log(entry.reportingPercent)
+      console.log('////')
 
       if (!hitThreshold) {
         path.style.fill = "#e1e1e1";
         incomplete = true;
+      } else if ((entry.reportingPercent < 0.5) && (entry.reportingPercent > 0)) {
+        path.style.fill = '#a0a0a0';
       } else {
         var [candidate] = this.legendCands.filter(c => isSameCandidate(c, top));
         if (candidate.special) path.classList.add(`i${candidate.special}`);

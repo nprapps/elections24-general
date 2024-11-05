@@ -434,10 +434,10 @@ class Cartogram extends ElementBase {
       groups.forEach((g) => {
         g.classList.remove("early", "winner", "leader", "GOP", "Dem");
 
-        if (eevp > 0) {
+        if (eevp > 0 && eevp < 0.5) {
           g.classList.add("early");
         }
-        if (eevp > 0.5) {
+        else if (eevp > 0.5) {
           g.classList.add("leader");
           g.classList.add(leader);
         }
