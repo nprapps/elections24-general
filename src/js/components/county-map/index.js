@@ -10,6 +10,14 @@ import {
   getCountyCandidates,
 } from "../util.js";
 
+/**
+ * @class CountyMap
+ * @extends ElementBase
+ * @description A component that renders an interactive county map to display election results..
+ * The map can display election results either at the county-level, or the township-level. The legend is built
+ * by checking the results data, and determining who is in the lead, as well as if there is a tie. Threshold is currently 50% to turn red or blue
+ */
+
 class CountyMap extends ElementBase {
   constructor() {
     super();
@@ -29,8 +37,12 @@ class CountyMap extends ElementBase {
     this.townCodesData = null;
   }
 
+    /**
+   * @async
+   * @method connectedCallback
+   * @description Lifecycle callback when element is added to DOM. Fetches and gets the data that'll feed into the map. Can we pass this as a data-attribute?
+   */
   async connectedCallback() {
-
     const state = this.getAttribute('state');
     const race = this.getAttribute('race-id');
 
@@ -42,8 +54,8 @@ class CountyMap extends ElementBase {
       url = `./data/counties/${state}-0.json`;
   }
 
+  //check specifically for newEngland candidates
     try {
-
       const newEnglandStates = ['CT', 'MA', 'ME', 'NH', 'RI', 'VT'];
 
       const response = await fetch(url);
@@ -81,10 +93,6 @@ class CountyMap extends ElementBase {
     //window.addEventListener("resize", this.handleResize);
   }
 
-  disconnectedCallback() {
-    //window.removeEventListener("resize", this.handleResize);
-  }
-
   componentDidUpdate() {
     this.paint();
   }
@@ -99,6 +107,10 @@ class CountyMap extends ElementBase {
     }
   }
 
+  /**
+   * @method render
+   * @description Renders the component's HTML structure, including map container and legend
+   */
   render() {
     this.innerHTML = `
       <div class="county-map" data-as="map" aria-hidden="true">
@@ -119,6 +131,13 @@ class CountyMap extends ElementBase {
     `
   }
 
+  /**
+   * @async
+   * @method loadSVG
+   * @description Loads and initializes the SVG map based on state. Checks to see if we need to upload a New England map. 
+   * Once the data is loaded in, we set the parent container to the width and height, set by updateDimensions
+   * @returns {Promise<SVGElement>} The loaded and configured SVG element
+   */
   async loadSVG() {
     const state = this.getAttribute('state');
     const newEnglandStates = ['CT', 'MA', 'ME', 'NH', 'RI', 'VT'];
@@ -150,6 +169,12 @@ class CountyMap extends ElementBase {
     return this.svg;
   }
 
+
+  /**
+   * @method processData
+   * @description Process map data and update legend candidates
+   * @param {Object} data - The data to process
+   */
   processData(data) {
     this.legendCands = getCountyCandidates(this.getAttribute('sort-order'), data);
     let specialCount = 1;
@@ -162,6 +187,10 @@ class CountyMap extends ElementBase {
     this.render();
   }
 
+    /**
+   * @method updateDimensions
+   * @description Updates the SVG dimensions based on container size and aspect ratio. Called by handle resize
+   */
   updateDimensions() {
     if (!this.svg) return;
 
