@@ -193,13 +193,14 @@ class ResultsTableCounty extends ElementBase {
 
     candidatePercentCell(candidate, leading, percentIn) {
         const displayPercent = percentDecimal(candidate.percent);
-        const party = getParty(candidate.party);
+        const isTied = displayPercent === '50.0%';
+        const party = isTied ? '' : getParty(candidate.party);
 
         const allIn = percentIn >= 1;
         return `
-            <td class="vote ${party} ${leading ? "leading" : ""} ${allIn ? "allin" : ""}" key="${candidate.id}">
-                ${displayPercent}
-            </td>
+             <td class="vote ${party} ${isTied ? '' : (leading ? "leading" : "")} ${isTied ? '' : (allIn ? "allin" : "")}" key="${candidate.id}">
+           ${displayPercent}
+       </td>
         `;
     }
 
@@ -208,7 +209,8 @@ class ResultsTableCounty extends ElementBase {
         const party = getParty(candidates[0]?.party || "");
         
         if (topCands.includes(candidates[0].last)) {
-            voteMargin = this.calculateVoteMargin(candidates);
+            const calculatedMargin = this.calculateVoteMargin(candidates);
+            voteMargin = (calculatedMargin.includes('+0')) ? '-' : calculatedMargin;
         }
 
         return `<td class="vote margin ${party}">${voteMargin}</td>`;
@@ -233,7 +235,7 @@ class ResultsTableCounty extends ElementBase {
                 .filter(c => c.party !== 'Other')
                 .reduce((sum, c) => sum + (c.percent || 0), 0);
               
-              if (sum > 0 && sum < 1) {
+              if (sum < 1) {
                 c.percent = Math.max(0, 1 - sum);
               }
             }
