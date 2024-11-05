@@ -317,10 +317,12 @@ class CountyMap extends ElementBase {
       const entry = mapData[d];
       if (!entry.candidates) continue;
 
+      var candidates = entry.candidates;
       var [top] = entry.candidates.sort((a, b) => b.percent - a.percent);
       if (!top.votes) continue;
+      let tie = candidates[0].percent === candidates[1].percent ? true : false;
 
-      // Try standard path ID first
+      // Use the same key format as above
       const pathId = isNewEngland ? `fips-${entry.censusID}` : `fips-${entry.fips}`;
       let path = this.svg.querySelector(`[id="${pathId}"]`);
 
@@ -357,7 +359,11 @@ class CountyMap extends ElementBase {
       } else {
         var [candidate] = this.legendCands.filter(c => isSameCandidate(c, top));
         if (candidate.special) path.classList.add(`i${candidate.special}`);
-        path.classList.add(getParty(top.party));
+        if (tie) {
+          path.classList.add("tie")
+        } else {
+          path.classList.add(getParty(top.party));
+        }
         path.classList.add("leading");
         if (allReporting) path.classList.add("allin");
       }
@@ -427,6 +433,10 @@ class CountyMap extends ElementBase {
 
     this.svg.appendChild(e.target);
 
+    if(!result) {
+      tooltip.classList.remove("shown");
+      return
+    }
 
     if (result) {
       // Update this.sortOrder with the current county's candidates

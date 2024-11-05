@@ -193,22 +193,29 @@ class ResultsTableCounty extends ElementBase {
 
     candidatePercentCell(candidate, leading, percentIn) {
         const displayPercent = percentDecimal(candidate.percent);
-        const party = getParty(candidate.party);
+        const isTied = displayPercent === '50.0%';
+        const party = isTied ? '' : getParty(candidate.party);
 
         const allIn = percentIn >= 1;
         return `
-            <td class="vote ${party} ${leading ? "leading" : ""} ${allIn ? "allin" : ""}" key="${candidate.id}">
-                ${displayPercent}
-            </td>
+             <td class="vote ${party} ${isTied ? '' : (leading ? "leading" : "")} ${isTied ? '' : (allIn ? "allin" : "")}" key="${candidate.id}">
+           ${displayPercent}
+       </td>
         `;
     }
 
     marginCell(candidates, leadingCand, topCands) {
         let voteMargin = "-";
-        const party = getParty(candidates[0]?.party || "");
+        let party = getParty(candidates[0]?.party || "");
         
         if (topCands.includes(candidates[0].last)) {
-            voteMargin = this.calculateVoteMargin(candidates);
+            const calculatedMargin = this.calculateVoteMargin(candidates);
+            if (calculatedMargin.includes('+0')) {
+                voteMargin = 'Tie';
+                party = ''
+            } else {
+                voteMargin = calculatedMargin;
+            }
         }
 
         return `<td class="vote margin ${party}">${voteMargin}</td>`;
@@ -233,7 +240,7 @@ class ResultsTableCounty extends ElementBase {
                 .filter(c => c.party !== 'Other')
                 .reduce((sum, c) => sum + (c.percent || 0), 0);
               
-              if (sum < 1) {
+              if (sum > 0 && sum < 1) {
                 c.percent = Math.max(0, 1 - sum);
               }
             }
@@ -267,7 +274,9 @@ class ResultsTableCounty extends ElementBase {
                 <td class="precincts amt">${reportingPercent}</td>
                 ${candidateCells}
                 ${marginCell}
-                <td class="comparison ${comparisonClass}">${metricValue}</td>
+                <td class="comparison ${comparisonClass}">
+                            ${!metricValue.includes('NaN') && metricValue != null ? metricValue : '-'}
+                </td>
             </tr>
         `;
     }

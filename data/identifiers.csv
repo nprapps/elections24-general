@@ -253,7 +253,7 @@ STATEFP,COUNTYFP,COUSUBFP,combined,GEOID,key,NAME,NAMELSAD,STUSPS,NAMELSADCO,LSA
 23,003,83785,23-003-83785,2300383785,20645,Weston,Weston town,ME,Aroostook County,43,,
 23,003,86865,23-003-86865,2300386865,20660,Winterville,Winterville plantation,ME,Aroostook County,39,,TRUE
 23,003,87215,23-003-87215,2300387215,20663,Woodland,Woodland town,ME,Aroostook County,43,,
-,,,,,20896,Aroostook County Townships,,ME,,,TRUE,
+23,003,20896,23-003-20896,2300320896,20896,Aroostook County Townships,,ME,,,TRUE,
 23,005,02655,23-005-02655,2300502655,20038,Baldwin,Baldwin town,ME,Cumberland County,43,,
 23,005,07170,23-005-07170,2300507170,20098,Bridgton,Bridgton town,ME,Cumberland County,43,,
 23,005,08430,23-005-08430,2300508430,20680,Brunswick,Brunswick town,ME,Cumberland County,43,,
@@ -308,7 +308,7 @@ STATEFP,COUNTYFP,COUSUBFP,combined,GEOID,key,NAME,NAMELSAD,STUSPS,NAMELSADCO,LSA
 23,007,82235,23-007-82235,2300782235,,West Central Franklin,West Central Franklin UT,ME,Franklin County,46,,TRUE
 23,007,85850,23-007-85850,2300785850,20651,Wilton,Wilton town,ME,Franklin County,43,,
 23,007,87680,23-007-87680,2300787680,,Wyman,Wyman UT,ME,Franklin County,46,,TRUE
-,,,,,20897,Franklin County Townships,,ME,,,TRUE,
+23,007,20897,23-007-20897,2300720897,20897,Franklin County Townships,,ME,Franklin County,,TRUE,
 23,009,01185,23-009-01185,2300901185,20011,Amherst,Amherst town,ME,Hancock County,43,,
 23,009,02165,23-009-02165,2300902165,20035,Aurora,Aurora town,ME,Hancock County,43,,
 23,009,02865,23-009-02865,2300902865,20050,Bar Harbor,Bar Harbor town,ME,Hancock County,43,,
@@ -459,7 +459,7 @@ STATEFP,COUNTYFP,COUSUBFP,combined,GEOID,key,NAME,NAMELSAD,STUSPS,NAMELSADCO,LSA
 23,017,80635,23-017-80635,2301780635,20616,Waterford,Waterford town,ME,Oxford County,43,,
 23,017,83890,23-017-83890,2301783890,20633,West Paris,West Paris town,ME,Oxford County,43,,
 23,017,87355,23-017-87355,2301787355,20664,Woodstock,Woodstock town,ME,Oxford County,43,,
-,,,,,20899,Oxford County Townships,,ME,,,TRUE,
+23,017,20899,23-017-20899,2301720899,20899,Oxford County Townships,,ME,Oxford County,,TRUE,
 23,019,01115,23-019-01115,2301901115,20010,Alton,Alton town,ME,Penobscot County,43,,
 23,019,01500,23-019-01500,2301901500,,Argyle,Argyle UT,ME,Penobscot County,46,,TRUE
 23,019,02795,23-019-02795,2301902795,20675,Bangor,Bangor city,ME,Penobscot County,25,,
@@ -527,7 +527,7 @@ STATEFP,COUNTYFP,COUSUBFP,combined,GEOID,key,NAME,NAMELSAD,STUSPS,NAMELSADCO,LSA
 23,019,85230,23-019-85230,2301985230,,Whitney,Whitney UT,ME,Penobscot County,46,,TRUE
 23,019,86305,23-019-86305,2301986305,20656,Winn,Winn town,ME,Penobscot County,43,,
 23,019,87390,23-019-87390,2301987390,20665,Woodville,Woodville town,ME,Penobscot County,43,,
-,,,,,20900,Penobscot County Townships,,ME,,,TRUE,
+23,019,20900,23-019-20900,2301920900,20900,Penobscot County Townships,,ME,Penobscot County,,TRUE,
 23,021,00100,23-021-00100,2302100100,20001,Abbot,Abbot town,ME,Piscataquis County,43,,
 23,021,03740,23-021-03740,2302103740,20060,Beaver Cove,Beaver Cove town,ME,Piscataquis County,43,,
 23,021,05560,23-021-05560,2302105560,,Blanchard,Blanchard UT,ME,Piscataquis County,46,,TRUE
@@ -550,7 +550,7 @@ STATEFP,COUNTYFP,COUSUBFP,combined,GEOID,key,NAME,NAMELSAD,STUSPS,NAMELSADCO,LSA
 23,021,70655,23-021-70655,2302170655,,Southeast Piscataquis,Southeast Piscataquis UT,ME,Piscataquis County,46,,TRUE
 23,021,81405,23-021-81405,2302181405,20627,Wellington,Wellington town,ME,Piscataquis County,43,,
 23,021,85710,23-021-85710,2302185710,20650,Willimantic,Willimantic town,ME,Piscataquis County,43,,
-,,,,,20901,Piscataquis County Townships,,ME,,,TRUE,
+23,021,20901,23-021-20901,2302120901,20901,Piscataquis County Townships,,ME,Piscataquis County,,TRUE,
 23,023,01570,23-023-01570,2302301570,20016,Arrowsic,Arrowsic town,ME,Sagadahoc County,43,,
 23,023,03355,23-023-03355,2302303355,20676,Bath,Bath city,ME,Sagadahoc County,25,,
 23,023,06260,23-023-06260,2302306260,20085,Bowdoin,Bowdoin town,ME,Sagadahoc County,43,,
@@ -673,7 +673,7 @@ STATEFP,COUNTYFP,COUSUBFP,combined,GEOID,key,NAME,NAMELSAD,STUSPS,NAMELSADCO,LSA
 23,029,81685,23-029-81685,2302981685,20629,Wesley,Wesley town,ME,Washington County,43,,
 23,029,85185,23-029-85185,2302985185,20648,Whiting,Whiting town,ME,Washington County,43,,
 23,029,85290,23-029-85290,2302985290,20649,Whitneyville,Whitneyville town,ME,Washington County,43,,
-,,,,,20903,Washington County Townships,,ME,,,TRUE,
+23,029,20903,23-029-20903,2302920903,20903,Washington County Townships,,ME,Washington County,,TRUE,
 23,031,00275,23-031-00275,2303100275,20002,Acton,Acton town,ME,York County,43,,
 23,031,00730,23-031-00730,2303100730,20007,Alfred,Alfred town,ME,York County,43,,
 23,031,01605,23-031-01605,2303101605,20017,Arundel,Arundel town,ME,York County,43,,
@@ -703,9 +703,9 @@ STATEFP,COUNTYFP,COUSUBFP,combined,GEOID,key,NAME,NAMELSAD,STUSPS,NAMELSADCO,LSA
 23,031,80530,23-031-80530,2303180530,20615,Waterboro,Waterboro town,ME,York County,43,,
 23,031,81475,23-031-81475,2303181475,20628,Wells,Wells town,ME,York County,43,,
 23,031,87985,23-031-87985,2303187985,20669,York,York town,ME,York County,43,,
-,,,,,20907,Madawaska Lake Township,,ME,,,TRUE,
-,,,,,20909,Albany Township,,ME,,,TRUE,
-,,,,,20916,Rockwood Strip Township,,ME,,,TRUE,
+23,003,20907,23-003-20907,2300320907,20907,Madawaska Lake Township,,ME,Berkshire County,,TRUE,
+23,017,20909,23-017-20909,2301720909,20909,Albany Township,,ME,Middlesex County,,TRUE,
+23,025,20916,23-025-20916,2302520916,20916,Rockwood Strip Township,,ME,,,TRUE,
 25,001,03690,25-001-03690,2500103690,22020,Barnstable Town,Barnstable Town city,MA,Barnstable County,25,,
 25,001,07175,25-001-07175,2500107175,22036,Bourne,Bourne town,MA,Barnstable County,43,,
 25,001,07980,25-001-07980,2500107980,22041,Brewster,Brewster town,MA,Barnstable County,43,,
