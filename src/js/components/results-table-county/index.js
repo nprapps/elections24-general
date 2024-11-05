@@ -206,11 +206,16 @@ class ResultsTableCounty extends ElementBase {
 
     marginCell(candidates, leadingCand, topCands) {
         let voteMargin = "-";
-        const party = getParty(candidates[0]?.party || "");
+        let party = getParty(candidates[0]?.party || "");
         
         if (topCands.includes(candidates[0].last)) {
             const calculatedMargin = this.calculateVoteMargin(candidates);
-            voteMargin = (calculatedMargin.includes('+0')) ? '-' : calculatedMargin;
+            if (calculatedMargin.includes('+0')) {
+                voteMargin = 'Tie';
+                party = ''
+            } else {
+                voteMargin = calculatedMargin;
+            }
         }
 
         return `<td class="vote margin ${party}">${voteMargin}</td>`;
@@ -235,7 +240,7 @@ class ResultsTableCounty extends ElementBase {
                 .filter(c => c.party !== 'Other')
                 .reduce((sum, c) => sum + (c.percent || 0), 0);
               
-              if (sum < 1) {
+              if (sum > 0 && sum < 1) {
                 c.percent = Math.max(0, 1 - sum);
               }
             }
