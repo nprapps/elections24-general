@@ -392,9 +392,11 @@ class CountyMap extends ElementBase {
       unpaintedElements: unpaintedByState
     };
 
+    /*
     console.log('=================');
     console.log('Election Map Summary:', summary);
     console.log('Full county data:', mapData);
+    */
   }
 
 
