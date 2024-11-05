@@ -142,7 +142,7 @@ class Cartogram extends ElementBase {
       }
 
       try {
-        const response = await fetch("./assets/_map-cartogram.svg");
+        const response = await fetch("./assets/_map-cartogram-new.svg");
         const svgText = await response.text();
         this.svg = await this.loadSVG(svgText);
         if (this.svg) {
