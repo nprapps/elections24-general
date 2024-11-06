@@ -274,7 +274,9 @@ class ResultsTableCounty extends ElementBase {
                 <td class="precincts amt">${reportingPercent}</td>
                 ${candidateCells}
                 ${marginCell}
-                <td class="comparison ${comparisonClass}">${metricValue}</td>
+                <td class="comparison ${comparisonClass}">
+                            ${!metricValue.includes('NaN') && metricValue != null ? metricValue : '-'}
+                </td>
             </tr>
         `;
     }
