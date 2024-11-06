@@ -22,4 +22,9 @@ window.onload = function () {
   embed.setAttribute("race", race);
 
   main.appendChild(embed);
+
+  ads = document.querySelectorAll('.remove-embedded')
+        ads.forEach(element => {
+          element.remove()
+        });
 };
