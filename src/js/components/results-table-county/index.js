@@ -255,6 +255,7 @@ class ResultsTableCounty extends ElementBase {
         if (row.candidates[0].votes === row.candidates[1].votes) {
             leadingCand = "";
         }
+        
         const reportingPercent = reportingPercentage(row.eevp) + "% in";
         const candidateCells = candidates.map(c =>
             this.candidatePercentCell(
