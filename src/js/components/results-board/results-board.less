@@ -22,6 +22,7 @@
 }
 
 .header {
+  margin-top: 20px;
   margin-bottom: 15px;
   margin-left: auto;
   margin-right: auto;
@@ -171,7 +172,7 @@ table.results {
 
       .x-small { display: none; }
 
-      @media @mobile {
+      @mobile: ~"(max-width: 500px)" {
         flex: 0 0 39px;
         .x-small { display: inline; }
         .not-small { display: none; }

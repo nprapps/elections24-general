@@ -186,6 +186,8 @@ class ResultsTableCounty extends ElementBase {
         var [a, b] = candidates;
         if (!a.votes) {
             return "-";
+        } else if (a.votes === b.votes) {
+            return "Tie";
         }
         var winnerMargin = a.percent - b.percent;
         return voteMargin({ party: getParty(a.party), margin: winnerMargin });
@@ -197,18 +199,22 @@ class ResultsTableCounty extends ElementBase {
 
         const allIn = percentIn >= 1;
         return `
-            <td class="vote ${party} ${leading ? "leading" : ""} ${allIn ? "allin" : ""}" key="${candidate.id}">
-                ${displayPercent}
-            </td>
+          <td class="vote ${party}${leading ? " leading" : ""}${allIn ? " allin" : ""}" key="${candidate.id}">
+           ${displayPercent}
+          </td>
         `;
     }
 
     marginCell(candidates, leadingCand, topCands) {
         let voteMargin = "-";
-        const party = getParty(candidates[0]?.party || "");
-        
+        let party = getParty(candidates[0]?.party || "");
+        if (candidates[0].votes === candidates[1].votes) {
+            party = "";
+        }
+
         if (topCands.includes(candidates[0].last)) {
-            voteMargin = this.calculateVoteMargin(candidates);
+            const calculatedMargin = this.calculateVoteMargin(candidates);
+            voteMargin = calculatedMargin;
         }
 
         return `<td class="vote margin ${party}">${voteMargin}</td>`;
@@ -233,7 +239,7 @@ class ResultsTableCounty extends ElementBase {
                 .filter(c => c.party !== 'Other')
                 .reduce((sum, c) => sum + (c.percent || 0), 0);
               
-              if (sum < 1) {
+              if (sum > 0 && sum < 1) {
                 c.percent = Math.max(0, 1 - sum);
               }
             }
@@ -244,15 +250,26 @@ class ResultsTableCounty extends ElementBase {
             metricValue = metric.format(metricValue);
         }
 
-        const leadingCand = row.reportingPercent > 0 ? row.candidates[0] : "";
-        const reportingPercent = reportingPercentage(row.reportingPercent) + "% in";
-        const candidateCells = candidates.map(c =>
+        let leadingCand = row.eevp > 0 ? row.candidates[0] : "";
+        if (row.candidates[0].votes === row.candidates[1].votes) {
+            leadingCand = "";
+        }
+        const reportingPercent = reportingPercentage(row.eevp) + "% in";
+        const candidateCells = candidates.map(c => 
             this.candidatePercentCell(
                 c,
                 c.party == leadingCand.party && c.last == leadingCand.last,
-                row.reportingPercent
+                row.eevp
             )
         ).join('');
+
+        if (row.county.countyName === "St. Joseph County" && this.race === "0") {
+            candidates.forEach(c => {
+                console.log("c", c);
+                console.log(c.party == leadingCand.party && c.last == leadingCand.last)
+            })
+        }
+
 
         const marginCell = this.marginCell(row.candidates, leadingCand, topCands);
         const comparisonClass = metricValue.includes('D') ? 'Dem' : metricValue.includes('R') ? 'GOP' : '';
@@ -267,7 +284,9 @@ class ResultsTableCounty extends ElementBase {
                 <td class="precincts amt">${reportingPercent}</td>
                 ${candidateCells}
                 ${marginCell}
-                <td class="comparison ${comparisonClass}">${metricValue}</td>
+                <td class="comparison ${comparisonClass}">
+                            ${!metricValue.includes('NaN') && metricValue != null ? metricValue : '-'}
+                </td>
             </tr>
         `;
     }
@@ -301,7 +320,7 @@ class ResultsTableCounty extends ElementBase {
 
         this.innerHTML = `
         <div class="results-counties ${this.state.sortMetric.key.split("_").join("-")}">
-            <h3>Demographics by ${townshipStates.includes(this.currentState) ? 'township' : 'county'}</h3>
+            <h3 class="section-hed">Demographics by ${townshipStates.includes(this.currentState) ? 'township' : 'county'}</h3>
             ${this.getSorter(this.currentState)}
             <table class="results-table candidates-${orderedCandidates.length}">
                 <thead>

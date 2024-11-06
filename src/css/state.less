@@ -17,6 +17,9 @@
 
 header {
 	margin-top: 30px;
+	body[data-header="hide"] & {
+		display: none;
+	}
 }
 
 header, main {
@@ -51,12 +54,17 @@ header, main {
 }
 
 h1 {
-	font-size: 3.2em;
 	text-transform: none;
 	line-height: 1;
-	@media (min-width: @breakpoint2) {
-		font-size: 3.2em;
-	}
+  @media @mobile {
+    font-size: 2.2em;
+  }
+  @media @mobile-above {
+    font-size: 2.6em;
+  }
+  @media @tablet-above {
+    font-size: 3.2em;
+  }
 }
 
 .section-nav {
@@ -80,10 +88,16 @@ h1 {
 .intro {
 	line-height: 1.45;
 	margin: 0;
-	a {
+
+  a {
 		text-decoration: none;
 	}
-	@media (min-width: @breakpoint1) {
+
+  p:first-child {
+    margin-top: 0;
+  }
+
+  @media (min-width: @breakpoint1) {
 		flex-basis: calc(70% - 10px);
 	}
 }
@@ -157,9 +171,30 @@ main {
 
 section {
 	display: none;
-	&.shown {
-		display: block;
-	}
+}
+
+body[data-section="key-races"] #key-races-section {
+	display: block;
+}
+
+body[data-section="president"] #president-section {
+	display: block;
+}
+
+body[data-section="governor"] #governor-section {
+	display: block;
+}
+
+body[data-section="senate"] #senate-section {
+	display: block;
+}
+
+body[data-section="house"] #house-section {
+	display: block;
+}
+
+body[data-section="ballot-measures"] #ballot-measures-section {
+	display: block;
 }
 
 #president-section .results-table-wrapper {

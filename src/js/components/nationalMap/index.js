@@ -84,6 +84,8 @@ class NationalMap extends ElementBase {
 
       this.states = statesData || {};
       this.races = presidentData.results || {};
+      
+
     } catch (error) {
       console.error("Could not load JSON data:", error);
     } finally {
@@ -95,11 +97,8 @@ class NationalMap extends ElementBase {
   render() {
     // Create the basic structure
 
-    const bannerHtml = `${this.races?.[1] ? '<test-banner></test-banner>' : ''}`;
-    
     this.innerHTML = ` 
       <div class="map">
-        ${bannerHtml}
         <div class="svg-container" role="img" aria-label="National map of results"></div>
         <div class="tooltip"></div>
       </div>
@@ -365,15 +364,16 @@ class NationalMap extends ElementBase {
 
       stateGroup.classList.remove("early", "winner", "leader", "GOP", "Dem");
 
-      if (eevp > 0) {
+      if (eevp > 0 && eevp < 0.5) {
         stateGroup.classList.add("early");
       }
-      if (eevp > 0.5 && leader) {
+      else if (eevp > 0.5 && leader) {
         stateGroup.classList.add("leader");
         stateGroup.classList.add(leader);
       }
       if (winner) {
         stateGroup.classList.add("winner");
+        stateGroup.classList.remove("early");
         stateGroup.classList.add(winner);
       }
     });

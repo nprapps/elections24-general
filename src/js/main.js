@@ -16,6 +16,13 @@ require("./components/board-governor");
 require("./components/board-house");
 require("./components/county-map");
 require("./components/results-collection");
+require("./components/nationalMap");
+require("./components/cartogram");
+
+// show electoral bubbbles. controlled via `showBubbles` in config.strings sheet
+if (document.body.classList.contains("show-bubbles")) {
+  require("./components/electoralBubbles");
+}
 
 var baseTarget = document.head.querySelector("base");
 if (baseTarget == null) {
@@ -41,9 +48,16 @@ if (urlParams.has('embedded')) {
 
 // close disclaimer alert box
 if (document.querySelector("#close-disclaimer")) {
+  document.querySelector("#close-disclaimer").addEventListener("click", () => {
+    document.querySelector("#about-box").classList.add("closed");
+  });
+
+  //keyboard-accessibility
   document
     .querySelector("#close-disclaimer")
-    .addEventListener("click", () => {
-      document.querySelector("#about-box").classList.add("closed");
+    .addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        document.querySelector("#about-box").classList.add("closed");
+      }
     });
 }

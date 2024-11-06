@@ -136,13 +136,13 @@ class Cartogram extends ElementBase {
 
       this.states = statesData || {};
       this.races = presidentData.results || {};
-      if (this.races?.[1]) {
+      if (this.races?.[1]["test"]) {
         const bannerPlaceholder = this.querySelector('.banner-placeholder');
         bannerPlaceholder.innerHTML = '<test-banner></test-banner>';
       }
 
       try {
-        const response = await fetch("./assets/_map-cartogram.svg");
+        const response = await fetch("./assets/synced/_map-cartogram-new.svg");
         const svgText = await response.text();
         this.svg = await this.loadSVG(svgText);
         if (this.svg) {
@@ -336,8 +336,12 @@ class Cartogram extends ElementBase {
 
       let x, y;
       if (hasDistricts) {
-        x = parseFloat(square.getAttribute('x')) - 12;
-        y = parseFloat(square.getAttribute('y'));
+        if (stateName === "NE") {
+          x = parseFloat(square.getAttribute('x')) - 8;
+        } else if (stateName === "ME") {
+          x = parseFloat(square.getAttribute('x')) - 24;
+        }        
+        y = parseFloat(square.getAttribute('y')) + 20;
       } else {
         const squareX = parseFloat(square.getAttribute('x'));
         const squareY = parseFloat(square.getAttribute('y'));
@@ -345,11 +349,11 @@ class Cartogram extends ElementBase {
         const squareHeight = parseFloat(square.getAttribute('height'));
 
         x = squareX + (squareWidth / 2);
-        y = squareY + (squareHeight / 2);
+        y = squareY + (squareHeight / 2) + 5;
       }
 
       if (window.innerWidth > 650) {
-        y -= labelBox.height / 2 - 2;
+        y -= labelBox.height / 2;
         let votes = this.states[stateName].electoral;
         switch (stateName) {
           case "NE":
@@ -363,7 +367,6 @@ class Cartogram extends ElementBase {
         electoralLabel.textContent = votes;
 
         g.appendChild(electoralLabel);
-
 
         electoralLabel.setAttribute("x", x);
         electoralLabel.setAttribute("y", y + 10);
@@ -431,15 +434,16 @@ class Cartogram extends ElementBase {
       groups.forEach((g) => {
         g.classList.remove("early", "winner", "leader", "GOP", "Dem");
 
-        if (eevp > 0) {
+        if (eevp > 0 && eevp < 0.5) {
           g.classList.add("early");
         }
-        if (eevp > 0.5) {
+        else if (eevp > 0.5) {
           g.classList.add("leader");
           g.classList.add(leader);
         }
         if (winner) {
           g.classList.add("winner");
+          g.classList.remove("early");
           g.classList.add(winner);
         }
       });
