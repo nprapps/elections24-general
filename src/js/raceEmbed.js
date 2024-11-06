@@ -23,8 +23,10 @@ window.onload = function () {
 
   main.appendChild(embed);
 
-  var ads = document.querySelectorAll('.remove-embedded')
+  document.addEventListener("DOMContentLoaded", () => {
+   ads = document.querySelectorAll('.remove-embedded')
         ads.forEach(element => {
           element.remove()
         });
+      })
 };
