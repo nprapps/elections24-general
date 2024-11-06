@@ -7,7 +7,6 @@ require("./analytics");
 
 var oldOnload = window.onload;
 window.onload = function () {
-  oldOnload();
   var guest = Sidechain.Sidechain.registerGuest();
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -22,11 +21,6 @@ window.onload = function () {
   embed.setAttribute("race", race);
 
   main.appendChild(embed);
+  oldOnload();
 
-  document.addEventListener("DOMContentLoaded", () => {
-   ads = document.querySelectorAll('.remove-embedded')
-        ads.forEach(element => {
-          element.remove()
-        });
-      })
 };

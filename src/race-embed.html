@@ -19,6 +19,12 @@
     </script>
 
     <script src="raceEmbed.js" async></script>
+    <script type="text/javascript">
+      ads = document.querySelectorAll('.remove-embedded')
+        ads.forEach(element => {
+          element.remove()
+        });
+    </script>
     <%= t.include("partials/_analytics.html") %>
   </body>
 </html>
