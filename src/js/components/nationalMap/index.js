@@ -373,6 +373,7 @@ class NationalMap extends ElementBase {
       }
       if (winner) {
         stateGroup.classList.add("winner");
+        stateGroup.classList.remove("early");
         stateGroup.classList.add(winner);
       }
     });
