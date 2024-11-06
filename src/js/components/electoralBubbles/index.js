@@ -353,7 +353,7 @@ class ElectoralBubbles extends ElementBase {
       ).join("")}</div>
             <div class="reporting">${formatEEVP(
         data.eevp || data.reportingPercent
-      )}% in</div>
+      )}</div>
           `;
       this.lastHover = key;
     }
@@ -439,11 +439,8 @@ class ElectoralBubbles extends ElementBase {
       likelyR: "Likely Republican"
     };
 
-    const bannerHtml = `${this.races?.[1] ? '<test-banner></test-banner>' : ''}`;
-
     this.innerHTML = `
       <div class="electoral-bubbles">
-        ${bannerHtml}
         <div class="aspect-ratio">
           <svg class="bubble-svg" 
             role="img"
