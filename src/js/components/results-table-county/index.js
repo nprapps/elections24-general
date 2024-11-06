@@ -186,6 +186,8 @@ class ResultsTableCounty extends ElementBase {
         var [a, b] = candidates;
         if (!a.votes) {
             return "-";
+        } else if (a.votes === b.votes) {
+            return "Tie";
         }
         var winnerMargin = a.percent - b.percent;
         return voteMargin({ party: getParty(a.party), margin: winnerMargin });
@@ -206,15 +208,13 @@ class ResultsTableCounty extends ElementBase {
     marginCell(candidates, leadingCand, topCands) {
         let voteMargin = "-";
         let party = getParty(candidates[0]?.party || "");
-        
+        if (candidates[0].votes === candidates[1].votes) {
+            party = "";
+        }
+
         if (topCands.includes(candidates[0].last)) {
             const calculatedMargin = this.calculateVoteMargin(candidates);
-            if (calculatedMargin.includes('+0')) {
-                voteMargin = 'Tie';
-                party = ''
-            } else {
-                voteMargin = calculatedMargin;
-            }
+            voteMargin = calculatedMargin;
         }
 
         return `<td class="vote margin ${party}">${voteMargin}</td>`;
@@ -250,8 +250,10 @@ class ResultsTableCounty extends ElementBase {
             metricValue = metric.format(metricValue);
         }
 
-        const leadingCand = row.eevp > 0 ? row.candidates[0] : "";
-
+        let leadingCand = row.eevp > 0 ? row.candidates[0] : "";
+        if (row.candidates[0].votes === row.candidates[1].votes) {
+            leadingCand = "";
+        }
         const reportingPercent = reportingPercentage(row.eevp) + "% in";
         const candidateCells = candidates.map(c => 
             this.candidatePercentCell(
