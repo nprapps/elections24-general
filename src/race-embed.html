@@ -1,24 +1,11 @@
-<%
-var thisPage = "embed";
-var { seo, strings } = grunt.data.json;
-var metadata = {
-  project: Object.assign({}, grunt.data.json.project, {
-    title: seo[thisPage + "Title"] ? seo[thisPage + "Title"] : seo["defaultTitle"],
-    description: seo[thisPage + "Description"],
-    statePath: "embed.html",
-    image: "assets/synced/" + thisPage + "-results.jpg"
-  })
-};
-%>
-
 <!doctype html>
 <html lang="en-US">
   <head>
-    <%= t.include("partials/_head.html", metadata) %>
+    <%= t.include("partials/_head.html", grunt.data.json) %>
     <link rel="stylesheet" type="text/css" href="race-embed.css">
     <base target="_blank" />
   </head>
-  <body>
+  <body class="embedded">
     <main class="app constrained">
       <div class="embed"></div>
       <p class="source-footnote">
@@ -31,18 +18,7 @@ var metadata = {
         window.PROJECT_ANALYTICS = <%= JSON.stringify(json.project.analytics || {}) %>;
     </script>
 
-    <%= t.include("partials/_analytics.html") %>
-    <%= t.include("partials/_sponsorship.html", { "production": grunt.data.json.project.production }) %>
-    <script>
-      var here = new URL(window.location);
-    
-      if (here.searchParams.has("embedded")) {
-        ads = document.querySelectorAll('.remove-embedded')
-        ads.forEach(element => {
-          element.remove()
-        });
-      }
-    </script>
     <script src="raceEmbed.js" async></script>
+    <%= t.include("partials/_analytics.html") %>
   </body>
 </html>
