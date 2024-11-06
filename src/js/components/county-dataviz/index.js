@@ -90,12 +90,10 @@ class CountyDataViz extends ElementBase {
     }
 
     render() {
-        
-        if (!this.state.cleanedData || this.state.cleanedData.length === 0) {
+        if (!this.state.cleanedData || this.state.cleanedData.length === 0 || this.state.cleanedData.length < 10) {
             this.innerHTML = '';
             return;
         }
-
 
         const footnote = this.ommittedCounties
             ? "Counties where leading parties differ from statewide leading parties are omitted."
