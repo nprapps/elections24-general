@@ -202,13 +202,12 @@ class ResultsTableCounty extends ElementBase {
 
   candidatePercentCell(candidate, leading, percentIn) {
     const displayPercent = percentDecimal(candidate.percent);
-    const isTied = displayPercent === "50.0%";
-    const party = isTied ? "" : getParty(candidate.party);
+    const party = getParty(candidate.party);
 
     const allIn = percentIn >= 1;
     return `
-          <td class="vote ${party} ${isTied ? "" : leading ? "leading" : ""} ${
-      isTied ? "" : allIn ? "allin" : ""
+          <td class="vote ${party}${leading ? " leading" : ""}${
+      allIn ? " allin" : ""
     }" key="${candidate.id}">
            ${displayPercent}
           </td>
@@ -259,12 +258,10 @@ class ResultsTableCounty extends ElementBase {
     if (metric.format) {
       metricValue = metric.format(metricValue);
     }
-
     let leadingCand = row.eevp > 0 ? row.candidates[0] : "";
     if (row.candidates[0].votes === row.candidates[1].votes) {
       leadingCand = "";
     }
-
     const reportingPercent = reportingPercentage(row.eevp) + "% in";
     const candidateCells = candidates
       .map((c) =>
