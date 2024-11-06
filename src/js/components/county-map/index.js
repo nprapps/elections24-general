@@ -197,7 +197,7 @@ updateDimensions() {
               ${this.legendCands.map(candidate => this.createLegend(candidate)).join('')}
               ${Object.values(this.data).some(entry => entry.reportingPercent > 0 && entry.reportingPercent < 0.5) ? `
                 <div class="key-row">
-                    <div class="swatch" style="background-color: #b8b8b8"></div>
+                    <div class="swatch" style="background-color: #b8b6b6"></div>
                     <div class="name">Early results</div>
                 </div>
             ` : ''}
@@ -376,7 +376,7 @@ updateDimensions() {
         path.style.fill = "#e1e1e1";
         incomplete = true;
     } else if (entry.reportingPercent > 0 && entry.reportingPercent < 0.5) {
-        path.style.fill = "#b8b8b8";  // Special gray for early results
+        path.style.fill = "#b8b6b6";  // Special gray for early results
         incomplete = true;
     } else {  // reportingPercent >= 0.5
         var [candidate] = this.legendCands.filter(c => isSameCandidate(c, top));
