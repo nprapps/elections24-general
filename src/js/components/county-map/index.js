@@ -339,7 +339,7 @@ updateDimensions() {
       var candidates = entry.candidates;
       var [top] = entry.candidates.sort((a, b) => b.percent - a.percent);
       if (!top.votes) continue;
-      let tie = candidates[0].percent === candidates[1].percent ? true : false;
+      let tie = candidates[0].votes === candidates[1].votes ? true : false;
 
       // Use the same key format as above
       const pathId = isNewEngland ? `fips-${entry.censusID}` : `fips-${entry.fips}`;
@@ -520,7 +520,7 @@ updateDimensions() {
       var countyName = result.county.countyName.replace(/\s[a-z]/g, match =>
         match.toUpperCase()
       );
-      var perReporting = reportingPercentage(result.reportingPercent);
+      var perReporting = reportingPercentage(result.eevp);
       tooltip.innerHTML = `
         <div class="name">${locationName}</div>
         ${candText}
