@@ -31,25 +31,26 @@ const navigate = function(key) {
 
 var oldOnload = window.onload;
 window.onload = function() { oldOnload();
-
-  let nav = document.querySelector("form");
-  nav.addEventListener("change", e => {
-    navigate(e.target.value);
-  });
-
+  const nav = document.querySelector("form");
   const urlParams = new URLSearchParams(window.location.search);
   let urlSection = urlParams.get("section");
   if (urlSection === null) {
     urlSection = "key-races";
   }
-
   nav.querySelector("#" + offices[urlSection]).checked = true;
   navigate(offices[urlSection]);
+
+  nav.addEventListener("change", e => {
+    navigate(e.target.value);
+  });
 
   if (urlParams.has("embedded")) {
     const isEmbedded = urlParams.get("embedded");
     if (isEmbedded) {
       var guest = Sidechain.Sidechain.registerGuest();
+      nav.addEventListener("change", e => {
+        guest.sendHeight();
+      });
     }
     var showHeader = urlParams.get("showHeader");
     if (showHeader == "false") {
