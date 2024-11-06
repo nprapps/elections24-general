@@ -1,11 +1,14 @@
 var $ = require("./lib/qsa");
 
-require("./analytics");
 var Sidechain = require("@nprapps/sidechain");
+
 require("./components/individual-race-embed");
+require("./analytics");
 
 var oldOnload = window.onload;
-window.onload = function() { oldOnload();    var guest = Sidechain.Sidechain.registerGuest();
+window.onload = function () {
+  oldOnload();
+  var guest = Sidechain.Sidechain.registerGuest();
 
   const urlParams = new URLSearchParams(window.location.search);
 
