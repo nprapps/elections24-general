@@ -443,6 +443,7 @@ class Cartogram extends ElementBase {
         }
         if (winner) {
           g.classList.add("winner");
+          g.classList.remove("early");
           g.classList.add(winner);
         }
       });
