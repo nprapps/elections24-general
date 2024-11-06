@@ -129,7 +129,9 @@ module.exports = function (grunt) {
     const states = {};
     geo.state.forEach(function (result) {
       if (
-        (result.office === "H" && r.id !== "45888" && r.id !== "50068") ||
+        (result.office === "H" &&
+          result.id !== "45888" &&
+          result.id !== "50068") ||
         result.office === "S"
       ) {
         dashboard.push({
