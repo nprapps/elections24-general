@@ -134,8 +134,17 @@
     border: 2px solid @gray-lighter;
     padding: 10px 10px 30px 10px;
 
-    @media @tablet {
-      width: 33%;
+    @media (@mobile-above) and (@tablet){
+      width: 50%;
+      position: relative;
+      top: 50%;
+      -webkit-transform: translateX(50%);
+      -ms-transform: translateX(50%);
+      transform: translateX(50%);
+    }
+
+    @media @tablet-above {
+      width:33%;
     }
 
     @media @mobile {
