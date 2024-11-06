@@ -423,7 +423,12 @@ updateDimensions() {
       totalMapElements: allCountyPaths.length,
       missingCounties: missingByState,
       unpaintedElements: unpaintedByState
+<<<<<<< HEAD
     }
+=======
+    };
+
+>>>>>>> origin/main
   }
 
 
