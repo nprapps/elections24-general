@@ -206,20 +206,20 @@ class ResultsBoardDisplay extends ElementBase {
                             office="Governor"
                             hed="Likely/Solid Democratic"
                             class="first"
-                            races='${JSON.stringify(buckets.likelyD)}'>
+                            races='${JSON.stringify(buckets.likelyD).replace(/'/g, "&apos;").replace(/"/g, "&quot;")}'>
                         </results-board>
                         <results-board 
                             office="Governor"
                             split="true"
                             hed="Competitive Seats"
                             class="middle"
-                            races='${JSON.stringify(buckets.tossup)}'>
+                            races='${JSON.stringify(buckets.tossup).replace(/'/g, "&apos;").replace(/"/g, "&quot;")}'>
                         </results-board>
                         <results-board 
                             office="Governor"
                             hed="Likely/Solid Republican"
                             class="last"
-                            races='${JSON.stringify(buckets.likelyR)}'>
+                             races='${JSON.stringify(buckets.likelyR).replace(/'/g, "&apos;").replace(/"/g, "&quot;")}'>
                         </results-board>
                     ` : ''}
                 </div>
