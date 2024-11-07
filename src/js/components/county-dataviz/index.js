@@ -3,13 +3,11 @@ import {
     formatters, getCountyVariable
 } from "../util.js";
 import CountyChart from "./county-dataviz.js";
-import { getAvailableMetrics, sortByParty } from "../util.js";
+import { getAvailableMetrics, sortByParty, downCaret, upCaret } from "../util.js";
 import { filter } from "async";
-
 
 var { chain, comma, percent, dollars } = formatters;
 const ElementBase = require("../elementBase");
-
 
 class CountyDataViz extends ElementBase {
     constructor() {
@@ -48,7 +46,12 @@ class CountyDataViz extends ElementBase {
 
 
             // Only display candidates that are winning a county
-            const order = this.data[0].candidates;
+            const order =
+            race == "ME-20978" && state === "ME"
+              ? this.data[0].candidates.filter(
+                  (cand) => cand.last === "King" || cand.last === "Kouzounas"
+                )
+              : this.data[0].candidates;
             this.sortOrder = order;
 
             // Sort by party for consistent display.
@@ -120,7 +123,7 @@ class CountyDataViz extends ElementBase {
             data-more="Show all"
             tabindex="0"
             data-less="Show less">
-            ${this.state.collapsed ? 'Show all ▼' : 'Show less ▲'}
+            ${this.state.collapsed ? `Show all ${downCaret}` : `Show less ${upCaret}`}
           </button>
         </div>
       `;
