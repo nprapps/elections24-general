@@ -48,6 +48,7 @@ window.onload = function() { oldOnload();
     const isEmbedded = urlParams.get("embedded");
     if (isEmbedded) {
       var guest = Sidechain.Sidechain.registerGuest();
+      guest.sendHeight();
       nav.addEventListener("change", e => {
         guest.sendHeight();
       });
