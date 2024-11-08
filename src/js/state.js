@@ -22,7 +22,7 @@ const offices = {
   I: "ballot-measures",
 };
 
-const navigate = function(key) {
+export const navigate = function(key) {
   var sectionCode = Object.keys(offices).find(d => offices[d] === key);
   url.searchParams.set("section", sectionCode);
   window.history.pushState({}, "", url);
@@ -49,6 +49,7 @@ window.onload = function() { oldOnload();
     if (isEmbedded) {
       var guest = Sidechain.Sidechain.registerGuest();
       guest.sendHeight();
+      console.log(guest);
       nav.addEventListener("change", e => {
         guest.sendHeight();
       });
@@ -75,4 +76,14 @@ window.onload = function() { oldOnload();
         }
       });
   }
+
+  if (document.querySelector(".section-link")) {
+    document.querySelectorAll(".section-link").forEach(link => {
+      link.addEventListener("click", e => {
+        console.log("click");
+        console.log(link.dataset.value);
+      });
+    });
+  }
+
 };

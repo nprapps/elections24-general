@@ -1,5 +1,6 @@
 const ElementBase = require("../elementBase");
 const { classify } = require("../util");
+import navigate from "../../state.js"
 
 const townshipStates = ["CT", "MA", "ME", "NH", "RI", "VT"];
 
@@ -41,11 +42,11 @@ class ResultsCollection extends ElementBase {
       : "";
     if (this.hasAttribute("key-races-only")) {
       if (this.getAttribute("office") === "P") {
-        let linkElement = ` • <a href="${stateSlug}.html?section=P${embedParam}">${locality}-level results</a>`;
+        let linkElement = ` • <button class="section-link" data-value="president">${locality}-level results</button>`;
         if (stateSlug === "alaska" || stateSlug === "district-of-columbia") {
           linkElement = "";
         } else if (stateSlug === "nebraska" || stateSlug === "maine") {
-          linkElement = ` • <a href="${stateSlug}.html?section=P${embedParam}">District and ${locality.toLowerCase()}-level results</a>`;
+          linkElement = ` • <button href="" class="section-link" data-value="president">District and ${locality.toLowerCase()}-level results</button>`;
         }
         template += `
           <p class="section-info">
@@ -53,21 +54,21 @@ class ResultsCollection extends ElementBase {
               "electoral"
             )} electoral votes${linkElement}</p>`;
       } else if (this.getAttribute("office") === "G") {
-        template += `<a class='section-info' href="${stateSlug}.html?section=G${embedParam}">
+        template += `<button onclick="navigate('governor')" class='section-info section-link' data-value="governor">
           ${locality}-level results
-        </a>`;
+        </button>`;
       } else if (this.getAttribute("office") === "S") {
-        template += `<a class='section-info' href="${stateSlug}.html?section=S${embedParam}">
+        template += `<button class='section-info section-link' data-value="senate">
           ${locality}-level results
-        </a>`;
+        </button>`;
       } else if (this.getAttribute("office") === "H") {
-        template += `<a class="section-info" href='${stateSlug}.html?section=H${embedParam}'>
+        template += `<button class="section-info section-link" data-value="house">
           All House results
-        </a>`;
+        </button>`;
       } else if (this.getAttribute("office") === "I") {
-        template += `<a class="section-info" href='${stateSlug}.html?section=I${embedParam}'>
+        template += `<button class="section-info section-link" href='' data-value="ballot-measures">
           All ballot measure results
-        </a>`;
+        </button>`;
       }
     } else {
       if (this.getAttribute("office") === "P") {
