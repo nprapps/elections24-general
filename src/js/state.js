@@ -76,14 +76,18 @@ window.onload = function() { oldOnload();
         }
       });
   }
+};
 
-  if (document.querySelector(".section-link")) {
-    document.querySelectorAll(".section-link").forEach(link => {
-      link.addEventListener("click", e => {
-        console.log("click");
-        console.log(link.dataset.value);
+window.addEventListener("load", function () {
+  document.querySelectorAll(".section-link").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      navigate(link.dataset.value);
+      const nav = document.querySelector("form");
+      nav.querySelector("#" + link.dataset.value).checked = true;
+
+      nav.addEventListener("change", (e) => {
+        navigate(e.target.value);
       });
     });
-  }
-
-};
+  });
+});

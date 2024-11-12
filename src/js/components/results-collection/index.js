@@ -1,6 +1,5 @@
 const ElementBase = require("../elementBase");
 const { classify } = require("../util");
-import navigate from "../../state.js"
 
 const townshipStates = ["CT", "MA", "ME", "NH", "RI", "VT"];
 
@@ -40,7 +39,9 @@ class ResultsCollection extends ElementBase {
     const locality = townshipStates.includes(this.getAttribute("state"))
       ? "Township"
       : "County";
-    const embedParam = new URL(document.location.toString()).searchParams.get("embedded")
+    const embedParam = new URL(document.location.toString()).searchParams.get(
+      "embedded"
+    )
       ? "&embedded=true"
       : "";
     if (this.hasAttribute("key-races-only")) {
@@ -57,7 +58,7 @@ class ResultsCollection extends ElementBase {
               "electoral"
             )} electoral votes${linkElement}</p>`;
       } else if (this.getAttribute("office") === "G") {
-        template += `<button onclick="navigate('governor')" class='section-info section-link' data-value="governor">
+        template += `<button class='section-info section-link' data-value="governor">
           ${locality}-level results
         </button>`;
       } else if (this.getAttribute("office") === "S") {
