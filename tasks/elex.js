@@ -176,6 +176,7 @@ module.exports = function (grunt) {
 
     fs.writeFile(`build/data/dashboard.csv`, csv);
 
+    let splitBallots = [];
     for (let state in states) {
       let stateOutput = {
         test,
@@ -183,6 +184,60 @@ module.exports = function (grunt) {
           a.seatNumber - b.seatNumber < 0 ? -1 : 1
         ),
       };
+
+      // Analyze states that voted for a president and a senator/governor of different parties
+      if (["AZ","MI","NC","NH","NV","VT","WI"].includes(state)) {
+        // Get president data
+        const presResults = stateOutput.results.find(d => d.office === "P");
+        const presParty = presResults.winnerParty;
+        let presMargin = (presResults.candidates[0].percent 
+          - presResults.candidates[1].percent) * 100;
+        if (presParty === "Dem") { presMargin = presMargin * -1 };
+        const presDemVotes = presResults.candidates.find(d => d.party === "Dem").votes;
+        const presGopVotes = presResults.candidates.find(d => d.party === "GOP").votes;
+        const presTotalVotes = presResults.candidates.reduce((a, b) => a + b.votes, 0);
+
+        // Get senator or governor data
+        let otherOffice, otherParty, otherDemVotes, otherGopVotes, otherTotalVotes;
+        if (state != "VT" && stateOutput.results.find(d => d.office === "S")) {
+          const senateResults = stateOutput.results.find(d => d.office === "S");
+          otherOffice = "Senate"
+          otherParty = senateResults.winnerParty;
+          otherMargin = (senateResults.candidates[0].percent 
+          - senateResults.candidates[1].percent) * 100;
+          otherDemVotes = senateResults.candidates.find(d => d.party === "Dem").votes;
+          otherGopVotes = senateResults.candidates.find(d => d.party === "GOP").votes;
+          otherTotalVotes = senateResults.candidates.reduce((a, b) => a + b.votes, 0);
+        }
+        if (stateOutput.results.find(d => d.office === "G")) {
+          const govResults = stateOutput.results.find(d => d.office === "G")
+          otherOffice = "Governor"
+          otherParty = govResults.winnerParty;
+          otherMargin = (govResults.candidates[0].percent 
+          - govResults.candidates[1].percent) * 100;
+          otherDemVotes = govResults.candidates.find(d => d.party === "Dem").votes;
+          otherGopVotes = govResults.candidates.find(d => d.party === "GOP").votes;
+          otherTotalVotes = govResults.candidates.reduce((a, b) => a + b.votes, 0);
+        }
+        if (otherParty === "Dem") { otherMargin = otherMargin * -1 };
+
+        let stateObj = {
+          "State": state,
+          "President party": presParty,
+          "President margin": presMargin,
+          "President Dem. votes": presDemVotes,
+          "President GOP votes": presGopVotes,
+          "President total votes": presTotalVotes,
+          "Other office": otherOffice,
+          "Other party": otherParty,
+          "Other margin": otherMargin,
+          "Other Dem. votes": otherDemVotes,
+          "Other GOP votes": otherGopVotes,
+          "Other total votes": otherTotalVotes,
+          "Difference": otherTotalVotes / presTotalVotes * 100
+        }
+        splitBallots.push(stateObj);
+      }
 
       const stateChatter = longform.statePages[state.toLowerCase()];
       if (stateChatter) {
@@ -193,6 +248,8 @@ module.exports = function (grunt) {
         serialize(stateOutput)
       );
     }
+
+    fs.writeFile(`build/data/split-ballots.json`, JSON.stringify(splitBallots));
 
     // county files
     await fs.mkdir("build/data/counties", { recursive: true });
