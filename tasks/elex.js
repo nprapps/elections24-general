@@ -222,7 +222,7 @@ module.exports = function (grunt) {
         if (otherParty === "Dem") { otherMargin = otherMargin * -1 };
 
         let stateObj = {
-          "State": state,
+          "State": stateOutput.results[0].stateAP,
           "President party": presParty,
           "President margin": presMargin,
           "President Dem. votes": presDemVotes,
@@ -234,7 +234,6 @@ module.exports = function (grunt) {
           "Other Dem. votes": otherDemVotes,
           "Other GOP votes": otherGopVotes,
           "Other total votes": otherTotalVotes,
-          "Difference": otherTotalVotes / presTotalVotes * 100
         }
         splitBallots.push(stateObj);
       }
