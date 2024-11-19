@@ -37,7 +37,6 @@ async function getData() {
       states[statePostal].notes = pollHours[i].notes ? pollHours[i].notes : "";
       states[statePostal].closingTime = lastPollClosingET;
     }
-    console.log({ states });
     return states;
   } catch (error) {
     console.error(error.message);
