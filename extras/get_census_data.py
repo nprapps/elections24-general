@@ -1,9 +1,9 @@
 import pandas as pd
 import censusdata
 
-""" This function saves the census data for all the counties in data/census_data.csv.
-
-This function uses the censusdata package to get the data from Census Bureau.
+""" 
+This function uses the censusdata package to get the data for all the counties 
+from Census Bureau and saves it in data/census_data.csv.
 """
 
 detail_tables = {'B01003_001E' : 'population', "B02001_001E": "race_total", "B02001_003E": "black_total", "B03002_001E": "race_hispanic_total", "B03002_003E": "white_alone", "B03002_012E" : "hispanic_total"}
